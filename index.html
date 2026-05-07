@@ -673,7 +673,7 @@ function swapIndices(i1,i2,highlight=false){
     G.cards[i2].id=tmp.id; G.cards[i2].emoji=tmp.emoji; G.cards[i2].fc=tmp.fc;
     G.flipped=G.flipped.filter(f=>f!==i1&&f!==i2);
     els.forEach(e=>{ if(e) e.classList.remove('scrambling'); });
-    renderGrid();
+    render();
   },490);
 }
 
