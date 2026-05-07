@@ -23,9 +23,15 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .header{text-align:center;padding:4px 0 6px;}
 .title{font-family:'Fredoka One',cursive;font-size:2.5rem;letter-spacing:3px;background:linear-gradient(135deg,#f5c842 0%,#ff8c42 50%,#ff4d99 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .subtitle{color:var(--muted);font-size:0.8rem;margin-top:2px;}
-.bottom-bar{display:flex;gap:9px;align-items:flex-start;}
-.boss-panel{flex:0 0 160px;}
-.powers-panel{flex:1;}
+.powers-grid-panel{margin-top:4px;}
+.powers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.power-card{background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+.power-img{width:56px;height:56px;object-fit:contain;}
+.power-name{font-weight:700;color:var(--text);font-size:0.72rem;}
+.power-count{color:var(--gold);font-size:0.68rem;}
+.power-desc{color:var(--muted);font-size:0.63rem;}
+.boss-tile-hp{position:absolute;bottom:0;left:0;right:0;height:5px;background:rgba(0,0,0,0.5);border-radius:0 0 9px 9px;overflow:hidden;z-index:3;}
+.boss-tile-hp-bar{height:100%;background:linear-gradient(90deg,#ff4444,#ff8800);transition:width 0.4s;}
 .btn-reset{width:100%;padding:9px 14px;font-family:'Fredoka One',cursive;font-size:0.95rem;letter-spacing:1px;border:1px solid rgba(255,255,255,0.13);border-radius:99px;background:rgba(255,255,255,0.055);color:var(--text);cursor:pointer;transition:background 0.15s,transform 0.1s;}
 .btn-reset:hover{background:rgba(255,255,255,0.1);transform:translateY(-1px);}
 .main{display:flex;flex-direction:column;gap:9px;}
@@ -204,31 +210,48 @@ body.shake{animation:shake 0.45s ease-in-out;}
     </div>
   </div>
 
-  <div class="bottom-bar">
-    <div class="panel boss-panel">
-      <div class="ptitle">The Boss</div>
-      <div style="text-align:center;">
-        <div id="bEmoji" style="display:flex;align-items:center;justify-content:center;margin-bottom:4px;"><img id="smashyImg" style="width:60px;height:60px;object-fit:contain;" alt="Smashy"></div>
-        <div class="boss-name">Smashy</div>
-      </div>
-      <div class="hp-wrap"><div class="hp-bar" id="hpBar" style="width:100%"></div></div>
-      <div class="hp-text" id="hpTxt">8 / 8 HP</div>
-      <div class="taunt-bubble" id="tauntBubble">😤 I will squash your castle!</div>
-      <div style="text-align:center;margin-top:8px;">
-        <div class="dice-big" id="dBig">🎲</div>
-        <div class="dlabel" id="dLabel">Waiting...</div>
-      </div>
-    </div>
+  <!-- Hidden elements kept for JS compatibility -->
+  <div style="display:none">
+    <div id="bEmoji"><img id="smashyImg"></div>
+    <div id="hpBar"></div>
+    <div id="hpTxt"></div>
+    <div id="tauntBubble"></div>
+    <div id="dBig"></div>
+    <div id="dLabel"></div>
+  </div>
 
-    <div class="panel powers-panel">
-      <div class="ptitle">Tile Powers</div>
-      <div class="legend">
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-lightning);border:1px solid rgba(139,195,74,0.5)"><img src="./feather-arrow.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Lightning <span style="color:var(--gold)">×2</span></div><div class="ldesc">2 damage to Smashy</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-warrior);border:1px solid rgba(255,150,100,0.5)"><img src="./rainbow-guardian.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Rainbow Guardian <span style="color:var(--gold)">×2</span></div><div class="ldesc">Stops Smashy on matched tile</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-shield);border:1px solid rgba(181,123,255,0.5)"><img src="./cloud-wall.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Wind Shield <span style="color:var(--gold)">×1</span></div><div class="ldesc">Blocks one castle breach</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-starmap);border:1px solid rgba(245,200,66,0.5)"><img src="./star-wand.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Star Map <span style="color:var(--gold)">×1</span></div><div class="ldesc">Peek at 4 face-down tiles</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-fireball);border:1px solid rgba(255,140,66,0.4)"><img src="./cloud-cannon.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Rainbow Blast <span style="color:var(--gold)">×2</span></div><div class="ldesc">3 damage to Smashy</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-comet);border:1px solid rgba(200,168,86,0.4)"><img src="./wind-blast.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Comet <span style="color:var(--gold)">×2</span></div><div class="ldesc">1 dmg + push Smashy back</div></div></div>
+  <div class="panel powers-grid-panel">
+    <div class="ptitle">Tile Powers</div>
+    <div class="powers-grid">
+      <div class="power-card" style="border-color:rgba(139,195,74,0.3)">
+        <img src="./feather-arrow.png" class="power-img">
+        <div class="power-name">Feather Arrow <span class="power-count">×2</span></div>
+        <div class="power-desc">2 damage to Smashy</div>
+      </div>
+      <div class="power-card" style="border-color:rgba(255,150,100,0.3)">
+        <img src="./rainbow-guardian.png" class="power-img">
+        <div class="power-name">Cloud Guard <span class="power-count">×2</span></div>
+        <div class="power-desc">Stops Smashy on matched tile</div>
+      </div>
+      <div class="power-card" style="border-color:rgba(181,123,255,0.3)">
+        <img src="./cloud-wall.png" class="power-img">
+        <div class="power-name">Cloud Wall <span class="power-count">×1</span></div>
+        <div class="power-desc">Blocks one castle breach</div>
+      </div>
+      <div class="power-card" style="border-color:rgba(245,200,66,0.3)">
+        <img src="./star-wand.png" class="power-img">
+        <div class="power-name">Star Wand <span class="power-count">×1</span></div>
+        <div class="power-desc">Peek at 4 face-down tiles</div>
+      </div>
+      <div class="power-card" style="border-color:rgba(255,140,66,0.3)">
+        <img src="./cloud-cannon.png" class="power-img">
+        <div class="power-name">Cloud Cannon <span class="power-count">×2</span></div>
+        <div class="power-desc">3 damage to Smashy</div>
+      </div>
+      <div class="power-card" style="border-color:rgba(200,168,86,0.3)">
+        <img src="./wind-blast.png" class="power-img">
+        <div class="power-name">Wind Blast <span class="power-count">×2</span></div>
+        <div class="power-desc">1 dmg + push Smashy back</div>
       </div>
     </div>
   </div>
@@ -385,7 +408,8 @@ function renderGrid(){
       if(G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;">` : card.emoji;
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?'<div class="boss-overlay" id="bossOnTile"></div>':''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay">🪨</div>':''}`;
+      const hpPct = Math.max(0, G.hp/BOSS_MAX*100);
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay">🪨</div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
@@ -397,18 +421,7 @@ function renderGrid(){
 }
 
 function renderBoss(){
-  const pct = Math.max(0, G.hp/BOSS_MAX*100);
-  document.getElementById('hpBar').style.width = pct+'%';
-  document.getElementById('hpTxt').textContent = `${Math.max(0,G.hp)} / ${BOSS_MAX} HP`;
-  const bEl = document.getElementById('bEmoji');
-  // Apply visual state via filter on the image
-  const img = bEl.querySelector('img');
-  if(img){
-    if(G.hp<=0) img.style.filter='grayscale(1) brightness(0.5)';
-    else if(G.hp<=2) img.style.filter='drop-shadow(0 0 8px rgba(255,50,50,0.9)) saturate(0.5)';
-    else if(G.hp<=5) img.style.filter='drop-shadow(0 0 6px rgba(255,100,50,0.7))';
-    else img.style.filter='drop-shadow(0 0 4px rgba(255,150,50,0.3))';
-  }
+  // HP bar is rendered directly in renderGrid on the boss tile — nothing to do here
 }
 
 function renderShields(){
@@ -417,7 +430,7 @@ function renderShields(){
 
 function renderStatus(){
   const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
-  if(G.warriorMode){ bar.className='status-bar s-wait'; txt.textContent='☁️ Click a matched tile to place your Rainbow Guardian!'; }
+  if(G.warriorMode){ bar.className='status-bar s-wait'; txt.textContent='☁️ Click a matched tile to place your Cloud Guard!'; }
   else if(G.peek){ bar.className='status-bar s-wait'; txt.textContent=`⭐ Peek — ${4-G.peekN} left`; }
   else if(G.phase==='player'){ bar.className='status-bar s-player'; txt.textContent=G.flipped.length===0?'Your turn — flip a tile!':'Flip one more tile!'; }
   else if(G.phase==='boss'){ bar.className='status-bar s-boss'; txt.textContent="Smashy's turn!"; }
@@ -427,10 +440,9 @@ function renderStatus(){
 function renderPeek(){ document.getElementById('peekBanner').className='peek-banner'+(G.peek?' on':''); }
 
 function setDice(ri){
-  const d=document.getElementById('dBig'), l=document.getElementById('dLabel');
-  d.textContent=DICE_DEF[ri].e; d.className='dice-big spin';
-  setTimeout(()=>d.className='dice-big',460);
-  l.textContent=DICE_DEF[ri].lbl;
+  const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
+  if(bar) bar.className='status-bar s-boss';
+  if(txt) txt.textContent=`🎲 ${DICE_DEF[ri].lbl}`;
 }
 
 // ── CARD CLICK ───────────────────────────────────────────────────────────────
@@ -504,20 +516,17 @@ function onCard(pathIdx){
 // ── POWERS ───────────────────────────────────────────────────────────────────
 function applyPower(id){
   G.powerDelay=480;
-  if(id==='lightning')   { damageBoss(2,'⚡ Lightning Strike — 2 damage!'); showPopup('⚡','Lightning Strike!','-2 HP to Smashy','#8bc34a'); }
-  else if(id==='warrior'){ G.warriorMode=true; addLog('⚔️ Click a matched tile to place your Rainbow Guardian!','i'); showPopup('🌈','Rainbow Guardian!','Click a matched tile!','#4da6ff'); }
-  else if(id==='shield') { G.shields++; addLog(`🛡️ Wind Shield raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🛡️','Wind Shield!','Castle protected!','#b57bff'); }
-  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Map! Click 4 tiles to peek...','i'); showPopup('⭐','Star Map!','Click 4 tiles to peek!','#f5c842'); }
-  else if(id==='fireball'){ damageBoss(3,'🌈 Rainbow Blast — 3 damage!'); showPopup('🌈','Rainbow Blast!','-3 HP to Smashy!','#ff8c42'); }
-  else if(id==='comet')  { damageBoss(1,'💫 Comet — 1 damage + pushback!'); pushBack(); showPopup('💫','Comet!','-1 HP + Smashy pushed back!','#c8a856'); G.powerDelay=1400; }
+  if(id==='lightning')   { damageBoss(2,'🪶 Feather Arrow — 2 damage!'); showPopup('🪶','Feather Arrow!','-2 HP to Smashy','#8bc34a'); }
+  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); }
+  else if(id==='shield') { G.shields++; addLog(`🌥️ Cloud Wall raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Cloud Wall!','Castle protected!','#b57bff'); }
+  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
+  else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
+  else if(id==='comet')  { damageBoss(1,'💨 Wind Blast — 1 damage + pushback!'); pushBack(); showPopup('💨','Wind Blast!','-1 HP + Smashy pushed back!','#c8a856'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
   G.hp=Math.max(0,G.hp-amt);
   addLog(msg,'g');
-  const bEl=document.getElementById('bEmoji');
-  const bImg=bEl.querySelector('img')||bEl;
-  bImg.classList.add('dmg'); setTimeout(()=>bImg.classList.remove('dmg'),700);
   document.body.classList.add('shake'); setTimeout(()=>document.body.classList.remove('shake'),500);
   renderBoss();
   smashyTaunt('hurt');
@@ -731,7 +740,9 @@ function showPopup(emoji,title,sub,color='white'){
 
 function smashyTaunt(type){
   const list=TAUNTS[type]||TAUNTS.move;
-  document.getElementById('tauntBubble').textContent=list[Math.floor(Math.random()*list.length)];
+  const taunt=list[Math.floor(Math.random()*list.length)];
+  const txt=document.getElementById('stxt');
+  if(txt) txt.textContent=taunt;
 }
 
 function checkMilestone(){
