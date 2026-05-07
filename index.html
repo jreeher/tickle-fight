@@ -636,11 +636,6 @@ function execMove(ri){
       showPopup('🌈','Blocked!','Rainbow Guardian stops Smashy!','#4da6ff');
       break;
     }
-    // Check rock
-    if(G.rocks.includes(nextPos)){
-      addLog('🪨 Smashy is blocked by his own rock! He doesn\'t move.','n');
-      break;
-    }
     G.bossPos=nextPos;
   }
 
