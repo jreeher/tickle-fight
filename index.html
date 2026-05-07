@@ -463,7 +463,7 @@ function onCard(pathIdx){
         G.peek=false; G.peekN=0; G.peekIdx=[];
         addLog('⭐ Peek ended — remember those tiles!','i');
         renderStatus(); renderPeek();
-      },5000);
+      },1000);
     }
     return;
   }
@@ -612,12 +612,13 @@ function execMove(ri){
   const subs = {1:'Smashy charges ahead!',2:'Smashy moves twice!',3:'Smashy moves three times!'};
   showBossPopup(d.e, labels[steps], subs[steps]);
 
+  const startPos=G.bossPos;
   for(let s=0;s<steps;s++){
     const nextPos=G.bossPos+1;
     if(nextPos>=TOTAL){
       // Reached the end — storm the castle
       if(G.shields>0){
-        G.shields--; 
+        G.shields--;
         addLog(`🛡️ Wind Shield blocks Smashy at the gates! ${G.shields} left.`,'g');
         renderShields();
         showPopup('🛡️','Shield Activated!','Castle protected!','#b57bff');
@@ -637,14 +638,16 @@ function execMove(ri){
     }
     // Check rock
     if(G.rocks.includes(nextPos)){
-      addLog('🪨 Smashy is blocked by his own rock!','n');
+      addLog('🪨 Smashy is blocked by his own rock! He doesn\'t move.','n');
       break;
     }
     G.bossPos=nextPos;
   }
 
   const progress=G.bossPos/(TOTAL-1);
-  addLog(`🧌 Smashy charges ahead! Step ${G.bossPos+1} of ${TOTAL}.`,'b');
+  if(G.bossPos>startPos){
+    addLog(`🧌 Smashy charges ahead! Step ${G.bossPos+1} of ${TOTAL}.`,'b');
+  }
   smashyTaunt(progress>0.75?'close':'move');
   render();
 }
