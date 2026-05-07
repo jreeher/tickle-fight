@@ -193,8 +193,8 @@ body.shake{animation:shake 0.45s ease-in-out;}
   </div>
 
   <div class="main">
-    <div class="status-bar s-player" id="sbar"><div class="sdot"></div><span id="stxt">Your turn — flip a tile!</span></div>
-    <div class="peek-banner" id="peekBanner">⭐ Star Map active — click 4 tiles to peek!</div>
+    <div style="display:none" id="sbar"><span id="stxt"></span></div>
+    <div class="peek-banner" id="peekBanner">⭐ Star Wand active — click 4 tiles to peek!</div>
     <div class="grid-wrapper">
       <div class="grid-header">
         <div class="grid-label">Battle Arena</div>
@@ -409,7 +409,7 @@ function renderGrid(){
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;">` : card.emoji;
       const hpPct = Math.max(0, G.hp/BOSS_MAX*100);
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay">🪨</div>':''}`;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay"><img src="./rock.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
@@ -738,12 +738,7 @@ function showPopup(emoji,title,sub,color='white'){
   popupTimer=setTimeout(()=>{ el.className='power-popup'; },1800);
 }
 
-function smashyTaunt(type){
-  const list=TAUNTS[type]||TAUNTS.move;
-  const taunt=list[Math.floor(Math.random()*list.length)];
-  const txt=document.getElementById('stxt');
-  if(txt) txt.textContent=taunt;
-}
+function smashyTaunt(type){}
 
 function checkMilestone(){
   const msg=MILESTONES[G.pairs];
