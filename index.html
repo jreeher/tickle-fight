@@ -195,10 +195,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="pairs-badge" id="pBadge">0 / 10 matched</div>
       </div>
       <!-- Castle strip -->
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 10px;margin-bottom:8px;background:linear-gradient(90deg,rgba(245,200,66,0.03),rgba(245,200,66,0.12),rgba(245,200,66,0.03));border-radius:10px;border:1px solid rgba(245,200,66,0.2);">
-        <img src="./castle.png" style="width:2rem;height:2rem;object-fit:contain;filter:drop-shadow(0 0 6px rgba(245,200,66,0.5))">
-        <span style="font-family:'Fredoka One',cursive;font-size:0.85rem;color:var(--gold);letter-spacing:1px;">CLOUD CASTLE</span>
-        <div class="shield-pips" id="shieldPips"></div>
+      <div style="position:relative;aspect-ratio:3/1;margin-bottom:8px;background:linear-gradient(90deg,rgba(245,200,66,0.03),rgba(245,200,66,0.12),rgba(245,200,66,0.03));border-radius:10px;border:1px solid rgba(245,200,66,0.2);overflow:hidden;">
+        <img src="./castle.png" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(245,200,66,0.5))">
+        <div class="shield-pips" id="shieldPips" style="position:absolute;bottom:6px;right:8px;"></div>
       </div>
       <!-- Path board: 5 cols x 8 rows -->
       <div class="path-board" id="grid"></div>
