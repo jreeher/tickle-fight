@@ -675,9 +675,9 @@ function swapIndices(i1,i2,highlight=false){
   els.forEach(e=>{ if(e) e.classList.add('scrambling'); });
   if(highlight) showSwapArrow(i1,i2);
   setTimeout(()=>{
-    const tmp={id:G.cards[i1].id,emoji:G.cards[i1].emoji,fc:G.cards[i1].fc};
-    G.cards[i1].id=G.cards[i2].id; G.cards[i1].emoji=G.cards[i2].emoji; G.cards[i1].fc=G.cards[i2].fc;
-    G.cards[i2].id=tmp.id; G.cards[i2].emoji=tmp.emoji; G.cards[i2].fc=tmp.fc;
+    const tmp={id:G.cards[i1].id,emoji:G.cards[i1].emoji,fc:G.cards[i1].fc,img:G.cards[i1].img};
+    G.cards[i1].id=G.cards[i2].id; G.cards[i1].emoji=G.cards[i2].emoji; G.cards[i1].fc=G.cards[i2].fc; G.cards[i1].img=G.cards[i2].img;
+    G.cards[i2].id=tmp.id; G.cards[i2].emoji=tmp.emoji; G.cards[i2].fc=tmp.fc; G.cards[i2].img=tmp.img;
     G.flipped=G.flipped.filter(f=>f!==i1&&f!==i2);
     els.forEach(e=>{ if(e) e.classList.remove('scrambling'); });
     render();
