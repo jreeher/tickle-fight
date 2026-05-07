@@ -224,12 +224,12 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="panel powers-panel">
       <div class="ptitle">Tile Powers</div>
       <div class="legend">
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-lightning);border:1px solid rgba(139,195,74,0.5)">⚡</div><div><div class="lname">Lightning <span style="color:var(--gold)">×2</span></div><div class="ldesc">2 damage to Smashy</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-warrior);border:1px solid rgba(255,150,100,0.5)">⚔️</div><div><div class="lname">Rainbow Guardian <span style="color:var(--gold)">×2</span></div><div class="ldesc">Stops Smashy on matched tile</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-shield);border:1px solid rgba(181,123,255,0.5)">🛡️</div><div><div class="lname">Wind Shield <span style="color:var(--gold)">×1</span></div><div class="ldesc">Blocks one castle breach</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-starmap);border:1px solid rgba(245,200,66,0.5)">⭐</div><div><div class="lname">Star Map <span style="color:var(--gold)">×1</span></div><div class="ldesc">Peek at 4 face-down tiles</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-fireball);border:1px solid rgba(255,140,66,0.4)">🌈</div><div><div class="lname">Rainbow Blast <span style="color:var(--gold)">×2</span></div><div class="ldesc">3 damage to Smashy</div></div></div>
-        <div class="lrow"><div class="lswatch" style="background:var(--tile-comet);border:1px solid rgba(200,168,86,0.4)">💫</div><div><div class="lname">Comet <span style="color:var(--gold)">×2</span></div><div class="ldesc">1 dmg + push Smashy back</div></div></div>
+        <div class="lrow"><div class="lswatch" style="background:var(--tile-lightning);border:1px solid rgba(139,195,74,0.5)"><img src="./feather-arrow.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Lightning <span style="color:var(--gold)">×2</span></div><div class="ldesc">2 damage to Smashy</div></div></div>
+        <div class="lrow"><div class="lswatch" style="background:var(--tile-warrior);border:1px solid rgba(255,150,100,0.5)"><img src="./rainbow-guardian.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Rainbow Guardian <span style="color:var(--gold)">×2</span></div><div class="ldesc">Stops Smashy on matched tile</div></div></div>
+        <div class="lrow"><div class="lswatch" style="background:var(--tile-shield);border:1px solid rgba(181,123,255,0.5)"><img src="./cloud-wall.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Wind Shield <span style="color:var(--gold)">×1</span></div><div class="ldesc">Blocks one castle breach</div></div></div>
+        <div class="lrow"><div class="lswatch" style="background:var(--tile-starmap);border:1px solid rgba(245,200,66,0.5)"><img src="./star-wand.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Star Map <span style="color:var(--gold)">×1</span></div><div class="ldesc">Peek at 4 face-down tiles</div></div></div>
+        <div class="lrow"><div class="lswatch" style="background:var(--tile-fireball);border:1px solid rgba(255,140,66,0.4)"><img src="./cloud-cannon.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Rainbow Blast <span style="color:var(--gold)">×2</span></div><div class="ldesc">3 damage to Smashy</div></div></div>
+        <div class="lrow"><div class="lswatch" style="background:var(--tile-comet);border:1px solid rgba(200,168,86,0.4)"><img src="./wind-blast.png" style="width:90%;height:90%;object-fit:contain;"></div><div><div class="lname">Comet <span style="color:var(--gold)">×2</span></div><div class="ldesc">1 dmg + push Smashy back</div></div></div>
       </div>
     </div>
   </div>
@@ -274,12 +274,12 @@ const PATH_COORDS = [
 const TOTAL = PATH_COORDS.length; // 20
 
 const TILES = [
-  { id:'lightning', emoji:'⚡', fc:'face-lightning' },
-  { id:'warrior',   emoji:'⚔️',  fc:'face-warrior'   },
-  { id:'shield',    emoji:'🛡️',  fc:'face-shield'    },
-  { id:'starmap',   emoji:'⭐', fc:'face-starmap'   },
-  { id:'fireball',  emoji:'🌈', fc:'face-fireball'  },
-  { id:'comet',     emoji:'💫', fc:'face-comet'     },
+  { id:'lightning', emoji:'⚡', img:'./feather-arrow.png', fc:'face-lightning' },
+  { id:'warrior',   emoji:'⚔️',                            fc:'face-warrior'   },
+  { id:'shield',    emoji:'🛡️', img:'./cloud-wall.png',    fc:'face-shield'    },
+  { id:'starmap',   emoji:'⭐', img:'./star-wand.png',     fc:'face-starmap'   },
+  { id:'fireball',  emoji:'🌈', img:'./cloud-cannon.png',  fc:'face-fireball'  },
+  { id:'comet',     emoji:'💫', img:'./wind-blast.png',    fc:'face-comet'     },
 ];
 
 const DICE_DEF = [
@@ -385,7 +385,8 @@ function renderGrid(){
       if(isRock && !isBoss) el.classList.add('rock-cell');
       if(G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${card.emoji}</div></div>${isBoss?'<div class="boss-overlay" id="bossOnTile"></div>':''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay">🪨</div>':''}`;
+      const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;">` : card.emoji;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?'<div class="boss-overlay" id="bossOnTile"></div>':''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay">🪨</div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
