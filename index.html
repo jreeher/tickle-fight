@@ -361,7 +361,10 @@ function generatePath(n) {
     const count = hSegs[i];
     const goRight = i % 2 === 0;
     if (goRight) {
-      for (let c = 1; c <= count; c++) path.push({ gr: gridRow, gc: c });
+      // For i=0 (Smashy's partial row), anchor to the right side so it connects
+      // flush against the connector tile — gap appears on the left where Smashy starts
+      const startCol = (i === 0) ? COLS - count + 1 : 1;
+      for (let c = startCol; c <= startCol + count - 1; c++) path.push({ gr: gridRow, gc: c });
     } else {
       for (let c = COLS; c > COLS - count; c--) path.push({ gr: gridRow, gc: c });
     }
