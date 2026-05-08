@@ -15,6 +15,11 @@
 <link rel="preload" href="./star-wand.png" as="image">
 <link rel="preload" href="./cloud-cannon.png" as="image">
 <link rel="preload" href="./wind-blast.png" as="image">
+<link rel="preload" href="./unicorn-horn.png" as="image">
+<link rel="preload" href="./glitter-bomb.png" as="image">
+<link rel="preload" href="./rainbow-tornado.png" as="image">
+<link rel="preload" href="./freeze-wand.png" as="image">
+<link rel="preload" href="./rain-bow.png" as="image">
 <style>
 :root {
   --bg: #0d1b2a; --bg2: #162032; --border: rgba(255,255,255,0.1);
@@ -254,7 +259,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="peek-banner" id="peekBanner">⭐ Star Wand active — click 4 tiles to peek!</div>
     <div class="grid-wrapper">
       <div class="grid-header">
-        <div class="grid-label">Battle Arena</div>
+        <div class="grid-label">Cloud Kingdom</div>
         <div class="pairs-badge" id="pBadge">0 / 10 matched</div>
       </div>
       <!-- Castle strip -->
@@ -277,40 +282,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div id="dLabel"></div>
   </div>
 
-  <div class="panel powers-grid-panel">
+  <div class="panel powers-grid-panel" id="powersPanel">
     <div class="ptitle">Tile Powers</div>
-    <div class="powers-grid">
-      <div class="power-card" style="border-color:rgba(139,195,74,0.3)">
-        <img src="./feather-arrow.png" class="power-img">
-        <div class="power-name">Feather Arrow <span class="power-count">×2</span></div>
-        <div class="power-desc">2 damage to Smashy</div>
-      </div>
-      <div class="power-card" style="border-color:rgba(255,150,100,0.3)">
-        <img src="./rainbow-guardian.png" class="power-img">
-        <div class="power-name">Cloud Guard <span class="power-count">×2</span></div>
-        <div class="power-desc">Stops Smashy on matched tile</div>
-      </div>
-      <div class="power-card" style="border-color:rgba(181,123,255,0.3)">
-        <img src="./cloud-wall.png" class="power-img">
-        <div class="power-name">Cloud Wall <span class="power-count">×1</span></div>
-        <div class="power-desc">Blocks one castle breach</div>
-      </div>
-      <div class="power-card" style="border-color:rgba(245,200,66,0.3)">
-        <img src="./star-wand.png" class="power-img">
-        <div class="power-name">Star Wand <span class="power-count">×1</span></div>
-        <div class="power-desc">Peek at 4 face-down tiles</div>
-      </div>
-      <div class="power-card" style="border-color:rgba(255,140,66,0.3)">
-        <img src="./cloud-cannon.png" class="power-img">
-        <div class="power-name">Cloud Cannon <span class="power-count">×2</span></div>
-        <div class="power-desc">3 damage to Smashy</div>
-      </div>
-      <div class="power-card" style="border-color:rgba(200,168,86,0.3)">
-        <img src="./wind-blast.png" class="power-img">
-        <div class="power-name">Wind Blast <span class="power-count">×2</span></div>
-        <div class="power-desc">1 dmg + push Smashy back</div>
-      </div>
-    </div>
+    <div class="powers-grid" id="powersGrid"></div>
   </div>
   <button class="btn-reset" onclick="showSetup()">🔄 New Game</button>
 </div>
@@ -384,6 +358,11 @@ const TILE_CONFIG = [
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.png',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
   { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.png',       fc:'face-comet',     damage:1, defaultPairs:2, desc:'1 damage + pushes Smashy back' },
+  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.png',     fc:'face-unicorn',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
+  { id:'glitter',   name:'Glitter Bomb',   img:'./glitter-bomb.png',     fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Removes all rocks from the board' },
+  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.png',  fc:'face-tornado',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 5 spaces' },
+  { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.png',      fc:'face-freeze',    damage:0, defaultPairs:1, desc:'Freezes Smashy for one turn' },
+  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.png',         fc:'face-rainbow',   damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back 2' },
 ];
 let setupCounts = {};
 
@@ -479,7 +458,7 @@ function initGame(counts, bossHp){
     hp: bossHp,
     maxHp: bossHp,
     peek: false, peekN: 0, peekIdx: [],
-    canFlip: true, canFlipLockedAt: null,
+    canFlip: true, canFlipLockedAt: null, frozen: false,
     phase: 'player',
     warriorMode: false,
     pairs: 0,
@@ -487,9 +466,21 @@ function initGame(counts, bossHp){
     powerDelay: 480,
     log: [],
   };
+  renderPowersPanel(counts);
   hideOv();
   render();
   smashyTaunt('start');
+}
+
+function renderPowersPanel(counts){
+  const grid = document.getElementById('powersGrid');
+  grid.innerHTML = TILE_CONFIG
+    .filter(t => (counts[t.id]||0) > 0)
+    .map(t => `<div class="power-card">
+      <img src="${t.img}" class="power-img" onerror="this.style.display='none'">
+      <div class="power-name">${t.name} <span class="power-count">×${counts[t.id]}</span></div>
+      <div class="power-desc">${t.desc}</div>
+    </div>`).join('');
 }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
@@ -671,6 +662,11 @@ function applyPower(id){
   else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
   else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { damageBoss(1,'💨 Wind Blast — 1 damage + pushback!'); pushBack(); showPopup('💨','Wind Blast!','-1 HP + Smashy pushed back!','#c8a856'); G.powerDelay=1400; }
+  else if(id==='unicorn'){ pushBackN(3); showPopup('🦄','Unicorn Horn!','Smashy pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
+  else if(id==='glitter'){ G.rocks=[]; addLog('✨ Glitter Bomb — all rocks cleared!','g'); showPopup('✨','Glitter Bomb!','All rocks removed!','#ffe4f7'); render(); }
+  else if(id==='tornado'){ pushBackN(5); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 5!','#a0d8ff'); G.powerDelay=1400; }
+  else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
+  else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -686,9 +682,17 @@ function pushBack(){
   else addLog('Smashy is already at the start!','n');
 }
 
+function pushBackN(n){
+  const before=G.bossPos;
+  G.bossPos=Math.max(0,G.bossPos-n);
+  const moved=before-G.bossPos;
+  addLog(moved>0?`Smashy pushed back ${moved} step${moved>1?'s':''}!`:'Smashy is already at the start!','g');
+}
+
 // ── BOSS TURN ────────────────────────────────────────────────────────────────
 function bossTurn(){
   if(G.phase==='over') return;
+  if(G.frozen){ G.frozen=false; addLog('❄️ Smashy is frozen and skips a turn!','i'); G.phase='player'; G.canFlip=true; G.canFlipLockedAt=null; renderStatus(); return; }
   if(G.peek){ const t=setInterval(()=>{ if(!G.peek){clearInterval(t);doBoss();} },200); return; }
   doBoss();
 }
