@@ -78,11 +78,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);border-radius:9px;}
 .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg);}
 .card-back,.card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
-.card-back{background:linear-gradient(135deg,#1c3050,#243d62);border:1.5px solid rgba(100,160,255,0.22);}
-.card-back::after{content:'✦';color:rgba(255,255,255,0.13);font-size:0.9rem;}
+.card-back{background:linear-gradient(145deg,#ffffff 0%,#e4f3fc 55%,#cce8f8 100%);border:1.5px solid rgba(90,160,210,0.4);}
+.card-back::after{content:'☁️';font-size:1rem;opacity:0.55;}
 .card-face{transform:rotateY(180deg);border:1.5px solid transparent;}
 .card.matched .card-face{opacity:0.45;border-color:rgba(255,255,255,0.08)!important;}
-.card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back{border-color:rgba(100,200,255,0.45);background:linear-gradient(135deg,#243d62,#2e4e7e);}
+.card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back{border-color:rgba(60,150,210,0.7);background:linear-gradient(145deg,#ffffff 0%,#b8dff5 100%);}
 .card.boss-cell{cursor:default;}
 .card.boss-cell .card-back{background:linear-gradient(135deg,#3a1818,#5a2020);border-color:rgba(255,80,80,0.55)!important;box-shadow:0 0 12px rgba(255,60,60,0.35);}
 .card.peeked .card-face{box-shadow:0 0 10px rgba(245,200,66,0.55);border-color:var(--gold)!important;}
@@ -311,26 +311,33 @@ let TOTAL = 0;
 
 function generatePath(n) {
   const COLS = 5;
-  // Build horizontal segment tile counts with connector tiles between them
-  // Pattern: h-row, connector, h-row, connector, ..., h-row
-  const hSegs = [];
-  let remaining = n;
-  while (remaining > 0) {
-    if (remaining <= 5) {
-      hSegs.push(remaining);
-      remaining = 0;
-    } else {
-      let hCount = 5;
-      const afterBoth = remaining - hCount - 1; // tiles left after h-row + connector
-      if (afterBoth === 0) { hCount = 4; } // avoid leaving 0 for next row
-      hSegs.push(hCount);
-      remaining -= hCount + 1; // h-tiles + 1 connector
-    }
+  const LAST_COUNT = 3; // last tile always at col 3 — directly in front of the castle
+
+  if (n < 5) {
+    // Too few tiles for a proper snake ending at col 3 — just lay them in a single row
+    const path = [];
+    for (let c = 1; c <= n; c++) path.push({ gr: 1, gc: c });
+    return path;
   }
 
-  // Grid rows: each h-row occupies one grid row, each connector occupies the row between
-  // Total grid rows = hSegs.length (h) + (hSegs.length - 1) (connectors) = 2*hSegs.length - 1
-  const numGridRows = Math.max(1, 2 * hSegs.length - 1);
+  // Total tiles = sum(non-last h-tiles) + LAST_COUNT + (k-1) connectors
+  // => sum(non-last) = n - LAST_COUNT - (k-1)
+  // Minimum k (rows) such that sum(non-last) can be split into rows of ≤ 5:
+  const k = Math.ceil((n + 3) / 6);
+  const sumNonLast = n - LAST_COUNT - (k - 1);
+
+  // Distribute sumNonLast among the k-1 non-last rows (greedy, max 5 each)
+  const hSegs = [];
+  let rem = sumNonLast;
+  for (let i = 0; i < k - 1; i++) {
+    const rowsLeft = (k - 1) - i;
+    const hCount = Math.min(5, rem - (rowsLeft - 1)); // leave at least 1 per remaining row
+    hSegs.push(hCount);
+    rem -= hCount;
+  }
+  hSegs.push(LAST_COUNT); // castle row — always 3 tiles ending at col 3
+
+  const numGridRows = 2 * k - 1;
   const path = [];
   let gridRow = numGridRows;
 
@@ -343,7 +350,7 @@ function generatePath(n) {
       for (let c = COLS; c > COLS - count; c--) path.push({ gr: gridRow, gc: c });
     }
     if (i < hSegs.length - 1) {
-      // connector goes at the START of the next row so it always aligns cleanly
+      // connector at the START of the next row so it always aligns cleanly
       const connCol = goRight ? COLS : 1;
       path.push({ gr: gridRow - 1, gc: connCol });
     }
