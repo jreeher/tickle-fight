@@ -25,20 +25,20 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .subtitle{color:#2a5878;font-size:0.8rem;margin-top:2px;}
 .powers-grid-panel{margin-top:4px;}
 .powers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
-.power-card{background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+.power-card{background:rgba(255,255,255,0.3);border-radius:10px;border:1px solid rgba(80,150,200,0.25);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
 .power-img{width:56px;height:56px;object-fit:contain;}
-.power-name{font-weight:700;color:var(--text);font-size:0.72rem;}
-.power-count{color:var(--gold);font-size:0.68rem;}
-.power-desc{color:var(--muted);font-size:0.63rem;}
+.power-name{font-weight:700;color:#1a3d55;font-size:0.72rem;}
+.power-count{color:#b07a00;font-size:0.68rem;}
+.power-desc{color:#2a5878;font-size:0.63rem;}
 .boss-tile-hp{position:absolute;bottom:0;left:0;right:0;height:5px;background:rgba(0,0,0,0.5);border-radius:0 0 9px 9px;overflow:hidden;z-index:3;}
 .boss-tile-hp-bar{height:100%;background:linear-gradient(90deg,#ff4444,#ff8800);transition:width 0.4s;}
 .btn-reset{width:100%;padding:9px 14px;font-family:'Fredoka One',cursive;font-size:0.95rem;letter-spacing:1px;border:1px solid rgba(30,80,130,0.25);border-radius:99px;background:rgba(255,255,255,0.45);color:#1a3a5a;cursor:pointer;transition:background 0.15s,transform 0.1s;}
 .btn-reset:hover{background:rgba(255,255,255,0.65);transform:translateY(-1px);}
 .main{display:flex;flex-direction:column;gap:9px;}
-.grid-wrapper{background:var(--bg2);border-radius:16px;padding:12px;border:1px solid var(--border);}
+.grid-wrapper{background:#9dc9e3;border-radius:16px;padding:12px;border:1px solid rgba(80,150,200,0.35);}
 .grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
-.grid-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
-.pairs-badge{font-size:0.73rem;font-weight:700;color:var(--gold);background:rgba(245,200,66,0.1);padding:2px 9px;border-radius:99px;border:1px solid rgba(245,200,66,0.22);}
+.grid-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;color:#1e4d6a;}
+.pairs-badge{font-size:0.73rem;font-weight:700;color:#7a5500;background:rgba(245,200,66,0.35);padding:2px 9px;border-radius:99px;border:1px solid rgba(180,130,0,0.4);}
 
 /* Path board — 5 cols x 9 rows grid, tiles placed at specific positions */
 .path-board{
@@ -120,8 +120,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .peek-banner.on{display:block;}
 
 /* Sidebar */
-.panel{background:var(--bg2);border-radius:13px;padding:13px;border:1px solid var(--border);}
-.ptitle{font-size:0.63rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:9px;}
+.panel{background:#9dc9e3;border-radius:13px;padding:13px;border:1px solid rgba(80,150,200,0.35);}
+.ptitle{font-size:0.63rem;text-transform:uppercase;letter-spacing:2px;color:#1e4d6a;margin-bottom:9px;}
 .boss-face{text-align:center;margin-bottom:7px;display:flex;align-items:center;justify-content:center;gap:10px;}
 .boss-big{font-size:2.7rem;display:block;animation:boss-bob 2s ease-in-out infinite;}
 @keyframes boss-bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
@@ -343,7 +343,8 @@ function generatePath(n) {
       for (let c = COLS; c > COLS - count; c--) path.push({ gr: gridRow, gc: c });
     }
     if (i < hSegs.length - 1) {
-      const connCol = goRight ? count : COLS - count + 1;
+      // connector goes at the START of the next row so it always aligns cleanly
+      const connCol = goRight ? COLS : 1;
       path.push({ gr: gridRow - 1, gc: connCol });
     }
     gridRow -= 2;
@@ -352,12 +353,12 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
-  { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.png',    fc:'face-lightning', damage:2, defaultPairs:2 },
-  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.png', fc:'face-warrior',   damage:0, defaultPairs:2 },
-  { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.png',       fc:'face-shield',    damage:0, defaultPairs:1 },
-  { id:'starmap',   name:'Star Wand',      img:'./star-wand.png',        fc:'face-starmap',   damage:0, defaultPairs:1 },
-  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:2 },
-  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.png',       fc:'face-comet',     damage:1, defaultPairs:2 },
+  { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.png',    fc:'face-lightning', damage:2, defaultPairs:2, desc:'Deals 2 damage to Smashy' },
+  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.png', fc:'face-warrior',   damage:0, defaultPairs:2, desc:'Place on a tile to stop Smashy' },
+  { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.png',       fc:'face-shield',    damage:0, defaultPairs:1, desc:'Blocks one castle breach' },
+  { id:'starmap',   name:'Star Wand',      img:'./star-wand.png',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
+  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
+  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.png',       fc:'face-comet',     damage:1, defaultPairs:2, desc:'1 damage + pushes Smashy back' },
 ];
 let setupCounts = {};
 
@@ -396,7 +397,7 @@ function renderSetupTiles() {
     <div class="setup-tile-card">
       <img src="${t.img}" class="setup-tile-img">
       <div class="setup-tile-name">${t.name}</div>
-      ${t.damage > 0 ? `<div style="font-size:0.6rem;color:var(--muted)">${t.damage} dmg/match</div>` : '<div style="font-size:0.6rem;color:var(--muted)">utility</div>'}
+      <div style="font-size:0.6rem;color:var(--muted)">${t.desc}</div>
       <div class="setup-counter">
         <button class="setup-btn" onclick="changeCount('${t.id}',-1)">−</button>
         <span class="setup-count" id="cnt-${t.id}">${setupCounts[t.id]}</span>
@@ -874,15 +875,14 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 // Drifting clouds
 (function(){
   const sf=document.getElementById('sf');
-  const emojis=['☁️','☁️','☁️','⛅','🌤️','☁️'];
-  for(let i=0;i<18;i++){
+  for(let i=0;i<16;i++){
     const c=document.createElement('div'); c.className='cloud';
-    const dur=25+Math.random()*45;
-    const sz=1.2+Math.random()*2.2;
-    const top=Math.random()*75;
-    const op=0.35+Math.random()*0.45;
+    const dur=60+Math.random()*80;
+    const sz=3+Math.random()*3.5;
+    const top=Math.random()*80;
+    const op=0.45+Math.random()*0.35;
     const delay=-Math.random()*dur;
-    c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    c.textContent='☁️';
     c.style.cssText=`--sz:${sz}rem;--dur:${dur}s;--op:${op};top:${top}%;left:0;animation-delay:${delay}s`;
     sf.appendChild(c);
   }
