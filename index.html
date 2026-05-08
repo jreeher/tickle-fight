@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tickle Fight!</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="preload" href="./smashy.png" as="image">
+<link rel="preload" href="./castle.png" as="image">
+<link rel="preload" href="./banner.png" as="image">
+<link rel="preload" href="./rock.png" as="image">
+<link rel="preload" href="./feather-arrow.png" as="image">
+<link rel="preload" href="./rainbow-guardian.png" as="image">
+<link rel="preload" href="./cloud-wall.png" as="image">
+<link rel="preload" href="./star-wand.png" as="image">
+<link rel="preload" href="./cloud-cannon.png" as="image">
+<link rel="preload" href="./wind-blast.png" as="image">
 <style>
 :root {
   --bg: #0d1b2a; --bg2: #162032; --border: rgba(255,255,255,0.1);
@@ -311,37 +321,43 @@ let TOTAL = 0;
 
 function generatePath(n) {
   const COLS = 5;
-  const LAST_COUNT = 3; // last tile always at col 3 — directly in front of the castle
+  const CASTLE_COUNT = 3; // last tile always at col 3 (middle), directly in front of castle
 
   if (n < 5) {
-    // Too few tiles for a proper snake ending at col 3 — just lay them in a single row
     const path = [];
     for (let c = 1; c <= n; c++) path.push({ gr: 1, gc: c });
     return path;
   }
 
-  // Total tiles = sum(non-last h-tiles) + LAST_COUNT + (k-1) connectors
-  // => sum(non-last) = n - LAST_COUNT - (k-1)
-  // Minimum k (rows) such that sum(non-last) can be split into rows of ≤ 5:
-  const k = Math.ceil((n + 3) / 6);
-  const sumNonLast = n - LAST_COUNT - (k - 1);
+  // Build segments top-down (castle first), then reverse so index 0 = Smashy start.
+  // This guarantees the partial/gap row is always at the BOTTOM (Smashy's start).
+  const segsTopDown = [CASTLE_COUNT];
+  let rem = n - CASTLE_COUNT - 1; // subtract castle tiles + 1 connector below it
 
-  // Distribute sumNonLast among the k-1 non-last rows (greedy, max 5 each)
-  const hSegs = [];
-  let rem = sumNonLast;
-  for (let i = 0; i < k - 1; i++) {
-    const rowsLeft = (k - 1) - i;
-    const hCount = Math.min(5, rem - (rowsLeft - 1)); // leave at least 1 per remaining row
-    hSegs.push(hCount);
-    rem -= hCount;
+  // Fill full rows of 5 going downward, each costing 5 tiles + 1 connector
+  while (rem > 5) {
+    segsTopDown.push(5);
+    rem -= 6; // row + connector
   }
-  hSegs.push(LAST_COUNT); // castle row — always 3 tiles ending at col 3
 
+  // Whatever remains is the bottom (Smashy start) row
+  if (rem > 0) {
+    segsTopDown.push(rem);
+  } else {
+    // rem=0 means the last full-row push consumed everything; give bottom 1 tile
+    // by reducing the row above by 1
+    segsTopDown[segsTopDown.length - 1]--;
+    segsTopDown.push(1);
+  }
+
+  // Reverse: hSegs[0] = bottom/Smashy start, hSegs[last] = castle
+  const hSegs = segsTopDown.reverse();
+  const k = hSegs.length;
   const numGridRows = 2 * k - 1;
   const path = [];
   let gridRow = numGridRows;
 
-  for (let i = 0; i < hSegs.length; i++) {
+  for (let i = 0; i < k; i++) {
     const count = hSegs[i];
     const goRight = i % 2 === 0;
     if (goRight) {
@@ -349,8 +365,7 @@ function generatePath(n) {
     } else {
       for (let c = COLS; c > COLS - count; c--) path.push({ gr: gridRow, gc: c });
     }
-    if (i < hSegs.length - 1) {
-      // connector at the START of the next row so it always aligns cleanly
+    if (i < k - 1) {
       const connCol = goRight ? COLS : 1;
       path.push({ gr: gridRow - 1, gc: connCol });
     }
@@ -461,7 +476,7 @@ function initGame(counts, bossHp){
     hp: bossHp,
     maxHp: bossHp,
     peek: false, peekN: 0, peekIdx: [],
-    canFlip: true,
+    canFlip: true, canFlipLockedAt: null,
     phase: 'player',
     warriorMode: false,
     pairs: 0,
@@ -525,7 +540,7 @@ function renderGrid(){
       if(isRock && !isBoss) el.classList.add('rock-cell');
       if(G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
-      const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;">` : card.emoji;
+      const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
       el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay"><img src="./rock.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
@@ -607,6 +622,10 @@ function onCard(pathIdx){
     return;
   }
 
+  // Safety: if canFlip has been false for >1.8s (stuck state on mobile), reset
+  if(!G.canFlip && G.canFlipLockedAt && Date.now()-G.canFlipLockedAt>1800){
+    G.canFlip=true; G.phase='player'; G.flipped=[]; G.canFlipLockedAt=null;
+  }
   if(G.phase!=='player'||!G.canFlip) return;
   if(G.matched.has(pathIdx)||G.flipped.includes(pathIdx)||G.flipped.length>=2) return;
 
@@ -615,13 +634,13 @@ function onCard(pathIdx){
   renderStatus();
 
   if(G.flipped.length===2){
-    G.canFlip=false;
+    G.canFlip=false; G.canFlipLockedAt=Date.now();
     const [a,b]=G.flipped;
     if(G.cards[a].id===G.cards[b].id){
       setTimeout(()=>{
         G.matched.add(a); G.matched.add(b); G.pairs++;
         G.lastMatched=[a,b];
-        const id=G.cards[a].id; G.flipped=[]; G.canFlip=true;
+        const id=G.cards[a].id; G.flipped=[]; G.canFlip=true; G.canFlipLockedAt=null;
         applyPower(id); render();
         setTimeout(()=>{ G.lastMatched=[]; },600);
         checkMilestone();
@@ -633,7 +652,7 @@ function onCard(pathIdx){
       setTimeout(()=>{
         const ea=cardEl(a),eb=cardEl(b);
         if(ea) ea.classList.remove('flipped'); if(eb) eb.classList.remove('flipped');
-        G.flipped=[]; G.canFlip=true; renderStatus();
+        G.flipped=[]; G.canFlip=true; G.canFlipLockedAt=null; renderStatus();
         bossTurn();
       },820);
     }
@@ -676,7 +695,7 @@ function doBoss(){
   setTimeout(()=>{
     const ri=Math.floor(Math.random()*6);
     setDice(ri);
-    setTimeout(()=>{ execMove(ri); if(G.phase!=='over'){ G.phase='player'; G.canFlip=true; renderStatus(); } },580);
+    setTimeout(()=>{ execMove(ri); if(G.phase!=='over'){ G.phase='player'; G.canFlip=true; G.canFlipLockedAt=null; renderStatus(); } },580);
   },340);
 }
 
