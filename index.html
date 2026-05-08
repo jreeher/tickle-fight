@@ -14,15 +14,15 @@
   --tile-starmap:#3a2a1a; --tile-fireball:#2a1e1a; --tile-comet:#2a2a1e;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0%,#b8ddf0 40%,#d0edf8 100%);color:var(--text);min-height:100vh;overflow-x:hidden;}
 .starfield{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.star{position:absolute;background:white;border-radius:50%;animation:twinkle var(--dur,2s) infinite alternate;}
-@keyframes twinkle{from{opacity:0.12;}to{opacity:0.75;}}
+.cloud{position:absolute;pointer-events:none;font-size:var(--sz,1.5rem);opacity:var(--op,0.6);animation:drift var(--dur,30s) linear infinite;white-space:nowrap;filter:drop-shadow(0 2px 6px rgba(100,160,210,0.25));}
+@keyframes drift{from{transform:translateX(110vw);}to{transform:translateX(-110vw);}}
 
 .app{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;max-width:560px;margin:0 auto;padding:12px;min-height:100vh;}
 .header{text-align:center;padding:4px 0 6px;}
 .title{font-family:'Fredoka One',cursive;font-size:2.5rem;letter-spacing:3px;background:linear-gradient(135deg,#f5c842 0%,#ff8c42 50%,#ff4d99 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.subtitle{color:var(--muted);font-size:0.8rem;margin-top:2px;}
+.subtitle{color:#2a5878;font-size:0.8rem;margin-top:2px;}
 .powers-grid-panel{margin-top:4px;}
 .powers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
 .power-card{background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.07);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
@@ -32,8 +32,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .power-desc{color:var(--muted);font-size:0.63rem;}
 .boss-tile-hp{position:absolute;bottom:0;left:0;right:0;height:5px;background:rgba(0,0,0,0.5);border-radius:0 0 9px 9px;overflow:hidden;z-index:3;}
 .boss-tile-hp-bar{height:100%;background:linear-gradient(90deg,#ff4444,#ff8800);transition:width 0.4s;}
-.btn-reset{width:100%;padding:9px 14px;font-family:'Fredoka One',cursive;font-size:0.95rem;letter-spacing:1px;border:1px solid rgba(255,255,255,0.13);border-radius:99px;background:rgba(255,255,255,0.055);color:var(--text);cursor:pointer;transition:background 0.15s,transform 0.1s;}
-.btn-reset:hover{background:rgba(255,255,255,0.1);transform:translateY(-1px);}
+.btn-reset{width:100%;padding:9px 14px;font-family:'Fredoka One',cursive;font-size:0.95rem;letter-spacing:1px;border:1px solid rgba(30,80,130,0.25);border-radius:99px;background:rgba(255,255,255,0.45);color:#1a3a5a;cursor:pointer;transition:background 0.15s,transform 0.1s;}
+.btn-reset:hover{background:rgba(255,255,255,0.65);transform:translateY(-1px);}
 .main{display:flex;flex-direction:column;gap:9px;}
 .grid-wrapper{background:var(--bg2);border-radius:16px;padding:12px;border:1px solid var(--border);}
 .grid-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
@@ -311,15 +311,42 @@ let TOTAL = 0;
 
 function generatePath(n) {
   const COLS = 5;
-  const numRows = Math.ceil(n / COLS);
-  const path = [];
-  for (let r = 0; r < numRows; r++) {
-    const gridRow = numRows - r;
-    const count = Math.min(COLS, n - path.length);
-    const goRight = r % 2 === 0;
-    for (let i = 0; i < count; i++) {
-      path.push({ gr: gridRow, gc: goRight ? i + 1 : count - i });
+  // Build horizontal segment tile counts with connector tiles between them
+  // Pattern: h-row, connector, h-row, connector, ..., h-row
+  const hSegs = [];
+  let remaining = n;
+  while (remaining > 0) {
+    if (remaining <= 5) {
+      hSegs.push(remaining);
+      remaining = 0;
+    } else {
+      let hCount = 5;
+      const afterBoth = remaining - hCount - 1; // tiles left after h-row + connector
+      if (afterBoth === 0) { hCount = 4; } // avoid leaving 0 for next row
+      hSegs.push(hCount);
+      remaining -= hCount + 1; // h-tiles + 1 connector
     }
+  }
+
+  // Grid rows: each h-row occupies one grid row, each connector occupies the row between
+  // Total grid rows = hSegs.length (h) + (hSegs.length - 1) (connectors) = 2*hSegs.length - 1
+  const numGridRows = Math.max(1, 2 * hSegs.length - 1);
+  const path = [];
+  let gridRow = numGridRows;
+
+  for (let i = 0; i < hSegs.length; i++) {
+    const count = hSegs[i];
+    const goRight = i % 2 === 0;
+    if (goRight) {
+      for (let c = 1; c <= count; c++) path.push({ gr: gridRow, gc: c });
+    } else {
+      for (let c = COLS; c > COLS - count; c--) path.push({ gr: gridRow, gc: c });
+    }
+    if (i < hSegs.length - 1) {
+      const connCol = goRight ? count : COLS - count + 1;
+      path.push({ gr: gridRow - 1, gc: connCol });
+    }
+    gridRow -= 2;
   }
   return path;
 }
@@ -451,13 +478,13 @@ function render(){
 function renderGrid(){
   const g = document.getElementById('grid');
   g.innerHTML = '';
-  const numRows = Math.ceil(TOTAL / 5);
+  const numRows = PATH_COORDS.length > 0 ? Math.max(...PATH_COORDS.map(p => p.gr)) : 1;
   g.style.gridTemplateRows = `repeat(${numRows},1fr)`;
   const posMap = {};
   PATH_COORDS.forEach((p,i) => { posMap[`${p.gr},${p.gc}`] = i; });
 
   for(let row=1; row<=numRows; row++){
-    for(let col=1; col<=5; col++){
+    for(let col=1; col<=5; col++) {
       const key = `${row},${col}`;
       const pathIdx = posMap[key];
       const el = document.createElement('div');
@@ -844,14 +871,20 @@ function checkMilestone(){
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
 
-// Stars
+// Drifting clouds
 (function(){
   const sf=document.getElementById('sf');
-  for(let i=0;i<72;i++){
-    const s=document.createElement('div'); s.className='star';
-    const sz=Math.random()*2.4+0.7;
-    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*65}%;--dur:${1.3+Math.random()*2.4}s;animation-delay:${Math.random()*3}s`;
-    sf.appendChild(s);
+  const emojis=['☁️','☁️','☁️','⛅','🌤️','☁️'];
+  for(let i=0;i<18;i++){
+    const c=document.createElement('div'); c.className='cloud';
+    const dur=25+Math.random()*45;
+    const sz=1.2+Math.random()*2.2;
+    const top=Math.random()*75;
+    const op=0.35+Math.random()*0.45;
+    const delay=-Math.random()*dur;
+    c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    c.style.cssText=`--sz:${sz}rem;--dur:${dur}s;--op:${op};top:${top}%;left:0;animation-delay:${delay}s`;
+    sf.appendChild(c);
   }
 })();
 
