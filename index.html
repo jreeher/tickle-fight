@@ -44,7 +44,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 .path-board{
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  grid-template-rows:repeat(7,1fr);
   gap:5px;
   width:100%;
   max-width:380px;
@@ -171,6 +170,36 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .obody{color:var(--muted);font-size:0.87rem;line-height:1.55;margin-bottom:22px;}
 .btn-play{font-family:'Fredoka One',cursive;font-size:1.05rem;letter-spacing:1px;padding:11px 34px;background:linear-gradient(135deg,var(--gold),#ff8c42);color:#1a1200;border:none;border-radius:99px;cursor:pointer;transition:transform 0.12s;}
 .btn-play:hover{transform:translateY(-2px) scale(1.03);}
+
+/* Setup overlay */
+.setup-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+.setup-overlay.off{display:none;}
+.setup-card{background:var(--bg2);border:1px solid rgba(255,255,255,0.14);border-radius:22px;padding:24px 20px;width:90%;max-width:420px;max-height:90vh;overflow-y:auto;}
+.setup-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--gold);text-align:center;margin-bottom:4px;}
+.setup-sub{color:var(--muted);font-size:0.75rem;text-align:center;margin-bottom:14px;}
+.setup-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.setup-tile-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
+.setup-tile-img{width:44px;height:44px;object-fit:contain;}
+.setup-tile-name{font-size:0.65rem;font-weight:700;color:var(--text);}
+.setup-counter{display:flex;align-items:center;gap:6px;}
+.setup-btn{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.setup-btn:hover{background:rgba(255,255,255,0.15);}
+.setup-count{font-size:0.85rem;font-weight:700;color:var(--gold);min-width:16px;text-align:center;}
+.setup-stats{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.78rem;display:flex;flex-direction:column;gap:5px;}
+.setup-stat-row{display:flex;justify-content:space-between;align-items:center;color:var(--muted);}
+.setup-stat-val{font-weight:700;color:var(--text);}
+.setup-hp-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.setup-hp-label{font-size:0.75rem;color:var(--muted);white-space:nowrap;}
+.setup-hp-slider{flex:1;accent-color:var(--red);}
+.setup-hp-val{font-size:0.85rem;font-weight:700;color:var(--red);min-width:32px;text-align:right;}
+.btn-start{width:100%;padding:12px;font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:1px;background:linear-gradient(135deg,var(--gold),#ff8c42);color:#1a1200;border:none;border-radius:99px;cursor:pointer;transition:transform 0.12s;}
+.btn-start:hover{transform:translateY(-2px) scale(1.02);}
+.btn-start:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+
+/* Context banner */
+.context-banner{display:none;padding:9px 16px;border-radius:10px;text-align:center;font-size:0.8rem;font-weight:700;letter-spacing:0.4px;margin-bottom:6px;}
+.context-banner.warrior{display:block;background:rgba(77,166,255,0.13);border:1px solid rgba(77,166,255,0.4);color:#4da6ff;}
+.context-banner.peek{display:block;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.35);color:var(--gold);}
 </style>
 </head>
 <body>
@@ -182,7 +211,25 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <span class="oemoji" id="oEmoji">🏆</span>
     <div class="otitle" id="oTitle">Victory!</div>
     <div class="obody" id="oBody"></div>
-    <button class="btn-play" onclick="initGame()">Play Again</button>
+    <button class="btn-play" onclick="showSetup()">Play Again</button>
+  </div>
+</div>
+
+<div class="setup-overlay" id="setupOverlay">
+  <div class="setup-card">
+    <div class="setup-title">⚔️ Setup Battle</div>
+    <div class="setup-sub">Choose your tiles and set Smashy's strength</div>
+    <div class="setup-tiles" id="setupTiles"></div>
+    <div class="setup-stats">
+      <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
+      <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
+    </div>
+    <div class="setup-hp-row">
+      <span class="setup-hp-label">Smashy's HP</span>
+      <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="document.getElementById('hpSliderVal').textContent=this.value">
+      <span class="setup-hp-val" id="hpSliderVal">8</span>
+    </div>
+    <button class="btn-start" id="btnStart" onclick="startFromSetup()">⚔️ Start Battle!</button>
   </div>
 </div>
 
@@ -193,6 +240,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 
   <div class="main">
     <div style="display:none" id="sbar"><span id="stxt"></span></div>
+    <div class="context-banner" id="contextBanner"></div>
     <div class="peek-banner" id="peekBanner">⭐ Star Wand active — click 4 tiles to peek!</div>
     <div class="grid-wrapper">
       <div class="grid-header">
@@ -254,54 +302,37 @@ body.shake{animation:shake 0.45s ease-in-out;}
       </div>
     </div>
   </div>
-  <button class="btn-reset" onclick="initGame()">🔄 New Game</button>
+  <button class="btn-reset" onclick="showSetup()">🔄 New Game</button>
 </div>
 
 <script>
-const BOSS_MAX = 8;
+let PATH_COORDS = [];
+let TOTAL = 0;
 
-// PATH: ordered list of {gridRow, gridCol} positions on a 5-col x 8-row display grid
-// Smashy starts at PATH[0] and wins when he reaches past PATH[PATH.length-1]
-// Grid uses 1-based CSS grid-row/column
-// Row 8=bottom, Row 1=top (castle area above)
-// Layout:
-//   Row 8: cols 1,2,3,4  (L→R, start)
-//   Row 7: col 4          (connector right)
-//   Row 6: cols 4,3,2,1,0→ actually cols 5,4,3,2,1 (R→L)
-//   Row 5: col 1          (connector left)
-//   Row 4: cols 1,2,3,4,5 (L→R)
-//   Row 3: col 5          (connector right)
-//   Row 2: cols 5,4,3     (R→L, end near castle)
+function generatePath(n) {
+  const COLS = 5;
+  const numRows = Math.ceil(n / COLS);
+  const path = [];
+  for (let r = 0; r < numRows; r++) {
+    const gridRow = numRows - r;
+    const count = Math.min(COLS, n - path.length);
+    const goRight = r % 2 === 0;
+    for (let i = 0; i < count; i++) {
+      path.push({ gr: gridRow, gc: goRight ? i + 1 : count - i });
+    }
+  }
+  return path;
+}
 
-
-const PATH_COORDS = [
-  // Row 7 L→R (4 tiles, cols 2→5 — shifted right by 1)
-  {gr:7,gc:2},{gr:7,gc:3},{gr:7,gc:4},{gr:7,gc:5},
-  // Row 6 connector (right side, col 5)
-  {gr:6,gc:5},
-  // Row 5 R→L (5 tiles, cols 5→1)
-  {gr:5,gc:5},{gr:5,gc:4},{gr:5,gc:3},{gr:5,gc:2},{gr:5,gc:1},
-  // Row 4 connector (left side, col 1)
-  {gr:4,gc:1},
-  // Row 3 L→R (5 tiles, cols 1→5)
-  {gr:3,gc:1},{gr:3,gc:2},{gr:3,gc:3},{gr:3,gc:4},{gr:3,gc:5},
-  // Row 2 connector (right side, col 5)
-  {gr:2,gc:5},
-  // Row 1 R→L (3 tiles, cols 5→3)
-  {gr:1,gc:5},{gr:1,gc:4},{gr:1,gc:3},
+const TILE_CONFIG = [
+  { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.png',    fc:'face-lightning', damage:2, defaultPairs:2 },
+  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.png', fc:'face-warrior',   damage:0, defaultPairs:2 },
+  { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.png',       fc:'face-shield',    damage:0, defaultPairs:1 },
+  { id:'starmap',   name:'Star Wand',      img:'./star-wand.png',        fc:'face-starmap',   damage:0, defaultPairs:1 },
+  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:2 },
+  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.png',       fc:'face-comet',     damage:1, defaultPairs:2 },
 ];
-// Total: 4+1+5+1+5+1+3 = 20 ✓
-
-const TOTAL = PATH_COORDS.length; // 20
-
-const TILES = [
-  { id:'lightning', emoji:'⚡', img:'./feather-arrow.png', fc:'face-lightning' },
-  { id:'warrior',   emoji:'⚔️',  img:'./rainbow-guardian.png', fc:'face-warrior'   },
-  { id:'shield',    emoji:'🛡️', img:'./cloud-wall.png',    fc:'face-shield'    },
-  { id:'starmap',   emoji:'⭐', img:'./star-wand.png',     fc:'face-starmap'   },
-  { id:'fireball',  emoji:'🌈', img:'./cloud-cannon.png',  fc:'face-fireball'  },
-  { id:'comet',     emoji:'💫', img:'./wind-blast.png',    fc:'face-comet'     },
-];
+let setupCounts = {};
 
 const DICE_DEF = [
   { e:'⬆️',     lbl:'Charge ahead!',               step:true    },
@@ -325,22 +356,75 @@ const MILESTONES = { 4:'4 pairs! Keep going! 🌟', 7:'Halfway there! ⚡', 10:'
 let G = {};
 let popupTimer = null, milestoneTimer = null;
 
-function initGame(){
+function showSetup() {
+  TILE_CONFIG.forEach(t => { setupCounts[t.id] = t.defaultPairs; });
+  renderSetupTiles();
+  updateSetupStats();
+  document.getElementById('setupOverlay').classList.remove('off');
+}
+
+function renderSetupTiles() {
+  const el = document.getElementById('setupTiles');
+  el.innerHTML = TILE_CONFIG.map(t => `
+    <div class="setup-tile-card">
+      <img src="${t.img}" class="setup-tile-img">
+      <div class="setup-tile-name">${t.name}</div>
+      ${t.damage > 0 ? `<div style="font-size:0.6rem;color:var(--muted)">${t.damage} dmg/match</div>` : '<div style="font-size:0.6rem;color:var(--muted)">utility</div>'}
+      <div class="setup-counter">
+        <button class="setup-btn" onclick="changeCount('${t.id}',-1)">−</button>
+        <span class="setup-count" id="cnt-${t.id}">${setupCounts[t.id]}</span>
+        <button class="setup-btn" onclick="changeCount('${t.id}',1)">+</button>
+      </div>
+    </div>`).join('');
+}
+
+function changeCount(id, delta) {
+  setupCounts[id] = Math.max(0, setupCounts[id] + delta);
+  document.getElementById(`cnt-${id}`).textContent = setupCounts[id];
+  updateSetupStats();
+}
+
+function updateSetupStats() {
+  const totalPairs = Object.values(setupCounts).reduce((a,b)=>a+b,0);
+  const totalTiles = totalPairs * 2;
+  const maxDmg = TILE_CONFIG.reduce((sum,t) => sum + t.damage * setupCounts[t.id], 0);
+  document.getElementById('setupMapSize').textContent = totalTiles || '—';
+  document.getElementById('setupMaxDmg').textContent = maxDmg || '—';
+  const slider = document.getElementById('hpSlider');
+  const effectiveMax = Math.max(1, maxDmg);
+  slider.max = effectiveMax;
+  if (parseInt(slider.value) > effectiveMax) slider.value = effectiveMax;
+  document.getElementById('hpSliderVal').textContent = slider.value;
+  document.getElementById('btnStart').disabled = totalPairs < 2;
+}
+
+function startFromSetup() {
+  const totalPairs = Object.values(setupCounts).reduce((a,b)=>a+b,0);
+  if (totalPairs < 2) return;
+  const hp = parseInt(document.getElementById('hpSlider').value);
+  document.getElementById('setupOverlay').classList.add('off');
+  initGame(setupCounts, hp);
+}
+
+function initGame(counts, bossHp){
   let deck = [];
-  // 20 tiles: lightning×4, warrior×4, fireball×4, comet×4 (2 pairs each = 16)
-  // shield×2, starmap×2 (1 pair each = 4) → total 20
-  const counts = { lightning:4, warrior:4, shield:2, starmap:2, fireball:4, comet:4 };
-  TILES.forEach(t => { for(let i=0;i<counts[t.id];i++) deck.push({...t}); });
+  TILE_CONFIG.forEach(t => {
+    const pairs = counts[t.id] || 0;
+    for (let i = 0; i < pairs * 2; i++) deck.push({...t});
+  });
   shuffle(deck);
+  PATH_COORDS = generatePath(deck.length);
+  TOTAL = PATH_COORDS.length;
   G = {
-    cards: deck,          // indexed 0..19, each maps to PATH_COORDS[i]
+    cards: deck,
     flipped: [],
     matched: new Set(),
-    bossPos: 0,           // index into PATH_COORDS
-    warriors: new Set(),  // set of path indices with warriors
-    rocks: [],            // ordered array of path indices with rocks (max 3)
+    bossPos: 0,
+    warriors: new Set(),
+    rocks: [],
     shields: 0,
-    hp: BOSS_MAX,
+    hp: bossHp,
+    maxHp: bossHp,
     peek: false, peekN: 0, peekIdx: [],
     canFlip: true,
     phase: 'player',
@@ -367,12 +451,12 @@ function render(){
 function renderGrid(){
   const g = document.getElementById('grid');
   g.innerHTML = '';
-  // Build a map of {gr,gc} → path index for fast lookup
+  const numRows = Math.ceil(TOTAL / 5);
+  g.style.gridTemplateRows = `repeat(${numRows},1fr)`;
   const posMap = {};
   PATH_COORDS.forEach((p,i) => { posMap[`${p.gr},${p.gc}`] = i; });
 
-  // Render 8 rows x 5 cols
-  for(let row=1; row<=7; row++){
+  for(let row=1; row<=numRows; row++){
     for(let col=1; col<=5; col++){
       const key = `${row},${col}`;
       const pathIdx = posMap[key];
@@ -407,7 +491,7 @@ function renderGrid(){
       if(G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;">` : card.emoji;
-      const hpPct = Math.max(0, G.hp/BOSS_MAX*100);
+      const hpPct = Math.max(0, G.hp/G.maxHp*100);
       el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay"><img src="./rock.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
@@ -416,7 +500,7 @@ function renderGrid(){
       g.appendChild(el);
     }
   }
-  document.getElementById('pBadge').textContent = `${Math.max(0,G.pairs)} / 10 matched`;
+  document.getElementById('pBadge').textContent = `${Math.max(0,G.pairs)} / ${TOTAL/2} matched`;
 }
 
 function renderBoss(){
@@ -428,15 +512,24 @@ function renderShields(){
 }
 
 function renderStatus(){
-  const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
-  if(G.warriorMode){ bar.className='status-bar s-wait'; txt.textContent='☁️ Click a matched tile to place your Cloud Guard!'; }
-  else if(G.peek){ bar.className='status-bar s-wait'; txt.textContent=`⭐ Peek — ${4-G.peekN} left`; }
-  else if(G.phase==='player'){ bar.className='status-bar s-player'; txt.textContent=G.flipped.length===0?'Your turn — flip a tile!':'Flip one more tile!'; }
-  else if(G.phase==='boss'){ bar.className='status-bar s-boss'; txt.textContent="Smashy's turn!"; }
-  else{ bar.className='status-bar s-wait'; txt.textContent='Game over'; }
+  const banner = document.getElementById('contextBanner');
+  if(!banner) return;
+  if(G.warriorMode){
+    banner.className = 'context-banner warrior';
+    banner.textContent = '☁️ Place your Cloud Guardian on a matched tile';
+  } else if(G.peek){
+    banner.className = 'context-banner peek';
+    banner.textContent = `⭐ Star Wand — click to reveal tiles (${4 - G.peekN} left)`;
+  } else {
+    banner.className = 'context-banner';
+    banner.textContent = '';
+  }
 }
 
-function renderPeek(){ document.getElementById('peekBanner').className='peek-banner'+(G.peek?' on':''); }
+function renderPeek(){
+  document.getElementById('peekBanner').className='peek-banner'+(G.peek?' on':'');
+  renderStatus();
+}
 
 function setDice(ri){
   const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
@@ -711,6 +804,7 @@ function cardEl(pathIdx){
 
 function checkWin(){
   if(G.hp<=0){ G.phase='over'; render(); setTimeout(()=>showOv(true),380); return true; }
+  if(G.pairs>=TOTAL/2){ G.phase='over'; render(); setTimeout(()=>showOv(true),380); return true; }
   return false;
 }
 
@@ -765,7 +859,7 @@ const WARRIOR_SRC = "./rainbow-guardian.png";
 const SMASHY_SRC = "./smashy.png";
 document.getElementById("smashyImg").src = SMASHY_SRC;
 
-initGame();
+showSetup();
 </script>
 </body>
 </html>
