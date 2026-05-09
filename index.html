@@ -1,26 +1,26 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tickle Fight!</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
-<link rel="preload" href="./smashy.png" as="image">
-<link rel="preload" href="./castle.png" as="image">
-<link rel="preload" href="./banner.png" as="image">
-<link rel="preload" href="./rock.png" as="image">
-<link rel="preload" href="./feather-arrow.png" as="image">
-<link rel="preload" href="./rainbow-guardian.png" as="image">
-<link rel="preload" href="./cloud-wall.png" as="image">
-<link rel="preload" href="./star-wand.png" as="image">
-<link rel="preload" href="./cloud-cannon.png" as="image">
-<link rel="preload" href="./wind-blast.png" as="image">
-<link rel="preload" href="./unicorn-horn.png" as="image">
-<link rel="preload" href="./glitter-bomb.png" as="image">
-<link rel="preload" href="./rainbow-tornado.png" as="image">
-<link rel="preload" href="./freeze-wand.png" as="image">
-<link rel="preload" href="./rain-bow.png" as="image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ°</text></svg>">
+<link rel="preload" href="./smashy.webp" as="image">
+<link rel="preload" href="./castle.webp" as="image">
+<link rel="preload" href="./banner.webp" as="image">
+<link rel="preload" href="./rock.webp" as="image">
+<link rel="preload" href="./feather-arrow.webp" as="image">
+<link rel="preload" href="./rainbow-guardian.webp" as="image">
+<link rel="preload" href="./cloud-wall.webp" as="image">
+<link rel="preload" href="./star-wand.webp" as="image">
+<link rel="preload" href="./cloud-cannon.webp" as="image">
+<link rel="preload" href="./wind-blast.webp" as="image">
+<link rel="preload" href="./unicorn-horn.webp" as="image">
+<link rel="preload" href="./glitter-bomb.webp" as="image">
+<link rel="preload" href="./rainbow-tornado.webp" as="image">
+<link rel="preload" href="./freeze-wand.webp" as="image">
+<link rel="preload" href="./rain-bow.webp" as="image">
 <style>
 :root {
   --bg: #0d1b2a; --bg2: #162032; --border: rgba(255,255,255,0.1);
@@ -56,7 +56,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .grid-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;color:#1e4d6a;}
 .pairs-badge{font-size:0.73rem;font-weight:700;color:#7a5500;background:rgba(245,200,66,0.35);padding:2px 9px;border-radius:99px;border:1px solid rgba(180,130,0,0.4);}
 
-/* Path board — 5 cols x 9 rows grid, tiles placed at specific positions */
+/* Path board â€” 5 cols x 9 rows grid, tiles placed at specific positions */
 .path-board{
   display:grid;
   grid-template-columns:repeat(5,1fr);
@@ -96,7 +96,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg);}
 .card-back,.card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
 .card-back{background:linear-gradient(145deg,#ffffff 0%,#e4f3fc 55%,#cce8f8 100%);border:1.5px solid rgba(90,160,210,0.4);}
-.card-back::after{content:'✦';color:rgba(80,150,200,0.35);font-size:0.9rem;}
+.card-back::after{content:'âœ¦';color:rgba(80,150,200,0.35);font-size:0.9rem;}
 .card-face{transform:rotateY(180deg);border:1.5px solid transparent;}
 .card.matched .card-face{opacity:0.45;border-color:rgba(255,255,255,0.08)!important;}
 .card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back{border-color:rgba(60,150,210,0.7);background:linear-gradient(145deg,#ffffff 0%,#b8dff5 100%);}
@@ -267,7 +267,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 <div class="milestone" id="milestone"></div>
 <div class="overlay off" id="overlay">
   <div class="ocard">
-    <span class="oemoji" id="oEmoji">🏆</span>
+    <span class="oemoji" id="oEmoji">ðŸ†</span>
     <div class="otitle" id="oTitle">Victory!</div>
     <div class="obody" id="oBody"></div>
     <button class="btn-play" onclick="showSetup()">Play Again</button>
@@ -276,12 +276,12 @@ body.shake{animation:shake 0.45s ease-in-out;}
 
 <div class="setup-overlay" id="setupOverlay">
   <div class="setup-card">
-    <div class="setup-title">⚔️ Setup Battle</div>
+    <div class="setup-title">âš”ï¸ Setup Battle</div>
     <div class="setup-sub">Choose your tiles and set Smashy's strength</div>
     <div class="setup-tiles" id="setupTiles"></div>
     <div class="setup-stats">
-      <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
-      <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
+      <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">â€”</span></div>
+      <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">â€”</span></div>
     </div>
     <div class="setup-hp-row">
       <span class="setup-hp-label">Smashy's HP</span>
@@ -290,105 +290,105 @@ body.shake{animation:shake 0.45s ease-in-out;}
     </div>
     <div class="setup-hard-row" id="hardModeRow" onclick="toggleHardMode()">
       <div>
-        <div class="setup-hard-label">🔥 <strong>Hard Mode</strong></div>
+        <div class="setup-hard-label">ðŸ”¥ <strong>Hard Mode</strong></div>
       </div>
       <div class="setup-hard-toggle" id="hardModeToggle"></div>
     </div>
-    <button class="btn-start" id="btnStart" onclick="startFromSetup()">⚔️ Start Battle!</button>
-    <button class="btn-tutorial" onclick="showTutorial()">📖 Tutorial</button>
+    <button class="btn-start" id="btnStart" onclick="startFromSetup()">âš”ï¸ Start Battle!</button>
+    <button class="btn-tutorial" onclick="showTutorial()">ðŸ“– Tutorial</button>
   </div>
 </div>
 
 <div class="tutorial-overlay off" id="tutorialOverlay">
   <div class="tutorial-card">
     <div class="tutorial-header">
-      <div class="tutorial-title-main">📖 How to Play</div>
+      <div class="tutorial-title-main">ðŸ“– How to Play</div>
       <div class="tutorial-dots" id="tutDots"></div>
     </div>
     <div class="tutorial-body" id="tutBody">
 
       <div class="tutorial-step active" id="tutStep0">
-        <span class="tut-emoji">🧌🏰</span>
+        <span class="tut-emoji">ðŸ§ŒðŸ°</span>
         <div class="tut-step-title">Welcome to Tickle Fight!</div>
         <p class="tut-text">Smashy the monster is marching toward your Cloud Castle! Your job is to stop him using the magic tiles on the board.</p>
-        <p class="tut-text">This is a <strong style="color:var(--text)">memory matching game</strong> — flip tiles two at a time to find matching pairs and unlock powerful abilities!</p>
+        <p class="tut-text">This is a <strong style="color:var(--text)">memory matching game</strong> â€” flip tiles two at a time to find matching pairs and unlock powerful abilities!</p>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">🎯</span><span>Match pairs to deal damage, push Smashy back, or defend your castle.</span></div>
-          <div class="tut-row"><span class="tut-icon">🧌</span><span>Every time you flip tiles (match or miss), Smashy gets a turn to advance!</span></div>
-          <div class="tut-row"><span class="tut-icon">🏆</span><span>Win by defeating Smashy or matching all pairs before he reaches the gates.</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸŽ¯</span><span>Match pairs to deal damage, push Smashy back, or defend your castle.</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ§Œ</span><span>Every time you flip tiles (match or miss), Smashy gets a turn to advance!</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ†</span><span>Win by defeating Smashy or matching all pairs before he reaches the gates.</span></div>
         </div>
       </div>
 
       <div class="tutorial-step" id="tutStep1">
-        <span class="tut-emoji">🃏✨</span>
+        <span class="tut-emoji">ðŸƒâœ¨</span>
         <div class="tut-step-title">Flipping Tiles</div>
         <p class="tut-text">Tap any face-down tile to flip it over and see what's underneath. Then tap a second tile.</p>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">✅</span><span><strong style="color:var(--green)">Match!</strong> Both tiles show the same image — their power activates immediately. The tiles stay face-up and are removed from play.</span></div>
-          <div class="tut-row"><span class="tut-icon">❌</span><span><strong style="color:var(--red)">No match.</strong> Both tiles flip back face-down, and Smashy takes his turn. Try to remember where they were!</span></div>
+          <div class="tut-row"><span class="tut-icon">âœ…</span><span><strong style="color:var(--green)">Match!</strong> Both tiles show the same image â€” their power activates immediately. The tiles stay face-up and are removed from play.</span></div>
+          <div class="tut-row"><span class="tut-icon">âŒ</span><span><strong style="color:var(--red)">No match.</strong> Both tiles flip back face-down, and Smashy takes his turn. Try to remember where they were!</span></div>
         </div>
-        <p class="tut-text">Rocks 🪨 dropped by Smashy block tiles — you can't flip them until a Glitter Bomb clears them!</p>
+        <p class="tut-text">Rocks ðŸª¨ dropped by Smashy block tiles â€” you can't flip them until a Glitter Bomb clears them!</p>
       </div>
 
       <div class="tutorial-step" id="tutStep2">
-        <span class="tut-emoji">⚡🌈</span>
+        <span class="tut-emoji">âš¡ðŸŒˆ</span>
         <div class="tut-step-title">Tile Powers</div>
         <p class="tut-text">Each tile type does something different when you match a pair:</p>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">🪶</span><span><strong style="color:var(--text)">Feather Arrow</strong> — Deals 2 damage to Smashy</span></div>
-          <div class="tut-row"><span class="tut-icon">💥</span><span><strong style="color:var(--text)">Cloud Cannon</strong> — Deals 3 damage to Smashy</span></div>
-          <div class="tut-row"><span class="tut-icon">💨</span><span><strong style="color:var(--text)">Wind Blast</strong> — 1 damage + pushes Smashy back 1</span></div>
-          <div class="tut-row"><span class="tut-icon">🌈</span><span><strong style="color:var(--text)">Rain-Bow</strong> — 1 damage + pushes Smashy back 2</span></div>
-          <div class="tut-row"><span class="tut-icon">🦄</span><span><strong style="color:var(--text)">Unicorn Horn</strong> — Pushes Smashy back 3 spaces</span></div>
-          <div class="tut-row"><span class="tut-icon">🌪️</span><span><strong style="color:var(--text)">Rainbow Tornado</strong> — Pushes Smashy back 5 spaces</span></div>
-          <div class="tut-row"><span class="tut-icon">☁️</span><span><strong style="color:var(--text)">Cloud Guard</strong> — Place a guardian that stops Smashy for one move</span></div>
-          <div class="tut-row"><span class="tut-icon">🛡️</span><span><strong style="color:var(--text)">Cloud Wall</strong> — Adds a shield that blocks one castle breach</span></div>
-          <div class="tut-row"><span class="tut-icon">⭐</span><span><strong style="color:var(--text)">Star Wand</strong> — Peek at 4 face-down tiles to help your memory</span></div>
-          <div class="tut-row"><span class="tut-icon">✨</span><span><strong style="color:var(--text)">Glitter Bomb</strong> — Clears all rocks from the board</span></div>
-          <div class="tut-row"><span class="tut-icon">❄️</span><span><strong style="color:var(--text)">Freeze Wand</strong> — Smashy skips his next turn</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸª¶</span><span><strong style="color:var(--text)">Feather Arrow</strong> â€” Deals 2 damage to Smashy</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ’¥</span><span><strong style="color:var(--text)">Cloud Cannon</strong> â€” Deals 3 damage to Smashy</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ’¨</span><span><strong style="color:var(--text)">Wind Blast</strong> â€” 1 damage + pushes Smashy back 1</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸŒˆ</span><span><strong style="color:var(--text)">Rain-Bow</strong> â€” 1 damage + pushes Smashy back 2</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ¦„</span><span><strong style="color:var(--text)">Unicorn Horn</strong> â€” Pushes Smashy back 3 spaces</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸŒªï¸</span><span><strong style="color:var(--text)">Rainbow Tornado</strong> â€” Pushes Smashy back 5 spaces</span></div>
+          <div class="tut-row"><span class="tut-icon">â˜ï¸</span><span><strong style="color:var(--text)">Cloud Guard</strong> â€” Place a guardian that stops Smashy for one move</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ›¡ï¸</span><span><strong style="color:var(--text)">Cloud Wall</strong> â€” Adds a shield that blocks one castle breach</span></div>
+          <div class="tut-row"><span class="tut-icon">â­</span><span><strong style="color:var(--text)">Star Wand</strong> â€” Peek at 4 face-down tiles to help your memory</span></div>
+          <div class="tut-row"><span class="tut-icon">âœ¨</span><span><strong style="color:var(--text)">Glitter Bomb</strong> â€” Clears all rocks from the board</span></div>
+          <div class="tut-row"><span class="tut-icon">â„ï¸</span><span><strong style="color:var(--text)">Freeze Wand</strong> â€” Smashy skips his next turn</span></div>
         </div>
       </div>
 
       <div class="tutorial-step" id="tutStep3">
-        <span class="tut-emoji">🎲🧌</span>
+        <span class="tut-emoji">ðŸŽ²ðŸ§Œ</span>
         <div class="tut-step-title">Smashy's Turn</div>
-        <p class="tut-text">After every pair of tile flips — whether you matched or not — Smashy rolls a die and does one of these:</p>
+        <p class="tut-text">After every pair of tile flips â€” whether you matched or not â€” Smashy rolls a die and does one of these:</p>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">⬆️</span><span><strong style="color:var(--text)">Charge 1–3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
-          <div class="tut-row"><span class="tut-icon">🪨</span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. You can't flip rocks until a Glitter Bomb removes them (max 3 rocks at a time).</span></div>
-          <div class="tut-row"><span class="tut-icon">↔️</span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles — scrambling your memory. Watch out for this one!</span></div>
+          <div class="tut-row"><span class="tut-icon">â¬†ï¸</span><span><strong style="color:var(--text)">Charge 1â€“3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸª¨</span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. You can't flip rocks until a Glitter Bomb removes them (max 3 rocks at a time).</span></div>
+          <div class="tut-row"><span class="tut-icon">â†”ï¸</span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles â€” scrambling your memory. Watch out for this one!</span></div>
         </div>
-        <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen ❄️</strong>, he skips his turn entirely. If a <strong style="color:#4da6ff">Cloud Guard ☁️</strong> is on his next tile, he stops before entering.</p>
+        <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen â„ï¸</strong>, he skips his turn entirely. If a <strong style="color:#4da6ff">Cloud Guard â˜ï¸</strong> is on his next tile, he stops before entering.</p>
       </div>
 
       <div class="tutorial-step" id="tutStep4">
-        <span class="tut-emoji">🏆💀</span>
+        <span class="tut-emoji">ðŸ†ðŸ’€</span>
         <div class="tut-step-title">Win & Lose</div>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">🏆</span><span><strong style="color:var(--green)">You win</strong> if Smashy's HP reaches 0, or if you successfully match all tile pairs on the board!</span></div>
-          <div class="tut-row"><span class="tut-icon">💀</span><span><strong style="color:var(--red)">You lose</strong> if Smashy reaches the castle and you have no Cloud Wall shields left to block him.</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ†</span><span><strong style="color:var(--green)">You win</strong> if Smashy's HP reaches 0, or if you successfully match all tile pairs on the board!</span></div>
+          <div class="tut-row"><span class="tut-icon">ðŸ’€</span><span><strong style="color:var(--red)">You lose</strong> if Smashy reaches the castle and you have no Cloud Wall shields left to block him.</span></div>
         </div>
         <p class="tut-text">On the <strong style="color:var(--text)">Setup Screen</strong> you can customize your tile loadout and set Smashy's HP. Higher HP = tougher fight! The HP slider automatically caps at your maximum possible damage output.</p>
-        <p class="tut-text">Good luck defending the Cloud Castle! 🏰✨</p>
+        <p class="tut-text">Good luck defending the Cloud Castle! ðŸ°âœ¨</p>
       </div>
 
     </div>
     <div class="tutorial-footer">
-      <button class="btn-tut-nav btn-tut-prev" id="tutPrev" onclick="tutNav(-1)">← Back</button>
-      <button class="btn-tut-nav btn-tut-next" id="tutNext" onclick="tutNav(1)">Next →</button>
+      <button class="btn-tut-nav btn-tut-prev" id="tutPrev" onclick="tutNav(-1)">â† Back</button>
+      <button class="btn-tut-nav btn-tut-next" id="tutNext" onclick="tutNav(1)">Next â†’</button>
     </div>
   </div>
 </div>
 
 <div class="app">
   <div class="header">
-    <img src="./banner.png" style="width:100%;border-radius:14px;display:block;">
+    <img src="./banner.webp" style="width:100%;border-radius:14px;display:block;">
   </div>
 
   <div class="main">
     <div style="display:none" id="sbar"><span id="stxt"></span></div>
     <div class="context-banner" id="contextBanner"></div>
-    <div class="peek-banner" id="peekBanner">⭐ Star Wand active — click 4 tiles to peek!</div>
+    <div class="peek-banner" id="peekBanner">â­ Star Wand active â€” click 4 tiles to peek!</div>
     <div class="grid-wrapper">
       <div class="grid-header">
         <div class="grid-label">Cloud Kingdom</div>
@@ -396,7 +396,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
       </div>
       <!-- Castle strip -->
       <div style="position:relative;aspect-ratio:3/1;margin-bottom:8px;background:linear-gradient(90deg,rgba(245,200,66,0.03),rgba(245,200,66,0.12),rgba(245,200,66,0.03));border-radius:10px;border:1px solid rgba(245,200,66,0.2);overflow:hidden;">
-        <img src="./castle.png" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(245,200,66,0.5))">
+        <img src="./castle.webp" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(245,200,66,0.5))">
         <div class="shield-pips" id="shieldPips" style="position:absolute;bottom:6px;right:8px;"></div>
       </div>
       <!-- Path board: 5 cols x 8 rows -->
@@ -418,7 +418,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="ptitle">Tile Powers</div>
     <div class="powers-grid" id="powersGrid"></div>
   </div>
-  <button class="btn-reset" onclick="showSetup()">🔄 New Game</button>
+  <button class="btn-reset" onclick="showSetup()">ðŸ”„ New Game</button>
 </div>
 
 <script>
@@ -468,7 +468,7 @@ function generatePath(n) {
     const goRight = i % 2 === 0;
     if (goRight) {
       // For i=0 (Smashy's partial row), anchor to the right side so it connects
-      // flush against the connector tile — gap appears on the left where Smashy starts
+      // flush against the connector tile â€” gap appears on the left where Smashy starts
       const startCol = (i === 0) ? COLS - count + 1 : 1;
       for (let c = startCol; c <= startCol + count - 1; c++) path.push({ gr: gridRow, gc: c });
     } else {
@@ -484,35 +484,35 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
-  { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.png',    fc:'face-lightning', damage:2, defaultPairs:2, desc:'Deals 2 damage to Smashy' },
-  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.png', fc:'face-warrior',   damage:0, defaultPairs:1, desc:'Place on a tile to stop Smashy' },
-  { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.png',       fc:'face-shield',    damage:0, defaultPairs:1, desc:'Blocks one castle breach' },
-  { id:'starmap',   name:'Star Wand',      img:'./star-wand.png',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
-  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
-  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.png',       fc:'face-comet',     damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back' },
-  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.png',     fc:'face-unicorn',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Bomb',   img:'./glitter-bomb.png',     fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Removes all rocks from the board' },
-  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.png',  fc:'face-tornado',   damage:0, defaultPairs:0, desc:'Pushes Smashy back 5 spaces' },
-  { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.png',      fc:'face-freeze',    damage:0, defaultPairs:0, desc:'Freezes Smashy for one turn' },
-  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.png',         fc:'face-rainbow',   damage:1, defaultPairs:0, desc:'1 damage + pushes Smashy back 2' },
+  { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, desc:'Deals 2 damage to Smashy' },
+  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, desc:'Place on a tile to stop Smashy' },
+  { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, desc:'Blocks one castle breach' },
+  { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
+  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.webp',     fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
+  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back' },
+  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
+  { id:'glitter',   name:'Glitter Bomb',   img:'./glitter-bomb.webp',     fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Removes all rocks from the board' },
+  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, desc:'Pushes Smashy back 5 spaces' },
+  { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, desc:'Freezes Smashy for one turn' },
+  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, desc:'1 damage + pushes Smashy back 2' },
 ];
 let setupCounts = {};
 
 const DICE_DEF = [
-  { e:'⬆️',     lbl:'Charge ahead!',               step:true    },
-  { e:'⬆️⬆️',   lbl:'Double step — moves twice!',  step2:true   },
-  { e:'⬆️⬆️⬆️', lbl:'Triple step — moves three!',  step3:true   },
-  { e:'🪨',     lbl:'ROCK! Current tile blocked!',  rock:true    },
-  { e:'↔️',     lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
-  { e:'↔️',     lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
+  { e:'â¬†ï¸',     lbl:'Charge ahead!',               step:true    },
+  { e:'â¬†ï¸â¬†ï¸',   lbl:'Double step â€” moves twice!',  step2:true   },
+  { e:'â¬†ï¸â¬†ï¸â¬†ï¸', lbl:'Triple step â€” moves three!',  step3:true   },
+  { e:'ðŸª¨',     lbl:'ROCK! Current tile blocked!',  rock:true    },
+  { e:'â†”ï¸',     lbl:'SWAP â€” tiles next to Smashy!', swapAdj:true },
+  { e:'â†”ï¸',     lbl:'SWAP â€” tiles next to Smashy!', swapAdj:true },
 ];
 const DICE_DEF_HARD = [
-  { e:'⬆️',         lbl:'Charge ahead!',               step:true    },
-  { e:'⬆️⬆️',       lbl:'Double step — moves twice!',  step2:true   },
-  { e:'⬆️⬆️⬆️',     lbl:'Triple step — moves three!',  step3:true   },
-  { e:'⬆️⬆️⬆️⬆️',   lbl:'QUAD step — moves four!',     step4:true   },
-  { e:'↔️',         lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
-  { e:'🪨',         lbl:'ROCK! Current tile blocked!',  rock:true    },
+  { e:'â¬†ï¸',         lbl:'Charge ahead!',               step:true    },
+  { e:'â¬†ï¸â¬†ï¸',       lbl:'Double step â€” moves twice!',  step2:true   },
+  { e:'â¬†ï¸â¬†ï¸â¬†ï¸',     lbl:'Triple step â€” moves three!',  step3:true   },
+  { e:'â¬†ï¸â¬†ï¸â¬†ï¸â¬†ï¸',   lbl:'QUAD step â€” moves four!',     step4:true   },
+  { e:'â†”ï¸',         lbl:'SWAP â€” tiles next to Smashy!', swapAdj:true },
+  { e:'ðŸª¨',         lbl:'ROCK! Current tile blocked!',  rock:true    },
 ];
 let hardMode = false;
 
@@ -522,14 +522,14 @@ function toggleHardMode() {
 }
 
 const TAUNTS = {
-  move:  ['Heh heh heh...🧌','Nothing can stop me!','STOMP STOMP STOMP!','Coming for you! 🧌','Keep trying, tiny ones!'],
-  close: ['Almost there! 🧌','I can SEE the castle!','MWAHAHA! 🧌','Your castle is MINE!','Try and stop me now!'],
-  swap:  ['Tee hee! Mixed it up!','Bet you forgot now! 😏','Swap swap swap! 🧌','Good luck with THAT!','My favourite trick! 🧌'],
-  hurt:  ['Ow! That tickled!','Lucky shot!','Grr... stop that!','You got me! ...For now.','OUCH! 🧌'],
-  start: ['😤 I will squash your castle!','Prepare yourself! 🧌','You cannot stop me!'],
+  move:  ['Heh heh heh...ðŸ§Œ','Nothing can stop me!','STOMP STOMP STOMP!','Coming for you! ðŸ§Œ','Keep trying, tiny ones!'],
+  close: ['Almost there! ðŸ§Œ','I can SEE the castle!','MWAHAHA! ðŸ§Œ','Your castle is MINE!','Try and stop me now!'],
+  swap:  ['Tee hee! Mixed it up!','Bet you forgot now! ðŸ˜','Swap swap swap! ðŸ§Œ','Good luck with THAT!','My favourite trick! ðŸ§Œ'],
+  hurt:  ['Ow! That tickled!','Lucky shot!','Grr... stop that!','You got me! ...For now.','OUCH! ðŸ§Œ'],
+  start: ['ðŸ˜¤ I will squash your castle!','Prepare yourself! ðŸ§Œ','You cannot stop me!'],
 };
 
-const MILESTONES = { 4:'4 pairs! Keep going! 🌟', 7:'Halfway there! ⚡', 10:'All pairs matched! 🎉' };
+const MILESTONES = { 4:'4 pairs! Keep going! ðŸŒŸ', 7:'Halfway there! âš¡', 10:'All pairs matched! ðŸŽ‰' };
 
 let G = {};
 let popupTimer = null, milestoneTimer = null;
@@ -563,8 +563,8 @@ function renderTutStep() {
   dots.innerHTML = Array.from({length: TUT_TOTAL}, (_,i) =>
     `<div class="tutorial-dot${i === tutStep ? ' active' : ''}"></div>`
   ).join('');
-  document.getElementById('tutPrev').textContent = tutStep === 0 ? '✕ Close' : '← Back';
-  document.getElementById('tutNext').textContent = tutStep === TUT_TOTAL - 1 ? 'Done ✓' : 'Next →';
+  document.getElementById('tutPrev').textContent = tutStep === 0 ? 'âœ• Close' : 'â† Back';
+  document.getElementById('tutNext').textContent = tutStep === TUT_TOTAL - 1 ? 'Done âœ“' : 'Next â†’';
 }
 
 function showSetup() {
@@ -582,7 +582,7 @@ function renderSetupTiles() {
       <div class="setup-tile-name">${t.name}</div>
       <div style="font-size:0.6rem;color:var(--muted)">${t.desc}</div>
       <div class="setup-counter">
-        <button class="setup-btn" onclick="changeCount('${t.id}',-1)">−</button>
+        <button class="setup-btn" onclick="changeCount('${t.id}',-1)">âˆ’</button>
         <span class="setup-count" id="cnt-${t.id}">${setupCounts[t.id]}</span>
         <button class="setup-btn" onclick="changeCount('${t.id}',1)">+</button>
       </div>
@@ -599,8 +599,8 @@ function updateSetupStats() {
   const totalPairs = Object.values(setupCounts).reduce((a,b)=>a+b,0);
   const totalTiles = totalPairs * 2;
   const maxDmg = TILE_CONFIG.reduce((sum,t) => sum + t.damage * setupCounts[t.id], 0);
-  document.getElementById('setupMapSize').textContent = totalTiles || '—';
-  document.getElementById('setupMaxDmg').textContent = maxDmg || '—';
+  document.getElementById('setupMapSize').textContent = totalTiles || 'â€”';
+  document.getElementById('setupMaxDmg').textContent = maxDmg || 'â€”';
   const slider = document.getElementById('hpSlider');
   const effectiveMax = Math.max(1, maxDmg);
   slider.max = effectiveMax;
@@ -658,12 +658,12 @@ function renderPowersPanel(counts){
     .filter(t => (counts[t.id]||0) > 0)
     .map(t => `<div class="power-card">
       <img src="${t.img}" class="power-img" onerror="this.style.display='none'">
-      <div class="power-name">${t.name} <span class="power-count">×${counts[t.id]}</span></div>
+      <div class="power-name">${t.name} <span class="power-count">Ã—${counts[t.id]}</span></div>
       <div class="power-desc">${t.desc}</div>
     </div>`).join('');
 }
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
+// â”€â”€ RENDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function render(){ 
   renderGrid(); renderBoss(); renderStatus(); renderPeek(); renderShields();
   // Set boss overlay images
@@ -716,7 +716,7 @@ function renderGrid(){
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay"><img src="./rock.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
@@ -728,11 +728,11 @@ function renderGrid(){
 }
 
 function renderBoss(){
-  // HP bar is rendered directly in renderGrid on the boss tile — nothing to do here
+  // HP bar is rendered directly in renderGrid on the boss tile â€” nothing to do here
 }
 
 function renderShields(){
-  document.getElementById('shieldPips').innerHTML = Array(G.shields).fill('<div class="shield-pip">🛡</div>').join('');
+  document.getElementById('shieldPips').innerHTML = Array(G.shields).fill('<div class="shield-pip">ðŸ›¡</div>').join('');
 }
 
 function renderStatus(){
@@ -740,10 +740,10 @@ function renderStatus(){
   if(!banner) return;
   if(G.warriorMode){
     banner.className = 'context-banner warrior';
-    banner.textContent = '☁️ Place your Cloud Guard on a matched tile';
+    banner.textContent = 'â˜ï¸ Place your Cloud Guard on a matched tile';
   } else if(G.peek){
     banner.className = 'context-banner peek';
-    banner.textContent = `⭐ Star Wand — click to reveal tiles (${4 - G.peekN} left)`;
+    banner.textContent = `â­ Star Wand â€” click to reveal tiles (${4 - G.peekN} left)`;
   } else {
     banner.className = 'context-banner';
     banner.textContent = '';
@@ -758,22 +758,22 @@ function renderPeek(){
 function setDice(ri){
   const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
   if(bar) bar.className='status-bar s-boss';
-  if(txt) txt.textContent=`🎲 ${(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri].lbl}`;
+  if(txt) txt.textContent=`ðŸŽ² ${(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri].lbl}`;
 }
 
-// ── CARD CLICK ───────────────────────────────────────────────────────────────
+// â”€â”€ CARD CLICK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function onCard(pathIdx){
   if(G.phase==='over') return;
 
   // WARRIOR PLACEMENT
   if(G.warriorMode){
     if(!G.matched.has(pathIdx) || pathIdx===G.bossPos || G.rocks.includes(pathIdx)){
-      addLog('☁️ Warriors can only be placed on matched tiles!','n'); return;
+      addLog('â˜ï¸ Warriors can only be placed on matched tiles!','n'); return;
     }
     G.warriors.add(pathIdx);
     G.warriorMode = false;
-    addLog('☁️ Cloud Guard placed! Smashy will stop before stepping on it.','g');
-    showPopup('☁️','Cloud Guard placed!','Smashy will stop here!','#4da6ff');
+    addLog('â˜ï¸ Cloud Guard placed! Smashy will stop before stepping on it.','g');
+    showPopup('â˜ï¸','Cloud Guard placed!','Smashy will stop here!','#4da6ff');
     render();
     setTimeout(()=>bossTurn(), 480);
     return;
@@ -789,7 +789,7 @@ function onCard(pathIdx){
       setTimeout(()=>{
         G.peekIdx.forEach(pi=>{ const x=cardEl(pi); if(x) x.classList.remove('flipped','peeked'); });
         G.peek=false; G.peekN=0; G.peekIdx=[];
-        addLog('⭐ Peek ended — remember those tiles!','i');
+        addLog('â­ Peek ended â€” remember those tiles!','i');
         renderStatus(); renderPeek();
       },1000);
     }
@@ -833,20 +833,20 @@ function onCard(pathIdx){
   }
 }
 
-// ── POWERS ───────────────────────────────────────────────────────────────────
+// â”€â”€ POWERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function applyPower(id){
   G.powerDelay=480;
-  if(id==='lightning')   { damageBoss(2,'🪶 Feather Arrow — 2 damage!'); showPopup('🪶','Feather Arrow!','-2 HP to Smashy','#8bc34a'); }
-  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); }
-  else if(id==='shield') { G.shields++; addLog(`🌥️ Cloud Wall raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Cloud Wall!','Castle protected!','#b57bff'); }
-  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
-  else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
-  else if(id==='comet')  { damageBoss(1,'💨 Wind Blast — 1 damage + pushback!'); pushBack(); showPopup('💨','Wind Blast!','-1 HP + Smashy pushed back!','#c8a856'); G.powerDelay=1400; }
-  else if(id==='unicorn'){ pushBackN(3); showPopup('🦄','Unicorn Horn!','Smashy pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.rocks=[]; addLog('✨ Glitter Bomb — all rocks cleared!','g'); showPopup('✨','Glitter Bomb!','All rocks removed!','#ffe4f7'); render(); }
-  else if(id==='tornado'){ pushBackN(5); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 5!','#a0d8ff'); G.powerDelay=1400; }
-  else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
-  else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
+  if(id==='lightning')   { damageBoss(2,'ðŸª¶ Feather Arrow â€” 2 damage!'); showPopup('ðŸª¶','Feather Arrow!','-2 HP to Smashy','#8bc34a'); }
+  else if(id==='warrior'){ G.warriorMode=true; addLog('â˜ï¸ Click a matched tile to place your Cloud Guard!','i'); showPopup('â˜ï¸','Cloud Guard!','Click a matched tile!','#4da6ff'); }
+  else if(id==='shield') { G.shields++; addLog(`ðŸŒ¥ï¸ Cloud Wall raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('ðŸŒ¥ï¸','Cloud Wall!','Castle protected!','#b57bff'); }
+  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('â­ Star Wand! Click 4 tiles to peek...','i'); showPopup('â­','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
+  else if(id==='fireball'){ damageBoss(3,'ðŸ’¥ Cloud Cannon â€” 3 damage!'); showPopup('ðŸ’¥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
+  else if(id==='comet')  { damageBoss(1,'ðŸ’¨ Wind Blast â€” 1 damage + pushback!'); pushBack(); showPopup('ðŸ’¨','Wind Blast!','-1 HP + Smashy pushed back!','#c8a856'); G.powerDelay=1400; }
+  else if(id==='unicorn'){ pushBackN(3); showPopup('ðŸ¦„','Unicorn Horn!','Smashy pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
+  else if(id==='glitter'){ G.rocks=[]; addLog('âœ¨ Glitter Bomb â€” all rocks cleared!','g'); showPopup('âœ¨','Glitter Bomb!','All rocks removed!','#ffe4f7'); render(); }
+  else if(id==='tornado'){ pushBackN(5); showPopup('ðŸŒˆ','Rainbow Tornado!','Smashy pushed back 5!','#a0d8ff'); G.powerDelay=1400; }
+  else if(id==='freeze') { G.frozen=true; addLog('â„ï¸ Freeze Wand â€” Smashy frozen for one turn!','i'); showPopup('â„ï¸','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
+  else if(id==='rainbow'){ damageBoss(1,'ðŸŒˆ Rain-Bow â€” 1 damage + pushback 2!'); pushBackN(2); showPopup('ðŸŒˆ','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -869,10 +869,10 @@ function pushBackN(n){
   addLog(moved>0?`Smashy pushed back ${moved} step${moved>1?'s':''}!`:'Smashy is already at the start!','g');
 }
 
-// ── BOSS TURN ────────────────────────────────────────────────────────────────
+// â”€â”€ BOSS TURN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function bossTurn(){
   if(G.phase==='over') return;
-  if(G.frozen){ G.frozen=false; addLog('❄️ Smashy is frozen and skips a turn!','i'); G.phase='player'; G.canFlip=true; G.canFlipLockedAt=null; renderStatus(); return; }
+  if(G.frozen){ G.frozen=false; addLog('â„ï¸ Smashy is frozen and skips a turn!','i'); G.phase='player'; G.canFlip=true; G.canFlipLockedAt=null; renderStatus(); return; }
   if(G.peek){ const t=setInterval(()=>{ if(!G.peek){clearInterval(t);doBoss();} },200); return; }
   doBoss();
 }
@@ -886,7 +886,7 @@ function doBoss(){
   },340);
 }
 
-// ── MOVEMENT ─────────────────────────────────────────────────────────────────
+// â”€â”€ MOVEMENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function execMove(ri){
   const d=(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri];
 
@@ -909,24 +909,24 @@ function execMove(ri){
       a=ahead; b=behind;
       msg='Smashy swaps next tile ahead and behind!';
     } else if(ahead!==null){
-      // No tiles behind — find two ahead
+      // No tiles behind â€” find two ahead
       a=ahead;
       for(let i=ahead+1;i<TOTAL;i++){ if(isAvail(i)){ b=i; break; } }
-      msg='No tiles behind — Smashy swaps two tiles ahead!';
+      msg='No tiles behind â€” Smashy swaps two tiles ahead!';
     } else if(behind!==null){
-      // No tiles ahead — find two behind
+      // No tiles ahead â€” find two behind
       a=behind;
       for(let i=behind-1;i>=0;i--){ if(isAvail(i)){ b=i; break; } }
-      msg='No tiles ahead — Smashy swaps two tiles behind!';
+      msg='No tiles ahead â€” Smashy swaps two tiles behind!';
     }
 
     if(a!==null&&b!==null){
       swapIndices(a,b,true);
-      addLog(`↔️ ${msg}`,'b');
-      showBossPopup('↔️','Swap!',msg);
+      addLog(`â†”ï¸ ${msg}`,'b');
+      showBossPopup('â†”ï¸','Swap!',msg);
     } else {
-      addLog('↔️ Smashy tried to swap — not enough tiles!','n');
-      showBossPopup('↔️','Swap Failed!','No tiles to mix...');
+      addLog('â†”ï¸ Smashy tried to swap â€” not enough tiles!','n');
+      showBossPopup('â†”ï¸','Swap Failed!','No tiles to mix...');
     }
     smashyTaunt('swap'); render(); return;
   }
@@ -934,17 +934,17 @@ function execMove(ri){
   if(d.rock){
     const k=G.bossPos;
     if(G.rocks.includes(k)){
-      showBossPopup('🪨','Rock Already Here!','Smashy grumbles...');
+      showBossPopup('ðŸª¨','Rock Already Here!','Smashy grumbles...');
       smashyTaunt('move'); render(); return;
     }
     if(G.rocks.length>=3){
       G.rocks.shift(); G.rocks.push(k);
-      addLog(`🪨 Smashy moves his oldest rock!`,'b');
-      showBossPopup('🪨','Rock Moved!','Oldest rock relocated!');
+      addLog(`ðŸª¨ Smashy moves his oldest rock!`,'b');
+      showBossPopup('ðŸª¨','Rock Moved!','Oldest rock relocated!');
     } else {
       G.rocks.push(k);
-      addLog(`🪨 Smashy drops a rock on this tile!`,'b');
-      showBossPopup('🪨','Rock Dropped!','That tile is blocked!');
+      addLog(`ðŸª¨ Smashy drops a rock on this tile!`,'b');
+      showBossPopup('ðŸª¨','Rock Dropped!','That tile is blocked!');
     }
     smashyTaunt('move'); render(); return;
   }
@@ -958,24 +958,24 @@ function execMove(ri){
   for(let s=0;s<steps;s++){
     const nextPos=G.bossPos+1;
     if(nextPos>=TOTAL){
-      // Reached the end — storm the castle
+      // Reached the end â€” storm the castle
       if(G.shields>0){
         G.shields--;
-        addLog(`🛡️ Wind Shield blocks Smashy at the gates! ${G.shields} left.`,'g');
+        addLog(`ðŸ›¡ï¸ Wind Shield blocks Smashy at the gates! ${G.shields} left.`,'g');
         renderShields();
-        showPopup('🛡️','Shield Activated!','Castle protected!','#b57bff');
+        showPopup('ðŸ›¡ï¸','Shield Activated!','Castle protected!','#b57bff');
       } else {
-        addLog('💀 Smashy storms the castle! GAME OVER!','b');
+        addLog('ðŸ’€ Smashy storms the castle! GAME OVER!','b');
         G.phase='over'; render();
         setTimeout(()=>showOv(false),650); return;
       }
       break;
     }
-    // Check warrior on next tile — blocks before entry
+    // Check warrior on next tile â€” blocks before entry
     if(G.warriors.has(nextPos)){
       G.warriors.delete(nextPos);
-      addLog('☁️ Cloud Guard blocks Smashy! He stops in his tracks!','g');
-      showPopup('☁️','Blocked!','Cloud Guard stops Smashy!','#4da6ff');
+      addLog('â˜ï¸ Cloud Guard blocks Smashy! He stops in his tracks!','g');
+      showPopup('â˜ï¸','Blocked!','Cloud Guard stops Smashy!','#4da6ff');
       break;
     }
     G.bossPos=nextPos;
@@ -983,13 +983,13 @@ function execMove(ri){
 
   const progress=G.bossPos/(TOTAL-1);
   if(G.bossPos>startPos){
-    addLog(`🧌 Smashy charges ahead! Step ${G.bossPos+1} of ${TOTAL}.`,'b');
+    addLog(`ðŸ§Œ Smashy charges ahead! Step ${G.bossPos+1} of ${TOTAL}.`,'b');
   }
   smashyTaunt(progress>0.75?'close':'move');
   render();
 }
 
-// ── HELPERS ──────────────────────────────────────────────────────────────────
+// â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function anyFaceDown(exclude=[]){
   const pool=[];
   for(let i=0;i<TOTAL;i++){
@@ -1051,12 +1051,12 @@ function checkWin(){
 
 function showOv(win){
   document.getElementById('overlay').classList.remove('off');
-  document.getElementById('oEmoji').textContent=win?'🏆':'💀';
+  document.getElementById('oEmoji').textContent=win?'ðŸ†':'ðŸ’€';
   document.getElementById('oTitle').textContent=win?'Victory!':'Defeated!';
   document.getElementById('oTitle').className='otitle '+(win?'win':'lose');
   document.getElementById('oBody').textContent=win
-    ?'Smashy is defeated! The Cloud Castle stands! 🎉'
-    :'Smashy stormed the gates! The castle has fallen... 😰';
+    ?'Smashy is defeated! The Cloud Castle stands! ðŸŽ‰'
+    :'Smashy stormed the gates! The castle has fallen... ðŸ˜°';
 }
 function hideOv(){ document.getElementById('overlay').classList.add('off'); }
 function addLog(m,t='n'){ G.log.push({m,t}); if(G.log.length>30) G.log.shift(); }
@@ -1095,14 +1095,14 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
     const top=Math.random()*80;
     const op=0.45+Math.random()*0.35;
     const delay=-Math.random()*dur;
-    c.textContent='☁️';
+    c.textContent='â˜ï¸';
     c.style.cssText=`--sz:${sz}rem;--dur:${dur}s;--op:${op};top:${top}%;left:0;animation-delay:${delay}s`;
     sf.appendChild(c);
   }
 })();
 
-const WARRIOR_SRC = "./rainbow-guardian.png";
-const SMASHY_SRC = "./smashy.png";
+const WARRIOR_SRC = "./rainbow-guardian.webp";
+const SMASHY_SRC = "./smashy.webp";
 document.getElementById("smashyImg").src = SMASHY_SRC;
 
 showSetup();
