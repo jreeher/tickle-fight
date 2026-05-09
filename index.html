@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tickle Fight!</title>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
 <link rel="preload" href="./smashy.png" as="image">
 <link rel="preload" href="./castle.png" as="image">
 <link rel="preload" href="./banner.png" as="image">
@@ -25,8 +26,8 @@
   --bg: #0d1b2a; --bg2: #162032; --border: rgba(255,255,255,0.1);
   --text: #e8edf5; --muted: #7a95b8; --gold: #f5c842;
   --red: #ff4d4d; --green: #4ddb8a; --blue: #4da6ff;
-  --tile-lightning:#4a8530; --tile-warrior:#1a5a9a; --tile-shield:#5a1a9a;
-  --tile-starmap:#9a6a1a; --tile-fireball:#9a401a; --tile-comet:#7a7a40;
+  --tile-lightning:#7ab55a; --tile-warrior:#5090c8; --tile-shield:#8850c8;
+  --tile-starmap:#c89848; --tile-fireball:#c87050; --tile-comet:#a8a868;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0%,#b8ddf0 40%,#d0edf8 100%);color:var(--text);min-height:100vh;overflow-x:hidden;}
@@ -124,11 +125,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .face-starmap{background:var(--tile-starmap);border-color:rgba(245,200,66,0.42)!important;}
 .face-fireball{background:var(--tile-fireball);border-color:rgba(255,140,66,0.35)!important;}
 .face-comet{background:var(--tile-comet);border-color:rgba(200,168,86,0.35)!important;}
-.face-unicorn{background:#7a30b0;border-color:rgba(180,100,255,0.42)!important;}
-.face-glitter{background:#b02880;border-color:rgba(255,100,200,0.42)!important;}
-.face-tornado{background:#2080b0;border-color:rgba(80,200,255,0.42)!important;}
-.face-freeze{background:#2098c0;border-color:rgba(80,220,255,0.42)!important;}
-.face-rainbow{background:#b02050;border-color:rgba(255,80,160,0.42)!important;}
+.face-unicorn{background:#a060d8;border-color:rgba(200,140,255,0.42)!important;}
+.face-glitter{background:#d060a8;border-color:rgba(255,140,210,0.42)!important;}
+.face-tornado{background:#50a8d8;border-color:rgba(120,210,255,0.42)!important;}
+.face-freeze{background:#48b8e0;border-color:rgba(120,225,255,0.42)!important;}
+.face-rainbow{background:#d05878;border-color:rgba(255,130,170,0.42)!important;}
 
 /* Status */
 .status-bar{display:flex;gap:7px;align-items:center;padding:6px 14px;background:var(--bg2);border-radius:99px;border:1px solid var(--border);font-size:0.78rem;font-weight:700;}
@@ -245,8 +246,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
 
 /* Context banner */
 .context-banner{display:none;padding:9px 16px;border-radius:10px;text-align:center;font-size:0.8rem;font-weight:700;letter-spacing:0.4px;margin-bottom:6px;}
-.context-banner.warrior{display:block;background:rgba(77,166,255,0.13);border:1px solid rgba(77,166,255,0.4);color:#4da6ff;}
-.context-banner.peek{display:block;background:rgba(245,200,66,0.1);border:1px solid rgba(245,200,66,0.35);color:var(--gold);}
+.context-banner.warrior,.context-banner.peek{display:block;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:560px;border-radius:0 0 12px 12px;z-index:150;margin:0;padding:11px 16px;}
+.context-banner.warrior{background:rgba(20,40,80,0.97);border:1px solid rgba(77,166,255,0.5);border-top:none;color:#4da6ff;}
+.context-banner.peek{background:rgba(30,25,10,0.97);border:1px solid rgba(245,200,66,0.5);border-top:none;color:var(--gold);}
 </style>
 </head>
 <body>
@@ -470,13 +472,13 @@ const TILE_CONFIG = [
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.png', fc:'face-warrior',   damage:0, defaultPairs:1, desc:'Place on a tile to stop Smashy' },
   { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.png',       fc:'face-shield',    damage:0, defaultPairs:1, desc:'Blocks one castle breach' },
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.png',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
-  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:1, desc:'Deals 3 damage to Smashy' },
+  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.png',     fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.png',       fc:'face-comet',     damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back' },
   { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.png',     fc:'face-unicorn',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
   { id:'glitter',   name:'Glitter Bomb',   img:'./glitter-bomb.png',     fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Removes all rocks from the board' },
-  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.png',  fc:'face-tornado',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 5 spaces' },
+  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.png',  fc:'face-tornado',   damage:0, defaultPairs:0, desc:'Pushes Smashy back 5 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.png',      fc:'face-freeze',    damage:0, defaultPairs:0, desc:'Freezes Smashy for one turn' },
-  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.png',         fc:'face-rainbow',   damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back 2' },
+  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.png',         fc:'face-rainbow',   damage:1, defaultPairs:0, desc:'1 damage + pushes Smashy back 2' },
 ];
 let setupCounts = {};
 
@@ -707,7 +709,7 @@ function renderStatus(){
   if(!banner) return;
   if(G.warriorMode){
     banner.className = 'context-banner warrior';
-    banner.textContent = '☁️ Place your Cloud Guardian on a matched tile';
+    banner.textContent = '☁️ Place your Cloud Guard on a matched tile';
   } else if(G.peek){
     banner.className = 'context-banner peek';
     banner.textContent = `⭐ Star Wand — click to reveal tiles (${4 - G.peekN} left)`;
@@ -739,8 +741,8 @@ function onCard(pathIdx){
     }
     G.warriors.add(pathIdx);
     G.warriorMode = false;
-    addLog('☁️ Rainbow Guardian placed! Smashy will stop before stepping on it.','g');
-    showPopup('🌈','Rainbow Guardian!','Smashy will regret this!','#4da6ff');
+    addLog('☁️ Cloud Guard placed! Smashy will stop before stepping on it.','g');
+    showPopup('☁️','Cloud Guard placed!','Smashy will stop here!','#4da6ff');
     render();
     setTimeout(()=>bossTurn(), 480);
     return;
@@ -941,8 +943,8 @@ function execMove(ri){
     // Check warrior on next tile — blocks before entry
     if(G.warriors.has(nextPos)){
       G.warriors.delete(nextPos);
-      addLog('☁️ Rainbow Guardian blocks Smashy! He stops in his tracks!','g');
-      showPopup('🌈','Blocked!','Rainbow Guardian stops Smashy!','#4da6ff');
+      addLog('☁️ Cloud Guard blocks Smashy! He stops in his tracks!','g');
+      showPopup('☁️','Blocked!','Cloud Guard stops Smashy!','#4da6ff');
       break;
     }
     G.bossPos=nextPos;
