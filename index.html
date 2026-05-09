@@ -214,6 +214,16 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-hp-label{font-size:0.75rem;color:var(--muted);white-space:nowrap;}
 .setup-hp-slider{flex:1;accent-color:var(--red);}
 .setup-hp-val{font-size:0.85rem;font-weight:700;color:var(--red);min-width:32px;text-align:right;}
+.setup-hard-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
+.setup-hard-row:hover{background:rgba(255,80,80,0.1);}
+.setup-hard-row.active{background:rgba(255,80,80,0.14);border-color:rgba(255,80,80,0.4);}
+.setup-hard-label{font-size:0.8rem;font-weight:700;color:var(--muted);}
+.setup-hard-label strong{color:var(--red);}
+.setup-hard-desc{font-size:0.65rem;color:var(--muted);margin-top:2px;}
+.setup-hard-toggle{width:36px;height:20px;border-radius:99px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);position:relative;flex-shrink:0;transition:background 0.2s;}
+.setup-hard-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.5);transition:transform 0.2s,background 0.2s;}
+.setup-hard-row.active .setup-hard-toggle{background:var(--red);border-color:var(--red);}
+.setup-hard-row.active .setup-hard-toggle::after{transform:translateX(16px);background:white;}
 .btn-start{width:100%;padding:12px;font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:1px;background:linear-gradient(135deg,var(--gold),#ff8c42);color:#1a1200;border:none;border-radius:99px;cursor:pointer;transition:transform 0.12s;}
 .btn-start:hover{transform:translateY(-2px) scale(1.02);}
 .btn-start:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
@@ -277,6 +287,13 @@ body.shake{animation:shake 0.45s ease-in-out;}
       <span class="setup-hp-label">Smashy's HP</span>
       <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="document.getElementById('hpSliderVal').textContent=this.value">
       <span class="setup-hp-val" id="hpSliderVal">8</span>
+    </div>
+    <div class="setup-hard-row" id="hardModeRow" onclick="toggleHardMode()">
+      <div>
+        <div class="setup-hard-label">🔥 <strong>Hard Mode</strong></div>
+        <div class="setup-hard-desc">Smashy rolls: 1-step, 2-step, 2-step, 3-step, swap, rock</div>
+      </div>
+      <div class="setup-hard-toggle" id="hardModeToggle"></div>
     </div>
     <button class="btn-start" id="btnStart" onclick="startFromSetup()">⚔️ Start Battle!</button>
     <button class="btn-tutorial" onclick="showTutorial()">📖 Tutorial</button>
@@ -490,6 +507,20 @@ const DICE_DEF = [
   { e:'↔️',     lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
   { e:'↔️',     lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
 ];
+const DICE_DEF_HARD = [
+  { e:'⬆️',     lbl:'Charge ahead!',               step:true    },
+  { e:'⬆️⬆️',   lbl:'Double step — moves twice!',  step2:true   },
+  { e:'⬆️⬆️',   lbl:'Double step — moves twice!',  step2:true   },
+  { e:'⬆️⬆️⬆️', lbl:'Triple step — moves three!',  step3:true   },
+  { e:'↔️',     lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
+  { e:'🪨',     lbl:'ROCK! Current tile blocked!',  rock:true    },
+];
+let hardMode = false;
+
+function toggleHardMode() {
+  hardMode = !hardMode;
+  document.getElementById('hardModeRow').classList.toggle('active', hardMode);
+}
 
 const TAUNTS = {
   move:  ['Heh heh heh...🧌','Nothing can stop me!','STOMP STOMP STOMP!','Coming for you! 🧌','Keep trying, tiny ones!'],
@@ -584,10 +615,10 @@ function startFromSetup() {
   if (totalPairs < 2) return;
   const hp = parseInt(document.getElementById('hpSlider').value);
   document.getElementById('setupOverlay').classList.add('off');
-  initGame(setupCounts, hp);
+  initGame(setupCounts, hp, hardMode);
 }
 
-function initGame(counts, bossHp){
+function initGame(counts, bossHp, isHard=false){
   let deck = [];
   TILE_CONFIG.forEach(t => {
     const pairs = counts[t.id] || 0;
@@ -613,6 +644,7 @@ function initGame(counts, bossHp){
     pairs: 0,
     lastMatched: [],
     powerDelay: 480,
+    hardMode: isHard,
     log: [],
   };
   renderPowersPanel(counts);
@@ -727,7 +759,7 @@ function renderPeek(){
 function setDice(ri){
   const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
   if(bar) bar.className='status-bar s-boss';
-  if(txt) txt.textContent=`🎲 ${DICE_DEF[ri].lbl}`;
+  if(txt) txt.textContent=`🎲 ${(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri].lbl}`;
 }
 
 // ── CARD CLICK ───────────────────────────────────────────────────────────────
@@ -857,7 +889,7 @@ function doBoss(){
 
 // ── MOVEMENT ─────────────────────────────────────────────────────────────────
 function execMove(ri){
-  const d=DICE_DEF[ri];
+  const d=(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri];
 
   if(d.swapAdj){
     const bPos=G.bossPos;
