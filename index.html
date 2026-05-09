@@ -138,8 +138,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .s-boss .sdot{background:var(--red);box-shadow:0 0 5px var(--red);}
 .s-wait .sdot{background:var(--gold);box-shadow:0 0 5px var(--gold);}
 .s-player{color:var(--green);}.s-boss{color:var(--red);}.s-wait{color:var(--gold);}
-.peek-banner{display:none;padding:5px 14px;background:rgba(245,200,66,0.09);border:1px solid rgba(245,200,66,0.28);border-radius:99px;text-align:center;font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1px;}
-.peek-banner.on{display:block;}
+.peek-banner{display:none!important;}
 
 /* Sidebar */
 .panel{background:#9dc9e3;border-radius:13px;padding:13px;border:1px solid rgba(80,150,200,0.35);}
@@ -212,7 +211,11 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-stat-val{font-weight:700;color:var(--text);}
 .setup-hp-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .setup-hp-label{font-size:0.75rem;color:var(--muted);white-space:nowrap;}
-.setup-hp-slider{flex:1;accent-color:var(--red);}
+.setup-hp-slider{-webkit-appearance:none;appearance:none;flex:1;height:8px;border-radius:99px;outline:none;cursor:pointer;border:none;}
+.setup-hp-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ff6666,#ff4d4d);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5),0 0 0 3px rgba(255,80,80,0.25);border:2px solid rgba(255,255,255,0.35);transition:box-shadow 0.15s,transform 0.1s;}
+.setup-hp-slider::-webkit-slider-thumb:hover{box-shadow:0 2px 12px rgba(0,0,0,0.6),0 0 0 5px rgba(255,80,80,0.35);transform:scale(1.1);}
+.setup-hp-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ff6666,#ff4d4d);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.35);}
+.setup-hp-slider::-moz-range-track{height:8px;border-radius:99px;background:rgba(255,255,255,0.15);}
 .setup-hp-val{font-size:0.85rem;font-weight:700;color:var(--red);min-width:32px;text-align:right;}
 .setup-hard-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
 .setup-hard-row:hover{background:rgba(255,80,80,0.1);}
@@ -254,11 +257,24 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .btn-tut-next{background:linear-gradient(135deg,var(--gold),#ff8c42);color:#1a1200;border:none;}
 .btn-tut-next:hover{transform:translateY(-1px) scale(1.02);}
 
-/* Context banner */
-.context-banner{display:none;padding:9px 16px;border-radius:10px;text-align:center;font-size:0.8rem;font-weight:700;letter-spacing:0.4px;margin-bottom:6px;}
-.context-banner.warrior,.context-banner.peek{display:block;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:560px;border-radius:0 0 12px 12px;z-index:150;margin:0;padding:11px 16px;}
-.context-banner.warrior{background:rgba(20,40,80,0.97);border:1px solid rgba(77,166,255,0.5);border-top:none;color:#4da6ff;}
-.context-banner.peek{background:rgba(30,25,10,0.97);border:1px solid rgba(245,200,66,0.5);border-top:none;color:var(--gold);}
+/* Context banner — floating card style */
+.context-banner{display:none;}
+.context-banner.warrior,.context-banner.peek{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0);opacity:0;
+  z-index:300;pointer-events:none;
+  background:rgba(10,20,40,0.94);
+  border-radius:22px;padding:22px 44px;text-align:center;
+  backdrop-filter:blur(10px);box-shadow:0 8px 48px rgba(0,0,0,0.6);
+  animation:ctx-in 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+@keyframes ctx-in{to{transform:translate(-50%,-50%) scale(1);opacity:1;}}
+.context-banner.warrior{border:2px solid rgba(77,166,255,0.45);}
+.context-banner.peek{border:2px solid rgba(245,200,66,0.45);}
+.cb-emoji{font-size:2.6rem;line-height:1;margin-bottom:2px;}
+.cb-title{font-family:'Fredoka One',cursive;font-size:1.5rem;color:white;}
+.cb-sub{font-size:0.85rem;color:rgba(255,255,255,0.6);margin-top:2px;}
 </style>
 </head>
 <body>
@@ -285,7 +301,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
     </div>
     <div class="setup-hp-row">
       <span class="setup-hp-label">Smashy's HP</span>
-      <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="document.getElementById('hpSliderVal').textContent=this.value">
+      <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="document.getElementById('hpSliderVal').textContent=this.value;updateSliderFill()">
       <span class="setup-hp-val" id="hpSliderVal">8</span>
     </div>
     <div class="setup-hard-row" id="hardModeRow" onclick="toggleHardMode()">
@@ -607,6 +623,14 @@ function updateSetupStats() {
   if (parseInt(slider.value) > effectiveMax) slider.value = effectiveMax;
   document.getElementById('hpSliderVal').textContent = slider.value;
   document.getElementById('btnStart').disabled = totalPairs < 2;
+  updateSliderFill();
+}
+
+function updateSliderFill() {
+  const slider = document.getElementById('hpSlider');
+  if(!slider) return;
+  const pct = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+  slider.style.background = `linear-gradient(to right,#ff4d4d 0%,#ff8866 ${pct}%,rgba(255,255,255,0.15) ${pct}%,rgba(255,255,255,0.15) 100%)`;
 }
 
 function startFromSetup() {
@@ -740,13 +764,14 @@ function renderStatus(){
   if(!banner) return;
   if(G.warriorMode){
     banner.className = 'context-banner warrior';
-    banner.textContent = '☁️ Place your Cloud Guard on a matched tile';
+    banner.innerHTML = `<span class="cb-emoji">☁️</span><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
   } else if(G.peek){
+    const left = 4 - G.peekN;
     banner.className = 'context-banner peek';
-    banner.textContent = `⭐ Star Wand — click to reveal tiles (${4 - G.peekN} left)`;
+    banner.innerHTML = `<span class="cb-emoji">⭐</span><div class="cb-title">Star Wand</div><div class="cb-sub">Click ${left} more tile${left!==1?'s':''} to reveal</div>`;
   } else {
     banner.className = 'context-banner';
-    banner.textContent = '';
+    banner.innerHTML = '';
   }
 }
 
