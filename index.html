@@ -67,7 +67,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 }
 .path-cell{aspect-ratio:1;}
 .path-cell.empty{/* invisible spacer */}
-.path-cell.ghost{background:rgba(255,255,255,0.08);border:1.5px dashed rgba(100,160,210,0.25);border-radius:9px;}
 
 /* Castle */
 .castle-cell{
@@ -176,6 +175,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .popup-title{font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;}
 .popup-sub{font-size:0.85rem;color:rgba(255,255,255,0.6);margin-top:2px;}
 @keyframes shake{0%,100%{transform:translate(0,0) rotate(0);}15%{transform:translate(-6px,3px) rotate(-1deg);}30%{transform:translate(5px,-4px) rotate(1deg);}45%{transform:translate(-4px,5px) rotate(-0.5deg);}60%{transform:translate(4px,-3px) rotate(0.5deg);}75%{transform:translate(-3px,2px) rotate(-0.3deg);}}
+@keyframes smashy-storm{from{transform:scale(0) rotate(-20deg);}to{transform:scale(1) rotate(0deg);}}
 body.shake{animation:shake 0.45s ease-in-out;}
 .milestone{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:250;pointer-events:none;background:linear-gradient(135deg,#f5c842,#ff8c42);color:#1a1000;font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:1px;padding:10px 28px;border-radius:99px;box-shadow:0 4px 24px rgba(245,200,66,0.5);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),opacity 0.4s;opacity:0;}
 .milestone.show{transform:translateX(-50%) translateY(0);opacity:1;}
@@ -191,6 +191,12 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .obody{color:var(--muted);font-size:0.87rem;line-height:1.55;margin-bottom:22px;}
 .btn-play{font-family:'Fredoka One',cursive;font-size:1.05rem;letter-spacing:1px;padding:11px 34px;background:linear-gradient(135deg,var(--gold),#ff8c42);color:#1a1200;border:none;border-radius:99px;cursor:pointer;transition:transform 0.12s;}
 .btn-play:hover{transform:translateY(-2px) scale(1.03);}
+.btn-review{font-family:'Fredoka One',cursive;font-size:0.9rem;letter-spacing:1px;padding:8px 24px;background:rgba(255,255,255,0.08);color:var(--muted);border:1px solid rgba(255,255,255,0.15);border-radius:99px;cursor:pointer;margin-top:10px;transition:background 0.15s;}
+.btn-review:hover{background:rgba(255,255,255,0.16);color:var(--text);}
+.review-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:350;display:none;}
+.review-bar.on{display:block;}
+.btn-back-results{font-family:'Fredoka One',cursive;font-size:0.95rem;padding:10px 28px;background:rgba(10,20,40,0.92);color:var(--text);border:1px solid rgba(255,255,255,0.2);border-radius:99px;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,0.5);}
+.card.review-unseen{box-shadow:0 0 0 2.5px rgba(255,80,80,0.8),0 0 14px rgba(255,50,50,0.35);}
 
 /* Setup overlay */
 .setup-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
@@ -203,6 +209,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--gold);text-align:center;margin-bottom:4px;}
 .setup-sub{color:var(--muted);font-size:0.75rem;text-align:center;margin-bottom:14px;}
 .setup-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+@media(max-width:360px){.setup-tiles{grid-template-columns:repeat(3,1fr);}}
 .setup-tile-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
 .setup-tile-img{width:36px;height:36px;object-fit:contain;}
 .setup-tile-name{font-size:0.65rem;font-weight:700;color:var(--text);}
@@ -291,7 +298,12 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="otitle" id="oTitle">Victory!</div>
     <div class="obody" id="oBody"></div>
     <button class="btn-play" onclick="showSetup()">Play Again</button>
+    <br>
+    <button class="btn-review" onclick="showReview()">🔍 Review Board</button>
   </div>
+</div>
+<div class="review-bar" id="reviewBar">
+  <button class="btn-back-results" onclick="exitReview()">← Back to Results</button>
 </div>
 
 <div class="setup-overlay" id="setupOverlay">
@@ -328,68 +340,72 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="tutorial-body" id="tutBody">
 
       <div class="tutorial-step active" id="tutStep0">
-        <span class="tut-emoji">🧌🏰</span>
+        <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
+          <img src="./smashy.webp" style="width:56px;height:56px;object-fit:contain;">
+          <img src="./castle.webp" style="width:56px;height:56px;object-fit:contain;">
+        </div>
         <div class="tut-step-title">Welcome to Tickle Fight!</div>
         <p class="tut-text">Smashy the monster is marching toward your Cloud Castle! Your job is to stop him using the magic tiles on the board.</p>
         <p class="tut-text">This is a <strong style="color:var(--text)">memory matching game</strong> — flip tiles two at a time to find matching pairs and unlock powerful abilities!</p>
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">🎯</span><span>Match pairs to deal damage, push Smashy back, or defend your castle.</span></div>
-          <div class="tut-row"><span class="tut-icon">🧌</span><span>Every time you flip tiles (match or miss), Smashy gets a turn to advance!</span></div>
-          <div class="tut-row"><span class="tut-icon">🏆</span><span>Win by defeating Smashy or matching all pairs before he reaches the gates.</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./smashy.webp" style="width:20px;height:20px;object-fit:contain;"></span><span>Every time you flip tiles (match or miss), Smashy gets a turn to advance!</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./castle.webp" style="width:20px;height:20px;object-fit:contain;"></span><span>Win by defeating Smashy or matching all pairs before he reaches the gates.</span></div>
         </div>
       </div>
 
       <div class="tutorial-step" id="tutStep1">
-        <span class="tut-emoji">🃏✨</span>
+        <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
+          <img src="./feather-arrow.webp" style="width:52px;height:52px;object-fit:contain;">
+          <img src="./glitter-bomb.webp" style="width:52px;height:52px;object-fit:contain;">
+        </div>
         <div class="tut-step-title">Flipping Tiles</div>
         <p class="tut-text">Tap any face-down tile to flip it over and see what's underneath. Then tap a second tile.</p>
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">✅</span><span><strong style="color:var(--green)">Match!</strong> Both tiles show the same image — their power activates immediately. The tiles stay face-up and are removed from play.</span></div>
           <div class="tut-row"><span class="tut-icon">❌</span><span><strong style="color:var(--red)">No match.</strong> Both tiles flip back face-down, and Smashy takes his turn. Try to remember where they were!</span></div>
         </div>
-        <p class="tut-text">Rocks 🪨 dropped by Smashy block tiles — you can't flip them until a Glitter Bomb clears them!</p>
+        <p class="tut-text">Rocks <img src="./rock.webp" style="width:16px;height:16px;vertical-align:middle;"> dropped by Smashy block tiles — you can't flip them until a Glitter Bomb clears them!</p>
       </div>
 
       <div class="tutorial-step" id="tutStep2">
-        <span class="tut-emoji">⚡🌈</span>
-        <div class="tut-step-title">Tile Powers</div>
-        <p class="tut-text">Each tile type does something different when you match a pair:</p>
-        <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">🪶</span><span><strong style="color:var(--text)">Feather Arrow</strong> — Deals 2 damage to Smashy</span></div>
-          <div class="tut-row"><span class="tut-icon">💥</span><span><strong style="color:var(--text)">Cloud Cannon</strong> — Deals 3 damage to Smashy</span></div>
-          <div class="tut-row"><span class="tut-icon">💨</span><span><strong style="color:var(--text)">Wind Blast</strong> — 1 damage + pushes Smashy back 1</span></div>
-          <div class="tut-row"><span class="tut-icon">🌈</span><span><strong style="color:var(--text)">Rain-Bow</strong> — 1 damage + pushes Smashy back 2</span></div>
-          <div class="tut-row"><span class="tut-icon">🦄</span><span><strong style="color:var(--text)">Unicorn Horn</strong> — Pushes Smashy back 3 spaces</span></div>
-          <div class="tut-row"><span class="tut-icon">🌪️</span><span><strong style="color:var(--text)">Rainbow Tornado</strong> — Pushes Smashy back 5 spaces</span></div>
-          <div class="tut-row"><span class="tut-icon">☁️</span><span><strong style="color:var(--text)">Cloud Guard</strong> — Place a guardian that stops Smashy for one move</span></div>
-          <div class="tut-row"><span class="tut-icon">🛡️</span><span><strong style="color:var(--text)">Cloud Wall</strong> — Adds a shield that blocks one castle breach</span></div>
-          <div class="tut-row"><span class="tut-icon">⭐</span><span><strong style="color:var(--text)">Star Wand</strong> — Peek at 4 face-down tiles to help your memory</span></div>
-          <div class="tut-row"><span class="tut-icon">✨</span><span><strong style="color:var(--text)">Glitter Bomb</strong> — Clears all rocks from the board</span></div>
-          <div class="tut-row"><span class="tut-icon">❄️</span><span><strong style="color:var(--text)">Freeze Wand</strong> — Smashy skips his next turn</span></div>
+        <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
+          <img src="./feather-arrow.webp" style="width:52px;height:52px;object-fit:contain;">
+          <img src="./cloud-cannon.webp" style="width:52px;height:52px;object-fit:contain;">
         </div>
+        <div class="tut-step-title">Tile Powers</div>
+        <p class="tut-text">Each tile does something when you match a pair. For example:</p>
+        <div class="tut-box">
+          <div class="tut-row"><span class="tut-icon"><img src="./feather-arrow.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Feather Arrow</strong> — Deals 2 damage to Smashy</span></div>
+        </div>
+        <p class="tut-text">Every tile in your deck has a unique power — from pushing Smashy back, to peeking at hidden tiles, to blocking castle breaches. Check the panel below the board to see which tiles are in play!</p>
       </div>
 
       <div class="tutorial-step" id="tutStep3">
-        <span class="tut-emoji">🎲🧌</span>
+        <div style="display:flex;justify-content:center;margin-bottom:10px;">
+          <img src="./smashy.webp" style="width:56px;height:56px;object-fit:contain;">
+        </div>
         <div class="tut-step-title">Smashy's Turn</div>
         <p class="tut-text">After every pair of tile flips — whether you matched or not — Smashy rolls a die and does one of these:</p>
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">⬆️</span><span><strong style="color:var(--text)">Charge 1–3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
-          <div class="tut-row"><span class="tut-icon">🪨</span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. You can't flip rocks until a Glitter Bomb removes them (max 3 rocks at a time).</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./rock.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. You can't flip rocks until a <img src="./glitter-bomb.webp" style="width:14px;height:14px;vertical-align:middle;"> Glitter Bomb removes them.</span></div>
           <div class="tut-row"><span class="tut-icon">↔️</span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles — scrambling your memory. Watch out for this one!</span></div>
         </div>
-        <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen ❄️</strong>, he skips his turn entirely. If a <strong style="color:#4da6ff">Cloud Guard ☁️</strong> is on his next tile, he stops before entering.</p>
+        <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen</strong> <img src="./freeze-wand.webp" style="width:14px;height:14px;vertical-align:middle;">, he skips his turn. If a <img src="./rainbow-guardian.webp" style="width:14px;height:14px;vertical-align:middle;"> <strong style="color:#4da6ff">Cloud Guard</strong> is on his next tile, he stops before entering.</p>
       </div>
 
       <div class="tutorial-step" id="tutStep4">
-        <span class="tut-emoji">🏆💀</span>
+        <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
+          <img src="./castle.webp" style="width:56px;height:56px;object-fit:contain;">
+          <img src="./smashy.webp" style="width:56px;height:56px;object-fit:contain;">
+        </div>
         <div class="tut-step-title">Win & Lose</div>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">🏆</span><span><strong style="color:var(--green)">You win</strong> if Smashy's HP reaches 0, or if you successfully match all tile pairs on the board!</span></div>
-          <div class="tut-row"><span class="tut-icon">💀</span><span><strong style="color:var(--red)">You lose</strong> if Smashy reaches the castle and you have no Cloud Wall shields left to block him.</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./castle.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--green)">You win</strong> if Smashy's HP reaches 0, or if you successfully match all tile pairs on the board!</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./smashy.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--red)">You lose</strong> if Smashy reaches the castle and you have no <img src="./cloud-wall.webp" style="width:14px;height:14px;vertical-align:middle;"> Cloud Wall shields left to block him.</span></div>
         </div>
         <p class="tut-text">On the <strong style="color:var(--text)">Setup Screen</strong> you can customize your tile loadout and set Smashy's HP. Higher HP = tougher fight! The HP slider automatically caps at your maximum possible damage output.</p>
-        <p class="tut-text">Good luck defending the Cloud Castle! 🏰✨</p>
       </div>
 
     </div>
@@ -415,8 +431,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="pairs-badge" id="pBadge">0 / 10 matched</div>
       </div>
       <!-- Castle strip -->
-      <div style="position:relative;aspect-ratio:3/1;margin-bottom:8px;background:linear-gradient(90deg,rgba(245,200,66,0.03),rgba(245,200,66,0.12),rgba(245,200,66,0.03));border-radius:10px;border:1px solid rgba(245,200,66,0.2);overflow:hidden;">
+      <div style="position:relative;aspect-ratio:3/1;margin-bottom:8px;background:linear-gradient(90deg,rgba(245,200,66,0.03),rgba(245,200,66,0.12),rgba(245,200,66,0.03));border-radius:10px;border:1px solid rgba(245,200,66,0.2);overflow:hidden;" id="castleStrip">
         <img src="./castle.webp" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(245,200,66,0.5))">
+        <img id="smashyOnCastle" src="./smashy.webp" style="display:none;position:absolute;bottom:0;right:8%;width:42%;object-fit:contain;transform-origin:bottom center;animation:smashy-storm 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;">
         <div class="shield-pips" id="shieldPips" style="position:absolute;bottom:6px;right:8px;"></div>
       </div>
       <!-- Path board: 5 cols x 8 rows -->
@@ -678,8 +695,12 @@ function initGame(counts, bossHp, isHard=false){
     hardMode: isHard,
     log: [],
   };
+  G.review = false;
   renderPowersPanel(counts);
   hideOv();
+  document.getElementById('reviewBar').classList.remove('on');
+  const soc = document.getElementById('smashyOnCastle');
+  if(soc) soc.style.display = 'none';
   render();
   smashyTaunt('start');
 }
@@ -719,8 +740,7 @@ function renderGrid(){
       const el = document.createElement('div');
 
       if(pathIdx === undefined){
-        // Empty spacer (ghost tile on bottom row to fill visual gap)
-        el.className = row === numRows ? 'path-cell ghost' : 'path-cell empty';
+        el.className = 'path-cell empty';
         el.style.gridRow = row;
         el.style.gridColumn = col;
         g.appendChild(el);
@@ -738,13 +758,14 @@ function renderGrid(){
       el.className = 'card';
       el.style.gridRow = row;
       el.style.gridColumn = col;
-      if(isFlipped || isMatched) el.classList.add('flipped');
+      if(G.review || isFlipped || isMatched) el.classList.add('flipped');
       if(isMatched) el.classList.add('matched');
-      if(G.lastMatched.includes(pathIdx)) el.classList.add('just-matched');
-      if(isBoss) el.classList.add('boss-cell');
-      if(isWarrior && !isBoss) el.classList.add('warrior-cell');
-      if(isRock && !isBoss) el.classList.add('rock-cell');
-      if(G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
+      if(G.review && !isMatched) el.classList.add('review-unseen');
+      if(!G.review && G.lastMatched.includes(pathIdx)) el.classList.add('just-matched');
+      if(!G.review && isBoss) el.classList.add('boss-cell');
+      if(!G.review && isWarrior && !isBoss) el.classList.add('warrior-cell');
+      if(!G.review && isRock && !isBoss) el.classList.add('rock-cell');
+      if(!G.review && G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
@@ -770,13 +791,16 @@ function renderShields(){
 function renderStatus(){
   const banner = document.getElementById('contextBanner');
   if(!banner) return;
+  const popupShowing = document.getElementById('powerPopup').classList.contains('show');
   if(G.warriorMode){
+    if(popupShowing){ banner.className='context-banner'; banner.innerHTML=''; return; }
     banner.className = 'context-banner warrior';
-    banner.innerHTML = `<span class="cb-emoji">☁️</span><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
+    banner.innerHTML = `<img src="./rainbow-guardian.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
   } else if(G.peek){
+    if(popupShowing){ banner.className='context-banner'; banner.innerHTML=''; return; }
     const left = 4 - G.peekN;
     banner.className = 'context-banner peek';
-    banner.innerHTML = `<span class="cb-emoji">⭐</span><div class="cb-title">Star Wand</div><div class="cb-sub">Click ${left} more tile${left!==1?'s':''} to reveal</div>`;
+    banner.innerHTML = `<img src="./star-wand.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Star Wand</div><div class="cb-sub">Click ${left} more tile${left!==1?'s':''} to reveal</div>`;
   } else {
     banner.className = 'context-banner';
     banner.innerHTML = '';
@@ -1000,7 +1024,9 @@ function execMove(ri){
       } else {
         addLog('💀 Smashy storms the castle! GAME OVER!','b');
         G.phase='over'; render();
-        setTimeout(()=>showOv(false),650); return;
+        const soc = document.getElementById('smashyOnCastle');
+        if(soc){ soc.style.display='block'; soc.style.animation='none'; void soc.offsetWidth; soc.style.animation='smashy-storm 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards'; }
+        setTimeout(()=>showOv(false),1100); return;
       }
       break;
     }
@@ -1092,6 +1118,20 @@ function showOv(win){
     :'Smashy stormed the gates! The castle has fallen... 😰';
 }
 function hideOv(){ document.getElementById('overlay').classList.add('off'); }
+
+function showReview(){
+  hideOv();
+  G.review = true;
+  renderGrid();
+  document.getElementById('reviewBar').classList.add('on');
+}
+function exitReview(){
+  G.review = false;
+  renderGrid();
+  document.getElementById('reviewBar').classList.remove('on');
+  document.getElementById('overlay').classList.remove('off');
+}
+
 function addLog(m,t='n'){ G.log.push({m,t}); if(G.log.length>30) G.log.shift(); }
 
 function showPopup(emoji,title,sub,color='white'){
@@ -1102,7 +1142,7 @@ function showPopup(emoji,title,sub,color='white'){
   document.getElementById('ppSub').textContent=sub;
   el.className='power-popup'; void el.offsetWidth; el.classList.add('show');
   if(popupTimer) clearTimeout(popupTimer);
-  popupTimer=setTimeout(()=>{ el.className='power-popup'; },1800);
+  popupTimer=setTimeout(()=>{ el.className='power-popup'; renderStatus(); },1800);
 }
 
 function smashyTaunt(type){}
