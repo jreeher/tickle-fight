@@ -466,30 +466,34 @@ function generatePath(n) {
     rem -= 6; // row + connector
   }
 
-  // Whatever remains is the bottom (Smashy start) row
-  if (rem > 0) {
-    segsTopDown.push(rem);
+  // Whatever remains is the bottom (Smashy start) row.
+  // Special case: rem=0 means tiles divide evenly — instead of a stolen 1-tile partial row,
+  // let the path end on a free-standing connector (no row required below it).
+  let endOnConnector = false;
+  if (rem === 0) {
+    endOnConnector = true;
   } else {
-    // rem=0 means the last full-row push consumed everything; give bottom 1 tile
-    // by reducing the row above by 1
-    segsTopDown[segsTopDown.length - 1]--;
-    segsTopDown.push(1);
+    segsTopDown.push(rem);
   }
 
   // Reverse: hSegs[0] = bottom/Smashy start, hSegs[last] = castle
   const hSegs = segsTopDown.reverse();
   const k = hSegs.length;
-  const numGridRows = 2 * k - 1;
+  // endOnConnector needs one extra grid row at the bottom for the lone connector tile
+  const numGridRows = endOnConnector ? 2 * k : 2 * k - 1;
   const path = [];
-  let gridRow = numGridRows;
+  let gridRow = endOnConnector ? numGridRows - 1 : numGridRows;
+
+  if (endOnConnector) {
+    // Smashy spawns on a connector at col 1 (left edge); the row above starts at col 1
+    path.push({ gr: numGridRows, gc: 1 });
+  }
 
   for (let i = 0; i < k; i++) {
     const count = hSegs[i];
     const goRight = i % 2 === 0;
     if (goRight) {
-      // For i=0 (Smashy's partial row), anchor to the right side so it connects
-      // flush against the connector tile — gap appears on the left where Smashy starts
-      const startCol = (i === 0) ? COLS - count + 1 : 1;
+      const startCol = (i === 0 && !endOnConnector) ? COLS - count + 1 : 1;
       for (let c = startCol; c <= startCol + count - 1; c++) path.push({ gr: gridRow, gc: c });
     } else {
       for (let c = COLS; c > COLS - count; c--) path.push({ gr: gridRow, gc: c });
