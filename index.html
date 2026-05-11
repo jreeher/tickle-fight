@@ -547,7 +547,7 @@ function generatePath(n) {
 const TILE_CONFIG = [
   { id:'queen',     name:'Rainbow Royals',    img:'./queen.webp',            fc:'face-queen',     damage:3, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.png', desc:'3 damage + knocks Smashy back 5 spaces!' },
   { id:'king',      name:'King',           img:'./king.png',              fc:'face-king',      damage:0, defaultPairs:0, max:1, hidden:true, desc:'' },
-  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
+  { id:'fireball',  name:'Cumulus Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, max:2, desc:'Deals 2 damage to Smashy' },
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Place on a tile to stop Smashy' },
   { id:'shield',    name:'Wall of Fluff',  img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, max:2, desc:'Blocks one castle breach' },
@@ -1016,7 +1016,7 @@ function applyPower(id){
   else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); setTimeout(setPopupActionMode,300); }
   else if(id==='shield') { G.shields++; addLog(`🌥️ Wall of Fluff raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Wall of Fluff!','Castle protected!','#b57bff'); }
   else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); setTimeout(setPopupActionMode,300); }
-  else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
+  else if(id==='fireball'){ damageBoss(3,'💥 Cumulus Cannon — 3 damage!'); showPopup('💥','Cumulus Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { G.rocks=[]; addLog('💨 Wind Blast — all rocks removed!','g'); showPopup('💨','Wind Blast!','All rocks cleared!','#c8a856'); render(); }
   else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
   else if(id==='glitter'){ G.glitterHoleMode=true; addLog('✨ Click a matched tile to place the Glitter Hole!','i'); showPopup('✨','Glitter Hole!','Click a matched tile!','#ffe4f7'); setTimeout(setPopupActionMode,300); }
