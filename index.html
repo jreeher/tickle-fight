@@ -984,8 +984,9 @@ function onCard(pathIdx){
     G.canFlip=false; G.canFlipLockedAt=Date.now();
     const [a,b]=G.flipped;
     const ta=G.cards[a],tb=G.cards[b];
-    const isMatch=ta.id===tb.id||(ta.pairWith&&ta.pairWith===tb.id)||(tb.pairWith&&tb.pairWith===ta.id);
-    const powerId=ta.pairWith?ta.id:(tb.pairWith?tb.id:ta.id);
+    const taCfg=TILE_CONFIG.find(c=>c.id===ta.id),tbCfg=TILE_CONFIG.find(c=>c.id===tb.id);
+    const isMatch=ta.id===tb.id||(taCfg?.pairWith&&taCfg.pairWith===tb.id)||(tbCfg?.pairWith&&tbCfg.pairWith===ta.id);
+    const powerId=taCfg?.pairWith?ta.id:(tbCfg?.pairWith?tb.id:ta.id);
     if(isMatch){
       setTimeout(()=>{
         G.matched.add(a); G.matched.add(b); G.pairs++;
@@ -995,7 +996,7 @@ function onCard(pathIdx){
         setTimeout(()=>{ G.lastMatched=[]; },600);
         checkMilestone();
         if(checkWin()) return;
-        if(!G.warriorMode) setTimeout(()=>bossTurn(), G.powerDelay);
+        if(!G.warriorMode && !G.glitterHoleMode) setTimeout(()=>bossTurn(), G.powerDelay);
         G.powerDelay=480;
       },400);
     } else {
@@ -1013,13 +1014,13 @@ function onCard(pathIdx){
 function applyPower(id){
   G.powerDelay=480;
   if(id==='lightning')   { damageBoss(2,'🪶 Feather Arrow — 2 damage!'); showPopup('🪶','Feather Arrow!','-2 HP to Smashy','#8bc34a'); }
-  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); setTimeout(setPopupActionMode,300); }
+  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showActionPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); }
   else if(id==='shield') { G.shields++; addLog(`🌥️ Wall of Fluff raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Wall of Fluff!','Castle protected!','#b57bff'); }
-  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); setTimeout(setPopupActionMode,300); }
+  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showActionPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
   else if(id==='fireball'){ damageBoss(3,'💥 Cumulus Cannon — 3 damage!'); showPopup('💥','Cumulus Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { G.rocks=[]; addLog('💨 Wind Blast — all rocks removed!','g'); showPopup('💨','Wind Blast!','All rocks cleared!','#c8a856'); render(); }
   else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterHoleMode=true; addLog('✨ Click a matched tile to place the Glitter Hole!','i'); showPopup('✨','Glitter Hole!','Click a matched tile!','#ffe4f7'); setTimeout(setPopupActionMode,300); }
+  else if(id==='glitter'){ G.glitterHoleMode=true; addLog('✨ Click a matched tile to place the Glitter Hole!','i'); showActionPopup('✨','Glitter Hole!','Click a matched tile!','#ffe4f7'); }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
@@ -1273,12 +1274,24 @@ function exitReview(){
 
 function addLog(m,t='n'){ G.log.push({m,t}); if(G.log.length>30) G.log.shift(); }
 
+function showActionPopup(emoji,title,sub,color='white'){
+  const el=document.getElementById('powerPopup');
+  document.getElementById('ppEmoji').textContent=emoji;
+  document.getElementById('ppTitle').textContent=title;
+  document.getElementById('ppTitle').style.color=color;
+  document.getElementById('ppSub').textContent=sub;
+  el.className='power-popup'; void el.offsetWidth;
+  el.className='power-popup show action-mode';
+  if(popupTimer) clearTimeout(popupTimer);
+  popupTimer=null;
+}
 function setPopupActionMode(){
   if(popupTimer) clearTimeout(popupTimer);
   document.getElementById('powerPopup').classList.add('action-mode');
 }
 function clearPopupActionMode(){
   if(popupTimer) clearTimeout(popupTimer);
+  popupTimer=null;
   document.getElementById('powerPopup').className='power-popup';
   renderStatus();
 }
