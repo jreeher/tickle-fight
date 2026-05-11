@@ -1006,7 +1006,7 @@ function execMove(ri){
     if(a!==null&&b!==null){
       swapIndices(a,b,true);
       addLog(`↔️ ${msg}`,'b');
-      showBossPopup('↔️','Swap!',msg);
+      showBossPopup('↔️','Swap!',msg,2500);
     } else {
       addLog('↔️ Smashy tried to swap — not enough tiles!','n');
       showBossPopup('↔️','Swap Failed!','No tiles to mix...');
@@ -1093,7 +1093,7 @@ function anyFaceDown(exclude=[]){
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
-function showBossPopup(emoji,title,sub){ showPopup(emoji,title,sub,'#ff8866'); }
+function showBossPopup(emoji,title,sub,duration=1800){ showPopup(emoji,title,sub,'#ff8866',duration); }
 
 function swapIndices(i1,i2,highlight=false){
   const els=[cardEl(i1),cardEl(i2)];
@@ -1167,7 +1167,7 @@ function exitReview(){
 
 function addLog(m,t='n'){ G.log.push({m,t}); if(G.log.length>30) G.log.shift(); }
 
-function showPopup(emoji,title,sub,color='white'){
+function showPopup(emoji,title,sub,color='white',duration=1800){
   const el=document.getElementById('powerPopup');
   document.getElementById('ppEmoji').textContent=emoji;
   document.getElementById('ppTitle').textContent=title;
@@ -1175,7 +1175,7 @@ function showPopup(emoji,title,sub,color='white'){
   document.getElementById('ppSub').textContent=sub;
   el.className='power-popup'; void el.offsetWidth; el.classList.add('show');
   if(popupTimer) clearTimeout(popupTimer);
-  popupTimer=setTimeout(()=>{ el.className='power-popup'; renderStatus(); },1800);
+  popupTimer=setTimeout(()=>{ el.className='power-popup'; renderStatus(); },duration);
 }
 
 function smashyTaunt(type){}
