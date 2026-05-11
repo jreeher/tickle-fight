@@ -377,7 +377,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
       <div class="tutorial-step" id="tutStep1">
         <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
           <img src="./feather-arrow.webp" style="width:52px;height:52px;object-fit:contain;">
-          <img src="./glitter-bomb.webp" style="width:52px;height:52px;object-fit:contain;">
+          <img src="./glitter-hole.png" style="width:52px;height:52px;object-fit:contain;">
         </div>
         <div class="tut-step-title">Flipping Tiles</div>
         <p class="tut-text">Tap any face-down tile to flip it over and see what's underneath. Then tap a second tile.</p>
@@ -385,7 +385,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
           <div class="tut-row"><span class="tut-icon">✅</span><span><strong style="color:var(--green)">Match!</strong> Both tiles show the same image — their power activates immediately. The tiles stay face-up and are removed from play.</span></div>
           <div class="tut-row"><span class="tut-icon">❌</span><span><strong style="color:var(--red)">No match.</strong> Both tiles flip back face-down, and Smashy takes his turn. Try to remember where they were!</span></div>
         </div>
-        <p class="tut-text">Rocks <img src="./rock.webp" style="width:16px;height:16px;vertical-align:middle;"> dropped by Smashy block tiles — you can't flip them until a Glitter Bomb clears them!</p>
+        <p class="tut-text">Rocks <img src="./rock.webp" style="width:16px;height:16px;vertical-align:middle;"> dropped by Smashy block tiles — only a <img src="./glitter-hole.png" style="width:16px;height:16px;vertical-align:middle;"> Glitter Hole or <img src="./wind-blast.webp" style="width:16px;height:16px;vertical-align:middle;"> Wind Blast can remove them!</p>
       </div>
 
       <div class="tutorial-step" id="tutStep2">
@@ -409,7 +409,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <p class="tut-text">After every pair of tile flips — whether you matched or not — Smashy rolls a die and does one of these:</p>
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">⬆️</span><span><strong style="color:var(--text)">Charge 1–3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
-          <div class="tut-row"><span class="tut-icon"><img src="./rock.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. You can't flip rocks until a <img src="./glitter-bomb.webp" style="width:14px;height:14px;vertical-align:middle;"> Glitter Bomb removes them.</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./rock.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. Only a <img src="./glitter-hole.png" style="width:14px;height:14px;vertical-align:middle;"> Glitter Hole or <img src="./wind-blast.webp" style="width:14px;height:14px;vertical-align:middle;"> Wind Blast can remove rocks.</span></div>
           <div class="tut-row"><span class="tut-icon">↔️</span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles — scrambling your memory. Watch out for this one!</span></div>
         </div>
         <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen</strong> <img src="./freeze-wand.webp" style="width:14px;height:14px;vertical-align:middle;">, he skips his turn. If a <img src="./queen.webp" style="width:14px;height:14px;vertical-align:middle;"> <strong style="color:#c44dff">Cloud Guard</strong> is on his next tile, he stops before entering.</p>
@@ -1101,7 +1101,7 @@ function execMove(ri){
     if(a!==null&&b!==null){
       swapIndices(a,b,true);
       addLog(`↔️ ${msg}`,'b');
-      showBossPopup('↔️','Swap!',msg,2500);
+      showBossPopup('↔️','Swap!',msg);
     } else {
       addLog('↔️ Smashy tried to swap — not enough tiles!','n');
       showBossPopup('↔️','Swap Failed!','No tiles to mix...');
@@ -1136,7 +1136,7 @@ function execMove(ri){
 
   if(d.miss){
     showBossPopup('','Smashy is taunting you!','');
-    document.getElementById('ppEmoji').innerHTML='<img src="./rock.webp" style="width:36px;height:36px;object-fit:contain;display:inline-block;vertical-align:middle;"><img src="./rock.webp" style="width:36px;height:36px;object-fit:contain;display:inline-block;vertical-align:middle;margin-left:-12px;">';
+    document.getElementById('ppEmoji').innerHTML='<img src="./rock.webp" style="width:72px;height:72px;object-fit:contain;display:inline-block;vertical-align:middle;"><img src="./rock.webp" style="width:72px;height:72px;object-fit:contain;display:inline-block;vertical-align:middle;margin-left:-30px;">';
     smashyTaunt('move'); render(); return;
   }
 
