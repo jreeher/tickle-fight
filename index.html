@@ -14,7 +14,11 @@
 <link rel="preload" href="./rainbow-guardian.webp" as="image">
 <link rel="preload" href="./cloud-wall.webp" as="image">
 <link rel="preload" href="./star-wand.webp" as="image">
-<link rel="preload" href="./cloud-cannon.webp" as="image">
+<link rel="preload" href="./cloud-cannon-2.webp" as="image">
+<link rel="preload" href="./queen.webp" as="image">
+<link rel="preload" href="./cloud-1.webp" as="image">
+<link rel="preload" href="./cloud-2.webp" as="image">
+<link rel="preload" href="./cloud-3.webp" as="image">
 <link rel="preload" href="./wind-blast.webp" as="image">
 <link rel="preload" href="./unicorn-horn.webp" as="image">
 <link rel="preload" href="./glitter-bomb.webp" as="image">
@@ -32,7 +36,7 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0%,#b8ddf0 40%,#d0edf8 100%);color:var(--text);min-height:100vh;overflow-x:hidden;}
 .starfield{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.cloud{position:absolute;pointer-events:none;font-size:var(--sz,1.5rem);opacity:var(--op,0.6);animation:drift var(--dur,30s) linear infinite;white-space:nowrap;filter:drop-shadow(0 2px 6px rgba(100,160,210,0.25));}
+.cloud{position:absolute;pointer-events:none;width:var(--sz,80px);opacity:var(--op,0.6);animation:drift var(--dur,30s) linear infinite;filter:drop-shadow(0 2px 6px rgba(100,160,210,0.25));}
 @keyframes drift{from{transform:translateX(110vw);}to{transform:translateX(-110vw);}}
 
 .app{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;max-width:560px;margin:0 auto;padding:12px;min-height:100vh;}
@@ -230,7 +234,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-hp-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ff6666,#ff4d4d);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.35);}
 .setup-hp-slider::-moz-range-track{height:8px;border-radius:99px;background:rgba(255,255,255,0.15);}
 .setup-hp-val{font-size:0.85rem;font-weight:700;color:var(--red);min-width:32px;text-align:right;}
-.setup-hard-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
+.setup-hard-row{display:flex;align-items:center;gap:10px;width:fit-content;margin:0 auto 14px;padding:10px 16px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
 .setup-hard-row:hover{background:rgba(255,80,80,0.1);}
 .setup-hard-row.active{background:rgba(255,80,80,0.14);border-color:rgba(255,80,80,0.4);}
 .setup-hard-label{font-size:0.8rem;font-weight:700;color:var(--muted);}
@@ -373,7 +377,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
       <div class="tutorial-step" id="tutStep2">
         <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
           <img src="./feather-arrow.webp" style="width:52px;height:52px;object-fit:contain;">
-          <img src="./cloud-cannon.webp" style="width:52px;height:52px;object-fit:contain;">
+          <img src="./cloud-cannon-2.webp" style="width:52px;height:52px;object-fit:contain;">
         </div>
         <div class="tut-step-title">Tile Powers</div>
         <p class="tut-text">Each tile does something when you match a pair. For example:</p>
@@ -531,7 +535,8 @@ const TILE_CONFIG = [
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, desc:'Place on a tile to stop Smashy' },
   { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, desc:'Blocks one castle breach' },
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
-  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon.webp',     fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
+  { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
+  { id:'queen',     name:'Cloud Queen',     img:'./queen.webp',            fc:'face-queen',     damage:0, defaultPairs:0, singleton:true, desc:'Knocks Smashy back 7 spaces!' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back' },
   { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
   { id:'glitter',   name:'Glitter Bomb',   img:'./glitter-bomb.webp',     fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Removes all rocks from the board' },
@@ -639,8 +644,8 @@ function changeCount(id, delta) {
 }
 
 function updateSetupStats() {
-  const totalPairs = Object.values(setupCounts).reduce((a,b)=>a+b,0);
-  const totalTiles = totalPairs * 2;
+  const totalTiles = TILE_CONFIG.reduce((sum,t) => sum + (t.singleton ? setupCounts[t.id] : setupCounts[t.id]*2), 0);
+  const totalPairs = TILE_CONFIG.filter(t=>!t.singleton).reduce((sum,t)=>sum+setupCounts[t.id],0);
   const maxDmg = TILE_CONFIG.reduce((sum,t) => sum + t.damage * setupCounts[t.id], 0);
   document.getElementById('setupMapSize').textContent = totalTiles || '—';
   document.getElementById('setupMaxDmg').textContent = maxDmg || '—';
@@ -649,7 +654,7 @@ function updateSetupStats() {
   slider.max = effectiveMax;
   if (parseInt(slider.value) > effectiveMax) slider.value = effectiveMax;
   document.getElementById('hpSliderVal').textContent = slider.value;
-  document.getElementById('btnStart').disabled = totalPairs < 2;
+  document.getElementById('btnStart').disabled = totalTiles < 4;
   updateSliderFill();
 }
 
@@ -661,8 +666,8 @@ function updateSliderFill() {
 }
 
 function startFromSetup() {
-  const totalPairs = Object.values(setupCounts).reduce((a,b)=>a+b,0);
-  if (totalPairs < 2) return;
+  const totalTilesCheck = TILE_CONFIG.reduce((sum,t) => sum + (t.singleton ? setupCounts[t.id] : setupCounts[t.id]*2), 0);
+  if (totalTilesCheck < 4) return;
   const hp = parseInt(document.getElementById('hpSlider').value);
   document.getElementById('setupOverlay').classList.add('off');
   initGame(setupCounts, hp, hardMode);
@@ -672,7 +677,8 @@ function initGame(counts, bossHp, isHard=false){
   let deck = [];
   TILE_CONFIG.forEach(t => {
     const pairs = counts[t.id] || 0;
-    for (let i = 0; i < pairs * 2; i++) deck.push({...t});
+    if(t.singleton){ for(let i=0;i<pairs;i++) deck.push({...t}); }
+    else { for(let i=0;i<pairs*2;i++) deck.push({...t}); }
   });
   shuffle(deck);
   PATH_COORDS = generatePath(deck.length);
@@ -866,6 +872,19 @@ function onCard(pathIdx){
   const flippedEl=cardEl(pathIdx); if(flippedEl) flippedEl.classList.add('flipped');
   renderStatus();
 
+  // Singleton tile: activates immediately on flip, no pair needed
+  if(G.cards[pathIdx].singleton){
+    G.canFlip=false; G.canFlipLockedAt=Date.now();
+    setTimeout(()=>{
+      G.matched.add(pathIdx); G.flipped=[]; G.canFlip=true; G.canFlipLockedAt=null;
+      applyPower(G.cards[pathIdx].id); render();
+      if(checkWin()) return;
+      setTimeout(()=>bossTurn(), G.powerDelay);
+      G.powerDelay=480;
+    },500);
+    return;
+  }
+
   if(G.flipped.length===2){
     G.canFlip=false; G.canFlipLockedAt=Date.now();
     const [a,b]=G.flipped;
@@ -906,6 +925,7 @@ function applyPower(id){
   else if(id==='tornado'){ pushBackN(5); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 5!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
+  else if(id==='queen')  { pushBackN(7); addLog('👑 Cloud Queen — Smashy knocked back 7!','g'); showPopup('👑','Cloud Queen!','Smashy knocked back 7!','#e8b4f8'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -1170,15 +1190,16 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.rand
 // Drifting clouds
 (function(){
   const sf=document.getElementById('sf');
+  const imgs=['./cloud-1.webp','./cloud-2.webp','./cloud-3.webp'];
   for(let i=0;i<16;i++){
-    const c=document.createElement('div'); c.className='cloud';
+    const c=document.createElement('img'); c.className='cloud';
+    c.src=imgs[i%3];
     const dur=60+Math.random()*80;
-    const sz=3+Math.random()*3.5;
+    const sz=60+Math.random()*80;
     const top=Math.random()*80;
     const op=0.45+Math.random()*0.35;
     const delay=-Math.random()*dur;
-    c.textContent='☁️';
-    c.style.cssText=`--sz:${sz}rem;--dur:${dur}s;--op:${op};top:${top}%;left:0;animation-delay:${delay}s`;
+    c.style.cssText=`--sz:${sz}px;--dur:${dur}s;--op:${op};top:${top}%;left:0;animation-delay:${delay}s`;
     sf.appendChild(c);
   }
 })();
