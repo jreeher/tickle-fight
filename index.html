@@ -660,7 +660,7 @@ function renderSetupTiles() {
       <div class="setup-counter">
         <button class="setup-btn" onclick="changeCount('${t.id}',-1)">−</button>
         <span class="setup-count" id="cnt-${t.id}">${setupCounts[t.id]}</span>
-        <button class="setup-btn" id="cnt-plus-${t.id}" onclick="changeCount('${t.id}',1)" style="${t.max !== undefined && setupCounts[t.id] >= t.max ? 'display:none' : ''}">+</button>
+        <button class="setup-btn" id="cnt-plus-${t.id}" onclick="changeCount('${t.id}',1)" style="${t.max !== undefined && setupCounts[t.id] >= t.max ? 'opacity:0.3;cursor:not-allowed;pointer-events:none' : ''}">+</button>
       </div>
     </div>`).join('');
 }
@@ -671,7 +671,12 @@ function changeCount(id, delta) {
   setupCounts[id] = Math.min(maxAllowed, Math.max(0, setupCounts[id] + delta));
   document.getElementById(`cnt-${id}`).textContent = setupCounts[id];
   const plusBtn = document.getElementById(`cnt-plus-${id}`);
-  if (plusBtn && t.max !== undefined) plusBtn.style.display = setupCounts[id] >= t.max ? 'none' : '';
+  if (plusBtn && t.max !== undefined) {
+    const atMax = setupCounts[id] >= t.max;
+    plusBtn.style.opacity = atMax ? '0.3' : '';
+    plusBtn.style.cursor = atMax ? 'not-allowed' : '';
+    plusBtn.style.pointerEvents = atMax ? 'none' : '';
+  }
   updateSetupStats();
 }
 
