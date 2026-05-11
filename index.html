@@ -223,7 +223,8 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-btn{width:24px;height:24px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
 .setup-btn:hover{background:rgba(255,255,255,0.15);}
 .setup-count{font-size:0.85rem;font-weight:700;color:var(--gold);min-width:16px;text-align:center;}
-.setup-stats{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.78rem;display:flex;flex-direction:column;gap:5px;}
+.setup-info-row{display:flex;gap:10px;align-items:stretch;margin-bottom:14px;}
+.setup-stats{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 14px;font-size:0.78rem;display:flex;flex-direction:column;gap:5px;flex:1;}
 .setup-stat-row{display:flex;justify-content:space-between;align-items:center;color:var(--muted);}
 .setup-stat-val{font-weight:700;color:var(--text);}
 .setup-hp-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
@@ -234,7 +235,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-hp-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ff6666,#ff4d4d);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.35);}
 .setup-hp-slider::-moz-range-track{height:8px;border-radius:99px;background:rgba(255,255,255,0.15);}
 .setup-hp-val{font-size:0.85rem;font-weight:700;color:var(--red);min-width:32px;text-align:right;}
-.setup-hard-row{display:flex;align-items:center;gap:10px;width:fit-content;margin:0 auto 14px;padding:10px 16px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
+.setup-hard-row{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
 .setup-hard-row:hover{background:rgba(255,80,80,0.1);}
 .setup-hard-row.active{background:rgba(255,80,80,0.14);border-color:rgba(255,80,80,0.4);}
 .setup-hard-label{font-size:0.8rem;font-weight:700;color:var(--muted);}
@@ -317,20 +318,20 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="setup-title">⚔️ Setup Battle</div>
     <div class="setup-sub">Choose your tiles and set Smashy's strength</div>
     <div class="setup-tiles" id="setupTiles"></div>
-    <div class="setup-stats">
-      <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
-      <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
+    <div class="setup-info-row">
+      <div class="setup-stats">
+        <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
+        <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
+      </div>
+      <div class="setup-hard-row" id="hardModeRow" onclick="toggleHardMode()">
+        <div class="setup-hard-label">🔥 <strong>Hard Mode</strong></div>
+        <div class="setup-hard-toggle" id="hardModeToggle"></div>
+      </div>
     </div>
     <div class="setup-hp-row">
       <span class="setup-hp-label">Smashy's HP</span>
-      <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="document.getElementById('hpSliderVal').textContent=this.value;updateSliderFill()">
+      <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="userChangedHp=true;document.getElementById('hpSliderVal').textContent=this.value;updateSliderFill()">
       <span class="setup-hp-val" id="hpSliderVal">8</span>
-    </div>
-    <div class="setup-hard-row" id="hardModeRow" onclick="toggleHardMode()">
-      <div>
-        <div class="setup-hard-label">🔥 <strong>Hard Mode</strong></div>
-      </div>
-      <div class="setup-hard-toggle" id="hardModeToggle"></div>
     </div>
     <button class="btn-start" id="btnStart" onclick="startFromSetup()">⚔️ Start Battle!</button>
     <button class="btn-tutorial" onclick="showTutorial()">📖 Tutorial</button>
@@ -563,6 +564,7 @@ const DICE_DEF_HARD = [
   { e:'🪨',         lbl:'ROCK! Current tile blocked!',  rock:true    },
 ];
 let hardMode = false;
+let userChangedHp = false;
 
 function toggleHardMode() {
   hardMode = !hardMode;
@@ -617,6 +619,7 @@ function renderTutStep() {
 
 function showSetup() {
   TILE_CONFIG.forEach(t => { setupCounts[t.id] = t.defaultPairs; });
+  userChangedHp = false;
   renderSetupTiles();
   updateSetupStats();
   document.getElementById('setupOverlay').classList.remove('off');
@@ -652,7 +655,8 @@ function updateSetupStats() {
   const slider = document.getElementById('hpSlider');
   const effectiveMax = Math.max(1, maxDmg);
   slider.max = effectiveMax;
-  if (parseInt(slider.value) > effectiveMax) slider.value = effectiveMax;
+  if (!userChangedHp) slider.value = Math.max(1, effectiveMax - 2);
+  else if (parseInt(slider.value) > effectiveMax) slider.value = effectiveMax;
   document.getElementById('hpSliderVal').textContent = slider.value;
   document.getElementById('btnStart').disabled = totalTiles < 4;
   updateSliderFill();
