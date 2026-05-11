@@ -112,6 +112,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card.peeked .card-face{box-shadow:0 0 10px rgba(245,200,66,0.55);border-color:var(--gold)!important;}
 .card.warrior-cell .card-back{border-color:rgba(255,150,100,0.55)!important;box-shadow:0 0 9px rgba(255,150,100,0.28);}
 .card.warrior-target .card-back{border-color:rgba(255,150,100,0.7)!important;box-shadow:0 0 12px rgba(255,150,100,0.4)!important;cursor:crosshair;}
+.card.glitter-hole-cell .card-back{border-color:rgba(255,100,220,0.55)!important;box-shadow:0 0 9px rgba(255,100,220,0.28);}
+.card.glitter-hole-target .card-back{border-color:rgba(255,100,220,0.7)!important;box-shadow:0 0 12px rgba(255,100,220,0.4)!important;cursor:crosshair;}
 .card.rock-cell{cursor:not-allowed;}
 .card.rock-cell .card-back{background:linear-gradient(135deg,#2a2018,#3a3020)!important;border-color:rgba(180,140,60,0.5)!important;box-shadow:0 0 8px rgba(150,110,40,0.3);}
 
@@ -124,6 +126,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 @keyframes boss-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
 .warrior-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;pointer-events:none;z-index:2;animation:warrior-pulse 2s ease-in-out infinite;}
 @keyframes warrior-pulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 4px rgba(255,150,100,0.7));}50%{transform:scale(1.15);filter:drop-shadow(0 0 12px rgba(255,200,100,1));}}
+.glitter-hole-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2;animation:glitter-pulse 2s ease-in-out infinite;}
+@keyframes glitter-pulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 4px rgba(255,100,220,0.7));}50%{transform:scale(1.15);filter:drop-shadow(0 0 12px rgba(255,160,240,1));}}
 .rock-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;pointer-events:none;z-index:2;}
 
 .face-lightning{background:var(--tile-lightning);border-color:rgba(139,195,74,0.42)!important;}
@@ -541,7 +545,7 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
-  { id:'queen',     name:'Cloud Queen',    img:'./queen.webp',            fc:'face-queen',     damage:3, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.png', desc:'3 damage + knocks Smashy back 5 spaces!' },
+  { id:'queen',     name:'Rainbow Royals',    img:'./queen.webp',            fc:'face-queen',     damage:3, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.png', desc:'3 damage + knocks Smashy back 5 spaces!' },
   { id:'king',      name:'King',           img:'./king.png',              fc:'face-king',      damage:0, defaultPairs:0, max:1, hidden:true, desc:'' },
   { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, max:2, desc:'Deals 2 damage to Smashy' },
@@ -754,9 +758,10 @@ function initGame(counts, bossHp, mode='medium'){
     matched: new Set(),
     bossPos: 0,
     warriors: new Set(),
+    glitterHoles: new Set(),
+    glitterHoleMode: false,
     rocks: [],
     shields: 0,
-    glitterTrap: false,
     hp: bossHp,
     maxHp: bossHp,
     peek: false, peekN: 0, peekIdx: [],
@@ -827,6 +832,7 @@ function renderGrid(){
       const isMatched = G.matched.has(pathIdx);
       const isFlipped = G.flipped.includes(pathIdx);
       const isWarrior = G.warriors.has(pathIdx);
+      const isGlitterHole = G.glitterHoles.has(pathIdx);
       const isRock = G.rocks.includes(pathIdx);
 
       el.className = 'card';
@@ -838,14 +844,17 @@ function renderGrid(){
       if(!G.review && G.lastMatched.includes(pathIdx)) el.classList.add('just-matched');
       if(!G.review && isBoss) el.classList.add('boss-cell');
       if(!G.review && isWarrior && !isBoss) el.classList.add('warrior-cell');
+      if(!G.review && isGlitterHole && !isBoss) el.classList.add('glitter-hole-cell');
       if(!G.review && isRock && !isBoss) el.classList.add('rock-cell');
       if(!G.review && G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
+      if(!G.review && G.glitterHoleMode && isMatched && !isBoss) el.classList.add('glitter-hole-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterHole&&!isBoss&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
+      else if(G.glitterHoleMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
 
       g.appendChild(el);
@@ -870,6 +879,9 @@ function renderStatus(){
   if(G.warriorMode){
     banner.className = 'context-banner warrior';
     banner.innerHTML = `<img src="./rainbow-guardian.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
+  } else if(G.glitterHoleMode){
+    banner.className = 'context-banner warrior';
+    banner.innerHTML = `<img src="./glitter-hole.png" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Glitter Hole</div><div class="cb-sub">Click a matched tile to place the trap</div>`;
   } else if(G.peek){
     const left = 4 - G.peekN;
     banner.className = 'context-banner peek';
@@ -904,6 +916,20 @@ function onCard(pathIdx){
     G.warriors.add(pathIdx);
     G.warriorMode = false;
     addLog('☁️ Cloud Guard placed! Smashy will stop before stepping on it.','g');
+    clearPopupActionMode();
+    render();
+    setTimeout(()=>bossTurn(), 480);
+    return;
+  }
+
+  // GLITTER HOLE PLACEMENT
+  if(G.glitterHoleMode){
+    if(!G.matched.has(pathIdx) || pathIdx===G.bossPos || G.rocks.includes(pathIdx)){
+      addLog('✨ Glitter Hole can only be placed on matched tiles!','n'); return;
+    }
+    G.glitterHoles.add(pathIdx);
+    G.glitterHoleMode = false;
+    addLog('✨ Glitter Hole placed! Smashy will be stopped when he lands on it.','g');
     clearPopupActionMode();
     render();
     setTimeout(()=>bossTurn(), 480);
@@ -993,11 +1019,11 @@ function applyPower(id){
   else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { G.rocks=[]; addLog('💨 Wind Blast — all rocks removed!','g'); showPopup('💨','Wind Blast!','All rocks cleared!','#c8a856'); render(); }
   else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterTrap=true; addLog('✨ Glitter Hole set — Smashy will be stopped on his next step!','g'); showPopup('✨','Glitter Hole!','Smashy will be stopped!','#ffe4f7'); }
+  else if(id==='glitter'){ G.glitterHoleMode=true; addLog('✨ Click a matched tile to place the Glitter Hole!','i'); showPopup('✨','Glitter Hole!','Click a matched tile!','#ffe4f7'); setTimeout(setPopupActionMode,300); }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
-  else if(id==='queen')  { damageBoss(3,'👑 Cloud Queen — 3 damage!'); pushBackN(5); showPopup('👑','Cloud Queen!','-3 HP + pushed back 5!','#e8b4f8'); G.powerDelay=1400; }
+  else if(id==='queen')  { damageBoss(3,'👑 Rainbow Royals — 3 damage!'); pushBackN(5); showPopup('👑','Rainbow Royals!','-3 HP + pushed back 5!','#e8b4f8'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -1145,8 +1171,8 @@ function execMove(ri){
       break;
     }
     G.bossPos=nextPos;
-    if(G.glitterTrap){
-      G.glitterTrap=false; G.rocks=[];
+    if(G.glitterHoles.has(nextPos)){
+      G.glitterHoles.delete(nextPos); G.rocks=[];
       addLog('✨ Glitter Hole triggered! Smashy stopped — all rocks cleared!','g');
       showPopup('✨','Glitter Hole!','Smashy stopped — rocks cleared!','#ffe4f7');
       render(); break;
