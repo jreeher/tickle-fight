@@ -21,7 +21,7 @@
 <link rel="preload" href="./cloud-3.webp" as="image">
 <link rel="preload" href="./wind-blast.webp" as="image">
 <link rel="preload" href="./unicorn-horn.webp" as="image">
-<link rel="preload" href="./glitter-bomb.webp" as="image">
+<link rel="preload" href="./glitter-bucket.png" as="image">
 <link rel="preload" href="./rainbow-tornado.webp" as="image">
 <link rel="preload" href="./freeze-wand.webp" as="image">
 <link rel="preload" href="./rain-bow.webp" as="image">
@@ -98,11 +98,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);border-radius:9px;}
 .card.flipped .card-inner,.card.matched .card-inner{transform:rotateY(180deg);}
 .card-back,.card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
-.card-back{background:linear-gradient(145deg,#ffffff 0%,#e4f3fc 55%,#cce8f8 100%);border:1.5px solid rgba(90,160,210,0.4);}
-.card-back::after{content:'✦';color:rgba(80,150,200,0.35);font-size:0.9rem;}
+.card-back{background:url('./cloud-2.webp') center/cover no-repeat;border:1.5px solid rgba(90,160,210,0.4);}
+.card-back::after{content:'';}
 .card-face{transform:rotateY(180deg);border:1.5px solid transparent;}
 .card.matched .card-face{opacity:0.45;border-color:rgba(255,255,255,0.08)!important;}
-.card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back{border-color:rgba(60,150,210,0.7);background:linear-gradient(145deg,#ffffff 0%,#b8dff5 100%);}
+.card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back{border-color:rgba(60,150,210,0.7);background:linear-gradient(rgba(100,180,240,0.25),rgba(100,180,240,0.25)),url('./cloud-2.webp') center/cover no-repeat;}
 .card.boss-cell{cursor:default;}
 .card.boss-cell .card-back{background:linear-gradient(135deg,#3a1818,#5a2020);border-color:rgba(255,80,80,0.55)!important;box-shadow:0 0 12px rgba(255,60,60,0.35);}
 .card.peeked .card-face{box-shadow:0 0 10px rgba(245,200,66,0.55);border-color:var(--gold)!important;}
@@ -133,6 +133,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .face-tornado{background:#80c8f0;border-color:rgba(150,220,255,0.42)!important;}
 .face-freeze{background:#80d8f8;border-color:rgba(150,235,255,0.42)!important;}
 .face-rainbow{background:#f080a0;border-color:rgba(255,160,190,0.42)!important;}
+.face-queen{background:linear-gradient(135deg,#7b2ff7 0%,#c44dff 60%,#f5c842 100%);border-color:rgba(245,200,66,0.6)!important;box-shadow:0 0 10px rgba(196,77,255,0.35);}
 
 /* Status */
 .status-bar{display:flex;gap:7px;align-items:center;padding:6px 14px;background:var(--bg2);border-radius:99px;border:1px solid var(--border);font-size:0.78rem;font-weight:700;}
@@ -235,16 +236,14 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .setup-hp-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#ff6666,#ff4d4d);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.5);border:2px solid rgba(255,255,255,0.35);}
 .setup-hp-slider::-moz-range-track{height:8px;border-radius:99px;background:rgba(255,255,255,0.15);}
 .setup-hp-val{font-size:0.85rem;font-weight:700;color:var(--red);min-width:32px;text-align:right;}
-.setup-hard-row{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;background:rgba(255,80,80,0.05);border:1px solid rgba(255,80,80,0.15);cursor:pointer;transition:background 0.15s;}
-.setup-hard-row:hover{background:rgba(255,80,80,0.1);}
-.setup-hard-row.active{background:rgba(255,80,80,0.14);border-color:rgba(255,80,80,0.4);}
-.setup-hard-label{font-size:0.8rem;font-weight:700;color:var(--muted);}
-.setup-hard-label strong{color:var(--red);}
-.setup-hard-desc{font-size:0.65rem;color:var(--muted);margin-top:2px;}
-.setup-hard-toggle{width:36px;height:20px;border-radius:99px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);position:relative;flex-shrink:0;transition:background 0.2s;}
-.setup-hard-toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.5);transition:transform 0.2s,background 0.2s;}
-.setup-hard-row.active .setup-hard-toggle{background:var(--red);border-color:var(--red);}
-.setup-hard-row.active .setup-hard-toggle::after{transform:translateX(16px);background:white;}
+.setup-mode-box{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);}
+.setup-mode-label{font-size:0.8rem;font-weight:700;color:var(--muted);}
+.setup-mode-btns{display:flex;gap:6px;}
+.mode-btn{padding:6px 13px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:var(--muted);font-size:0.76rem;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.mode-btn:hover{background:rgba(255,255,255,0.1);}
+.mode-btn.active-easy{background:rgba(80,210,100,0.15);border-color:rgba(80,210,100,0.45);color:#72e28a;}
+.mode-btn.active-medium{background:rgba(80,160,255,0.15);border-color:rgba(80,160,255,0.45);color:#80b4ff;}
+.mode-btn.active-hard{background:rgba(255,80,80,0.15);border-color:rgba(255,80,80,0.45);color:var(--red);}
 .btn-start{width:100%;padding:12px;font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:1px;background:linear-gradient(135deg,var(--gold),#ff8c42);color:#1a1200;border:none;border-radius:99px;cursor:pointer;transition:transform 0.12s;}
 .btn-start:hover{transform:translateY(-2px) scale(1.02);}
 .btn-start:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
@@ -315,7 +314,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 
 <div class="setup-overlay" id="setupOverlay">
   <div class="setup-card">
-    <div class="setup-title">⚔️ Setup Battle</div>
+    <div class="setup-title">Setup Battle</div>
     <div class="setup-sub">Choose your tiles and set Smashy's strength</div>
     <div class="setup-tiles" id="setupTiles"></div>
     <div class="setup-info-row">
@@ -323,9 +322,13 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
         <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
       </div>
-      <div class="setup-hard-row" id="hardModeRow" onclick="toggleHardMode()">
-        <div class="setup-hard-label">🔥 <strong>Hard Mode</strong></div>
-        <div class="setup-hard-toggle" id="hardModeToggle"></div>
+      <div class="setup-mode-box" id="modeBox">
+        <div class="setup-mode-label"><strong>Difficulty</strong></div>
+        <div class="setup-mode-btns">
+          <button class="mode-btn" id="modeEasy" onclick="setMode('easy')">🌈 Easy</button>
+          <button class="mode-btn active-medium" id="modeMedium" onclick="setMode('medium')">⚔️ Medium</button>
+          <button class="mode-btn" id="modeHard" onclick="setMode('hard')">🔥 Hard</button>
+        </div>
       </div>
     </div>
     <div class="setup-hp-row">
@@ -532,16 +535,16 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
+  { id:'queen',     name:'Cloud Queen',    img:'./queen.webp',            fc:'face-queen',     damage:0, defaultPairs:1, singleton:true, max:1, desc:'Knocks Smashy back 5 spaces!' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, desc:'Deals 2 damage to Smashy' },
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, desc:'Place on a tile to stop Smashy' },
   { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, desc:'Blocks one castle breach' },
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, desc:'Peek at 4 face-down tiles' },
   { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, desc:'Deals 3 damage to Smashy' },
-  { id:'queen',     name:'Cloud Queen',     img:'./queen.webp',            fc:'face-queen',     damage:0, defaultPairs:0, singleton:true, desc:'Knocks Smashy back 7 spaces!' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:1, defaultPairs:1, desc:'1 damage + pushes Smashy back' },
   { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Bomb',   img:'./glitter-bomb.webp',     fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Removes all rocks from the board' },
-  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, desc:'Pushes Smashy back 5 spaces' },
+  { id:'glitter',   name:'Glitter Bucket', img:'./glitter-bucket.png',    fc:'face-glitter',   damage:0, defaultPairs:1, desc:'Clears all rocks + blocks next castle breach' },
+  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, desc:'Pushes Smashy back 4 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, desc:'Freezes Smashy for one turn' },
   { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, desc:'1 damage + pushes Smashy back 2' },
 ];
@@ -563,12 +566,22 @@ const DICE_DEF_HARD = [
   { e:'↔️',         lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
   { e:'🪨',         lbl:'ROCK! Current tile blocked!',  rock:true    },
 ];
-let hardMode = false;
+const DICE_DEF_EASY = [
+  { e:'😵', lbl:'Smashy trips — no movement!',  miss:true  },
+  { e:'😵', lbl:'Smashy trips — no movement!',  miss:true  },
+  { e:'⬆️', lbl:'Charge ahead!',                step:true  },
+  { e:'⬆️', lbl:'Charge ahead!',                step:true  },
+  { e:'⬆️⬆️', lbl:'Double step — moves twice!', step2:true },
+  { e:'⬆️⬆️', lbl:'Double step — moves twice!', step2:true },
+];
+let gameMode = 'medium';
 let userChangedHp = false;
 
-function toggleHardMode() {
-  hardMode = !hardMode;
-  document.getElementById('hardModeRow').classList.toggle('active', hardMode);
+function setMode(mode) {
+  gameMode = mode;
+  document.getElementById('modeEasy').className   = 'mode-btn' + (mode==='easy'   ? ' active-easy'   : '');
+  document.getElementById('modeMedium').className = 'mode-btn' + (mode==='medium' ? ' active-medium' : '');
+  document.getElementById('modeHard').className   = 'mode-btn' + (mode==='hard'   ? ' active-hard'   : '');
 }
 
 const TAUNTS = {
@@ -641,7 +654,9 @@ function renderSetupTiles() {
 }
 
 function changeCount(id, delta) {
-  setupCounts[id] = Math.max(0, setupCounts[id] + delta);
+  const t = TILE_CONFIG.find(t => t.id === id);
+  const maxAllowed = t && t.max !== undefined ? t.max : Infinity;
+  setupCounts[id] = Math.min(maxAllowed, Math.max(0, setupCounts[id] + delta));
   document.getElementById(`cnt-${id}`).textContent = setupCounts[id];
   updateSetupStats();
 }
@@ -674,10 +689,10 @@ function startFromSetup() {
   if (totalTilesCheck < 4) return;
   const hp = parseInt(document.getElementById('hpSlider').value);
   document.getElementById('setupOverlay').classList.add('off');
-  initGame(setupCounts, hp, hardMode);
+  initGame(setupCounts, hp, gameMode);
 }
 
-function initGame(counts, bossHp, isHard=false){
+function initGame(counts, bossHp, mode='medium'){
   let deck = [];
   TILE_CONFIG.forEach(t => {
     const pairs = counts[t.id] || 0;
@@ -704,7 +719,7 @@ function initGame(counts, bossHp, isHard=false){
     pairs: 0,
     lastMatched: [],
     powerDelay: 480,
-    hardMode: isHard,
+    mode: mode,
     log: [],
   };
   G.review = false;
@@ -789,7 +804,7 @@ function renderGrid(){
       g.appendChild(el);
     }
   }
-  document.getElementById('pBadge').textContent = `${Math.max(0,G.pairs)} / ${TOTAL/2} matched`;
+  document.getElementById('pBadge').textContent = `${G.matched.size} / ${TOTAL} matched`;
 }
 
 function renderBoss(){
@@ -827,7 +842,8 @@ function renderPeek(){
 function setDice(ri){
   const bar=document.getElementById('sbar'), txt=document.getElementById('stxt');
   if(bar) bar.className='status-bar s-boss';
-  if(txt) txt.textContent=`🎲 ${(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri].lbl}`;
+  const diceDef = G.mode==='easy'?DICE_DEF_EASY:G.mode==='hard'?DICE_DEF_HARD:DICE_DEF;
+  if(txt) txt.textContent=`🎲 ${diceDef[ri].lbl}`;
 }
 
 // ── CARD CLICK ───────────────────────────────────────────────────────────────
@@ -925,11 +941,11 @@ function applyPower(id){
   else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { damageBoss(1,'💨 Wind Blast — 1 damage + pushback!'); pushBack(); showPopup('💨','Wind Blast!','-1 HP + Smashy pushed back!','#c8a856'); G.powerDelay=1400; }
   else if(id==='unicorn'){ pushBackN(3); showPopup('🦄','Unicorn Horn!','Smashy pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.rocks=[]; addLog('✨ Glitter Bomb — all rocks cleared!','g'); showPopup('✨','Glitter Bomb!','All rocks removed!','#ffe4f7'); render(); }
-  else if(id==='tornado'){ pushBackN(5); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 5!','#a0d8ff'); G.powerDelay=1400; }
+  else if(id==='glitter'){ G.rocks=[]; G.shields++; addLog('✨ Glitter Bucket — all rocks cleared + castle protected!','g'); renderShields(); showPopup('✨','Glitter Bucket!','Rocks cleared + shield added!','#ffe4f7'); render(); }
+  else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
-  else if(id==='queen')  { pushBackN(7); addLog('👑 Cloud Queen — Smashy knocked back 7!','g'); showPopup('👑','Cloud Queen!','Smashy knocked back 7!','#e8b4f8'); G.powerDelay=1400; }
+  else if(id==='queen')  { pushBackN(5); addLog('👑 Cloud Queen — Smashy knocked back 5!','g'); showPopup('👑','Cloud Queen!','Smashy knocked back 5!','#e8b4f8'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -971,7 +987,7 @@ function doBoss(){
 
 // ── MOVEMENT ─────────────────────────────────────────────────────────────────
 function execMove(ri){
-  const d=(G.hardMode?DICE_DEF_HARD:DICE_DEF)[ri];
+  const d=(G.mode==='easy'?DICE_DEF_EASY:G.mode==='hard'?DICE_DEF_HARD:DICE_DEF)[ri];
 
   if(d.swapAdj){
     const bPos=G.bossPos;
