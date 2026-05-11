@@ -175,7 +175,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .popup-title{font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;}
 .popup-sub{font-size:0.85rem;color:rgba(255,255,255,0.6);margin-top:2px;}
 @keyframes shake{0%,100%{transform:translate(0,0) rotate(0);}15%{transform:translate(-6px,3px) rotate(-1deg);}30%{transform:translate(5px,-4px) rotate(1deg);}45%{transform:translate(-4px,5px) rotate(-0.5deg);}60%{transform:translate(4px,-3px) rotate(0.5deg);}75%{transform:translate(-3px,2px) rotate(-0.3deg);}}
-@keyframes smashy-storm{from{transform:scale(0) rotate(-20deg);}to{transform:scale(1) rotate(0deg);}}
+@keyframes smashy-storm{from{transform:translateX(-50%) scale(0) rotate(-20deg);}to{transform:translateX(-50%) scale(1) rotate(0deg);}}
 body.shake{animation:shake 0.45s ease-in-out;}
 .milestone{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:250;pointer-events:none;background:linear-gradient(135deg,#f5c842,#ff8c42);color:#1a1000;font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:1px;padding:10px 28px;border-radius:99px;box-shadow:0 4px 24px rgba(245,200,66,0.5);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),opacity 0.4s;opacity:0;}
 .milestone.show{transform:translateX(-50%) translateY(0);opacity:1;}
@@ -196,7 +196,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
 .review-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:350;display:none;}
 .review-bar.on{display:block;}
 .btn-back-results{font-family:'Fredoka One',cursive;font-size:0.95rem;padding:10px 28px;background:rgba(10,20,40,0.92);color:var(--text);border:1px solid rgba(255,255,255,0.2);border-radius:99px;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,0.5);}
-.card.review-unseen{box-shadow:0 0 0 2.5px rgba(255,80,80,0.8),0 0 14px rgba(255,50,50,0.35);}
+.card.review-unseen .card-face{opacity:0.45;}
 
 /* Setup overlay */
 .setup-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
@@ -342,7 +342,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
       <div class="tutorial-step active" id="tutStep0">
         <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
           <img src="./smashy.webp" style="width:56px;height:56px;object-fit:contain;">
-          <img src="./castle.webp" style="width:56px;height:56px;object-fit:contain;">
+          <img src="./rainbow-guardian.webp" style="width:56px;height:56px;object-fit:contain;">
         </div>
         <div class="tut-step-title">Welcome to Tickle Fight!</div>
         <p class="tut-text">Smashy the monster is marching toward your Cloud Castle! Your job is to stop him using the magic tiles on the board.</p>
@@ -350,7 +350,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">🎯</span><span>Match pairs to deal damage, push Smashy back, or defend your castle.</span></div>
           <div class="tut-row"><span class="tut-icon"><img src="./smashy.webp" style="width:20px;height:20px;object-fit:contain;"></span><span>Every time you flip tiles (match or miss), Smashy gets a turn to advance!</span></div>
-          <div class="tut-row"><span class="tut-icon"><img src="./castle.webp" style="width:20px;height:20px;object-fit:contain;"></span><span>Win by defeating Smashy or matching all pairs before he reaches the gates.</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./rainbow-guardian.webp" style="width:20px;height:20px;object-fit:contain;"></span><span>Win by defeating Smashy or matching all pairs before he reaches the gates.</span></div>
         </div>
       </div>
 
@@ -397,12 +397,12 @@ body.shake{animation:shake 0.45s ease-in-out;}
 
       <div class="tutorial-step" id="tutStep4">
         <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
-          <img src="./castle.webp" style="width:56px;height:56px;object-fit:contain;">
+          <img src="./rainbow-guardian.webp" style="width:56px;height:56px;object-fit:contain;">
           <img src="./smashy.webp" style="width:56px;height:56px;object-fit:contain;">
         </div>
         <div class="tut-step-title">Win & Lose</div>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon"><img src="./castle.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--green)">You win</strong> if Smashy's HP reaches 0, or if you successfully match all tile pairs on the board!</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./rainbow-guardian.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--green)">You win</strong> if Smashy's HP reaches 0, or if you successfully match all tile pairs on the board!</span></div>
           <div class="tut-row"><span class="tut-icon"><img src="./smashy.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--red)">You lose</strong> if Smashy reaches the castle and you have no <img src="./cloud-wall.webp" style="width:14px;height:14px;vertical-align:middle;"> Cloud Wall shields left to block him.</span></div>
         </div>
         <p class="tut-text">On the <strong style="color:var(--text)">Setup Screen</strong> you can customize your tile loadout and set Smashy's HP. Higher HP = tougher fight! The HP slider automatically caps at your maximum possible damage output.</p>
@@ -433,7 +433,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
       <!-- Castle strip -->
       <div style="position:relative;aspect-ratio:3/1;margin-bottom:8px;background:linear-gradient(90deg,rgba(245,200,66,0.03),rgba(245,200,66,0.12),rgba(245,200,66,0.03));border-radius:10px;border:1px solid rgba(245,200,66,0.2);overflow:hidden;" id="castleStrip">
         <img src="./castle.webp" style="width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 6px rgba(245,200,66,0.5))">
-        <img id="smashyOnCastle" src="./smashy.webp" style="display:none;position:absolute;bottom:0;right:8%;width:42%;object-fit:contain;transform-origin:bottom center;animation:smashy-storm 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;">
+        <img id="smashyOnCastle" src="./smashy.webp" style="display:none;position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:28%;max-height:90%;object-fit:contain;transform-origin:bottom center;animation:smashy-storm 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;">
         <div class="shield-pips" id="shieldPips" style="position:absolute;bottom:6px;right:8px;"></div>
       </div>
       <!-- Path board: 5 cols x 8 rows -->
@@ -989,19 +989,26 @@ function execMove(ri){
   }
 
   if(d.rock){
-    const k=G.bossPos;
-    if(G.rocks.includes(k)){
-      showBossPopup('🪨','Rock Already Here!','Smashy grumbles...');
+    // Find the next unflipped, unmatched, unrocked tile ahead of Smashy
+    let rockTarget = null;
+    for(let i = G.bossPos + 1; i < TOTAL; i++){
+      if(!G.matched.has(i) && !G.flipped.includes(i) && !G.rocks.includes(i)){
+        rockTarget = i; break;
+      }
+    }
+    if(rockTarget === null){
+      addLog(`🪨 Smashy grumbles — no tiles to rock ahead!`,'b');
+      showBossPopup('🪨','Smashy Grumbles...','No tiles to block ahead!');
       smashyTaunt('move'); render(); return;
     }
     if(G.rocks.length>=3){
-      G.rocks.shift(); G.rocks.push(k);
-      addLog(`🪨 Smashy moves his oldest rock!`,'b');
+      G.rocks.shift(); G.rocks.push(rockTarget);
+      addLog(`🪨 Smashy moves his oldest rock ahead!`,'b');
       showBossPopup('🪨','Rock Moved!','Oldest rock relocated!');
     } else {
-      G.rocks.push(k);
-      addLog(`🪨 Smashy drops a rock on this tile!`,'b');
-      showBossPopup('🪨','Rock Dropped!','That tile is blocked!');
+      G.rocks.push(rockTarget);
+      addLog(`🪨 Smashy drops a rock on a tile ahead!`,'b');
+      showBossPopup('🪨','Rock Dropped!','A tile ahead is blocked!');
     }
     smashyTaunt('move'); render(); return;
   }
