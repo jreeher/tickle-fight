@@ -546,7 +546,7 @@ const TILE_CONFIG = [
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, desc:'Peek at 4 face-down tiles' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, desc:'Removes all rocks from play' },
   { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, max:2, desc:'Pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Bucket', img:'./glitter-bucket.png',    fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, desc:'Clears all rocks + blocks next castle breach' },
+  { id:'glitter',   name:'Glitter Bucket', img:'./glitter-bucket.png',    fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, desc:'Stops Smashy at castle and removes all rocks' },
   { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, desc:'Pushes Smashy back 4 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, desc:'Freezes Smashy for one turn' },
   { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, max:2, desc:'1 damage + pushes Smashy back 2' },
@@ -732,6 +732,7 @@ function initGame(counts, bossHp, mode='medium'){
     warriors: new Set(),
     rocks: [],
     shields: 0,
+    glitterShield: false,
     hp: bossHp,
     maxHp: bossHp,
     peek: false, peekN: 0, peekIdx: [],
@@ -963,7 +964,7 @@ function applyPower(id){
   else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { G.rocks=[]; addLog('💨 Wind Blast — all rocks removed!','g'); showPopup('💨','Wind Blast!','All rocks cleared!','#c8a856'); render(); }
   else if(id==='unicorn'){ pushBackN(3); showPopup('🦄','Unicorn Horn!','Smashy pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.rocks=[]; G.shields++; addLog('✨ Glitter Bucket — all rocks cleared + castle protected!','g'); renderShields(); showPopup('✨','Glitter Bucket!','Rocks cleared + shield added!','#ffe4f7'); render(); }
+  else if(id==='glitter'){ G.glitterShield=true; addLog('✨ Glitter Bucket ready — will clear rocks and block Smashy at the castle!','g'); showPopup('✨','Glitter Bucket!','Blocks Smashy at the castle!','#ffe4f7'); }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
@@ -1093,7 +1094,12 @@ function execMove(ri){
     const nextPos=G.bossPos+1;
     if(nextPos>=TOTAL){
       // Reached the end — storm the castle
-      if(G.shields>0){
+      if(G.glitterShield){
+        G.glitterShield=false; G.rocks=[];
+        addLog('✨ Glitter Bucket fires! All rocks cleared — Smashy blocked at the gates!','g');
+        showPopup('✨','Glitter Bucket!','Rocks cleared — castle protected!','#ffe4f7');
+        render();
+      } else if(G.shields>0){
         G.shields--;
         addLog(`🛡️ Wind Shield blocks Smashy at the gates! ${G.shields} left.`,'g');
         renderShields();
