@@ -106,6 +106,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back::after{opacity:0.85;}
 .card.boss-cell{cursor:default;}
 .card.boss-cell .card-back{background:linear-gradient(135deg,#3a1818,#5a2020);border-color:rgba(255,80,80,0.55)!important;box-shadow:0 0 12px rgba(255,60,60,0.35);}
+.card.boss-cell .card-back::after,.card.rock-cell .card-back::after{display:none;}
 .card.peeked .card-face{box-shadow:0 0 10px rgba(245,200,66,0.55);border-color:var(--gold)!important;}
 .card.warrior-cell .card-back{border-color:rgba(255,150,100,0.55)!important;box-shadow:0 0 9px rgba(255,150,100,0.28);}
 .card.warrior-target .card-back{border-color:rgba(255,150,100,0.7)!important;box-shadow:0 0 12px rgba(255,150,100,0.4)!important;cursor:crosshair;}
@@ -323,13 +324,13 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
         <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
       </div>
-      <div class="setup-mode-box" id="modeBox">
-        <div class="setup-mode-label"><strong>Difficulty</strong></div>
-        <div class="setup-mode-btns">
-          <button class="mode-btn" id="modeEasy" onclick="setMode('easy')">🌈 Easy</button>
-          <button class="mode-btn active-medium" id="modeMedium" onclick="setMode('medium')">⚔️ Medium</button>
-          <button class="mode-btn" id="modeHard" onclick="setMode('hard')">🔥 Hard</button>
-        </div>
+    </div>
+    <div class="setup-mode-box" id="modeBox">
+      <div class="setup-mode-label"><strong>Difficulty</strong></div>
+      <div class="setup-mode-btns">
+        <button class="mode-btn" id="modeEasy" onclick="setMode('easy')">🌈 Easy</button>
+        <button class="mode-btn active-medium" id="modeMedium" onclick="setMode('medium')">⚔️ Medium</button>
+        <button class="mode-btn" id="modeHard" onclick="setMode('hard')">🔥 Hard</button>
       </div>
     </div>
     <div class="setup-hp-row">
@@ -601,7 +602,7 @@ const TAUNTS = {
   start: ['😤 I will squash your castle!','Prepare yourself! 🧌','You cannot stop me!'],
 };
 
-const MILESTONES = { 4:'4 pairs! Keep going! 🌟', 7:'Halfway there! ⚡', 10:'All pairs matched! 🎉' };
+const MILESTONES = { 4:'4 pairs! Keep going! 🌟', 10:'All pairs matched! 🎉' };
 
 let G = {};
 let popupTimer = null, milestoneTimer = null;
@@ -659,7 +660,7 @@ function renderSetupTiles() {
       <div class="setup-counter">
         <button class="setup-btn" onclick="changeCount('${t.id}',-1)">−</button>
         <span class="setup-count" id="cnt-${t.id}">${setupCounts[t.id]}</span>
-        <button class="setup-btn" onclick="changeCount('${t.id}',1)">+</button>
+        <button class="setup-btn" id="cnt-plus-${t.id}" onclick="changeCount('${t.id}',1)" style="${t.max !== undefined && setupCounts[t.id] >= t.max ? 'display:none' : ''}">+</button>
       </div>
     </div>`).join('');
 }
@@ -669,6 +670,8 @@ function changeCount(id, delta) {
   const maxAllowed = t && t.max !== undefined ? t.max : Infinity;
   setupCounts[id] = Math.min(maxAllowed, Math.max(0, setupCounts[id] + delta));
   document.getElementById(`cnt-${id}`).textContent = setupCounts[id];
+  const plusBtn = document.getElementById(`cnt-plus-${id}`);
+  if (plusBtn && t.max !== undefined) plusBtn.style.display = setupCounts[id] >= t.max ? 'none' : '';
   updateSetupStats();
 }
 
