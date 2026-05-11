@@ -541,17 +541,28 @@ const TILE_CONFIG = [
   { id:'queen',     name:'Cloud Queen',    img:'./queen.webp',            fc:'face-queen',     damage:0, defaultPairs:1, singleton:true, max:1, desc:'Knocks Smashy back 5 spaces!' },
   { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, max:2, desc:'Deals 2 damage to Smashy' },
-  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, max:2, desc:'Place on a tile to stop Smashy' },
+  { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Place on a tile to stop Smashy' },
   { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, max:2, desc:'Blocks one castle breach' },
-  { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, desc:'Peek at 4 face-down tiles' },
-  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, desc:'Removes all rocks from play' },
-  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, max:2, desc:'Pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Bucket', img:'./glitter-bucket.png',    fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, desc:'Stops Smashy at castle and removes all rocks' },
-  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, desc:'Pushes Smashy back 4 spaces' },
-  { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, desc:'Freezes Smashy for one turn' },
-  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, max:2, desc:'1 damage + pushes Smashy back 2' },
+  { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Peek at 4 face-down tiles' },
+  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Removes all rocks from play' },
+  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'Pushes Smashy back 3 spaces' },
+  { id:'glitter',   name:'Glitter Bucket', img:'./glitter-bucket.png',    fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Stops Smashy at castle and removes all rocks' },
+  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Pushes Smashy back 4 spaces' },
+  { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Freezes Smashy for one turn' },
+  { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'1 damage + pushes Smashy back 2' },
 ];
 let setupCounts = {};
+
+function tileMax(t) {
+  if (t.singleton) return t.max !== undefined ? t.max : 1;
+  return gameMode === 'hard' ? 1 : (t.max !== undefined ? t.max : Infinity);
+}
+
+function tileDefault(t, mode) {
+  if (mode === 'hard' && t.hardDefaultPairs !== undefined) return t.hardDefaultPairs;
+  if (mode === 'easy' && t.easyDefaultPairs !== undefined) return t.easyDefaultPairs;
+  return t.defaultPairs;
+}
 
 const DICE_DEF = [
   { e:'⬆️',     lbl:'Charge ahead!',               step:true    },
@@ -586,11 +597,10 @@ function setMode(mode) {
   document.getElementById('modeMedium').className = 'mode-btn' + (mode==='medium' ? ' active-medium' : '');
   document.getElementById('modeHard').className   = 'mode-btn' + (mode==='hard'   ? ' active-hard'   : '');
   TILE_CONFIG.forEach(t => {
-    setupCounts[t.id] = (mode === 'hard' && t.hardDefaultPairs !== undefined) ? t.hardDefaultPairs : t.defaultPairs;
-    const el = document.getElementById(`cnt-${t.id}`);
-    if (el) el.textContent = setupCounts[t.id];
+    setupCounts[t.id] = Math.min(tileDefault(t, mode), tileMax(t));
   });
   userChangedHp = false;
+  renderSetupTiles();
   updateSetupStats();
 }
 
@@ -642,7 +652,7 @@ function renderTutStep() {
 
 function showSetup() {
   TILE_CONFIG.forEach(t => {
-    setupCounts[t.id] = (gameMode === 'hard' && t.hardDefaultPairs !== undefined) ? t.hardDefaultPairs : t.defaultPairs;
+    setupCounts[t.id] = Math.min(tileDefault(t, gameMode), tileMax(t));
   });
   userChangedHp = false;
   renderSetupTiles();
@@ -660,19 +670,19 @@ function renderSetupTiles() {
       <div class="setup-counter">
         <button class="setup-btn" onclick="changeCount('${t.id}',-1)">−</button>
         <span class="setup-count" id="cnt-${t.id}">${setupCounts[t.id]}</span>
-        <button class="setup-btn" id="cnt-plus-${t.id}" onclick="changeCount('${t.id}',1)" style="${t.max !== undefined && setupCounts[t.id] >= t.max ? 'opacity:0.3;cursor:not-allowed;pointer-events:none' : ''}">+</button>
+        <button class="setup-btn" id="cnt-plus-${t.id}" onclick="changeCount('${t.id}',1)" style="${setupCounts[t.id] >= tileMax(t) ? 'opacity:0.3;cursor:not-allowed;pointer-events:none' : ''}">+</button>
       </div>
     </div>`).join('');
 }
 
 function changeCount(id, delta) {
   const t = TILE_CONFIG.find(t => t.id === id);
-  const maxAllowed = t && t.max !== undefined ? t.max : Infinity;
+  const maxAllowed = tileMax(t);
   setupCounts[id] = Math.min(maxAllowed, Math.max(0, setupCounts[id] + delta));
   document.getElementById(`cnt-${id}`).textContent = setupCounts[id];
   const plusBtn = document.getElementById(`cnt-plus-${id}`);
-  if (plusBtn && t.max !== undefined) {
-    const atMax = setupCounts[id] >= t.max;
+  if (plusBtn) {
+    const atMax = setupCounts[id] >= tileMax(t);
     plusBtn.style.opacity = atMax ? '0.3' : '';
     plusBtn.style.cursor = atMax ? 'not-allowed' : '';
     plusBtn.style.pointerEvents = atMax ? 'none' : '';
@@ -1084,8 +1094,8 @@ function execMove(ri){
   }
 
   if(d.miss){
-    showBossPopup('😏','Smashy is taunting you!','');
-    document.getElementById('ppSub').innerHTML='<img src="./rock.webp" style="width:26px;height:26px;object-fit:contain;vertical-align:middle;display:inline-block;"><img src="./rock.webp" style="width:26px;height:26px;object-fit:contain;vertical-align:middle;display:inline-block;">';
+    showBossPopup('','Smashy is taunting you!','');
+    document.getElementById('ppEmoji').innerHTML='<img src="./rock.webp" style="width:36px;height:36px;object-fit:contain;display:inline-block;vertical-align:middle;"><img src="./rock.webp" style="width:36px;height:36px;object-fit:contain;display:inline-block;vertical-align:middle;margin-left:-12px;">';
     smashyTaunt('move'); render(); return;
   }
 
