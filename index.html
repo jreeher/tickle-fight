@@ -1225,9 +1225,9 @@ function showSwapArrow(i1,i2){
   svg.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:400;';
   svg.innerHTML=`<defs><marker id="ah1" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#FFD700"/></marker><marker id="ah2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ff8c42"/></marker></defs><line x1="${cx1}" y1="${cy1}" x2="${cx2}" y2="${cy2}" stroke="#FFD700" stroke-width="3" stroke-dasharray="6,4" opacity="0.9" marker-end="url(#ah1)"/><line x1="${cx2}" y1="${cy2}" x2="${cx1}" y2="${cy1}" stroke="#ff8c42" stroke-width="3" stroke-dasharray="6,4" opacity="0.9" marker-end="url(#ah2)"/><circle cx="${cx1}" cy="${cy1}" r="10" fill="none" stroke="#FFD700" stroke-width="2.5" opacity="0.9"/><circle cx="${cx2}" cy="${cy2}" r="10" fill="none" stroke="#ff8c42" stroke-width="2.5" opacity="0.9"/>`;
   document.body.appendChild(svg);
-  svg.style.transition='opacity 0.5s';
-  setTimeout(()=>{ svg.style.opacity='0'; },1800);
-  setTimeout(()=>{ svg.remove(); },2300);
+  svg.style.transition='opacity 0.3s';
+  setTimeout(()=>{ svg.style.opacity='0'; },1400);
+  setTimeout(()=>{ svg.remove(); },1800);
 }
 
 function cardEl(pathIdx){
