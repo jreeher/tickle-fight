@@ -21,7 +21,9 @@
 <link rel="preload" href="./cloud-3.webp" as="image">
 <link rel="preload" href="./wind-blast.webp" as="image">
 <link rel="preload" href="./unicorn-horn.webp" as="image">
-<link rel="preload" href="./glitter-bucket.png" as="image">
+<link rel="preload" href="./glitter-hole.png" as="image">
+<link rel="preload" href="./king.png" as="image">
+<link rel="preload" href="./kingandqueen.png" as="image">
 <link rel="preload" href="./rainbow-tornado.webp" as="image">
 <link rel="preload" href="./freeze-wand.webp" as="image">
 <link rel="preload" href="./rain-bow.webp" as="image">
@@ -136,6 +138,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .face-freeze{background:#80d8f8;border-color:rgba(150,235,255,0.42)!important;}
 .face-rainbow{background:#f080a0;border-color:rgba(255,160,190,0.42)!important;}
 .face-queen{background:linear-gradient(135deg,#7b2ff7 0%,#c44dff 60%,#f5c842 100%);border-color:rgba(245,200,66,0.6)!important;box-shadow:0 0 10px rgba(196,77,255,0.35);}
+.face-king{background:linear-gradient(135deg,#b8860b 0%,#daa520 60%,#ffe066 100%);border-color:rgba(255,215,0,0.6)!important;box-shadow:0 0 10px rgba(218,165,32,0.35);}
 
 /* Status */
 .status-bar{display:flex;gap:7px;align-items:center;padding:6px 14px;background:var(--bg2);border-radius:99px;border:1px solid var(--border);font-size:0.78rem;font-weight:700;}
@@ -176,6 +179,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 /* Power popup */
 .power-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);z-index:300;pointer-events:none;background:rgba(10,20,40,0.92);border-radius:20px;padding:18px 36px;text-align:center;border:2px solid rgba(255,255,255,0.2);backdrop-filter:blur(8px);box-shadow:0 8px 40px rgba(0,0,0,0.5);}
 .power-popup.show{animation:popup-in 0.25s cubic-bezier(0.34,1.56,0.64,1) forwards,popup-out 0.3s ease-in 1.4s forwards;}
+.power-popup.action-mode{animation:none!important;opacity:1;top:16px;transform:translateX(-50%) scale(0.85);transition:top 0.35s cubic-bezier(0.34,1.2,0.64,1),transform 0.35s;}
 @keyframes popup-in{to{transform:translate(-50%,-50%) scale(1);opacity:1;}}
 @keyframes popup-out{from{opacity:1;}to{opacity:0;transform:translate(-50%,-60%) scale(0.85);}}
 .popup-emoji{font-size:2.4rem;display:block;margin-bottom:4px;}
@@ -376,7 +380,6 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">✅</span><span><strong style="color:var(--green)">Match!</strong> Both tiles show the same image — their power activates immediately. The tiles stay face-up and are removed from play.</span></div>
           <div class="tut-row"><span class="tut-icon">❌</span><span><strong style="color:var(--red)">No match.</strong> Both tiles flip back face-down, and Smashy takes his turn. Try to remember where they were!</span></div>
-          <div class="tut-row"><span class="tut-icon"><img src="./queen.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:#c44dff">Cloud Queen</strong> is special — flip her once and she instantly pushes Smashy back 5 spaces. No pair needed!</span></div>
         </div>
         <p class="tut-text">Rocks <img src="./rock.webp" style="width:16px;height:16px;vertical-align:middle;"> dropped by Smashy block tiles — you can't flip them until a Glitter Bomb clears them!</p>
       </div>
@@ -538,15 +541,16 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
-  { id:'queen',     name:'Cloud Queen',    img:'./queen.webp',            fc:'face-queen',     damage:0, defaultPairs:1, singleton:true, max:1, desc:'Knocks Smashy back 5 spaces!' },
+  { id:'queen',     name:'Cloud Queen',    img:'./queen.webp',            fc:'face-queen',     damage:3, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.png', desc:'3 damage + knocks Smashy back 5 spaces!' },
+  { id:'king',      name:'King',           img:'./king.png',              fc:'face-king',      damage:0, defaultPairs:0, max:1, hidden:true, desc:'' },
   { id:'fireball',  name:'Cloud Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, max:2, desc:'Deals 2 damage to Smashy' },
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Place on a tile to stop Smashy' },
-  { id:'shield',    name:'Cloud Wall',     img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, max:2, desc:'Blocks one castle breach' },
+  { id:'shield',    name:'Wall of Fluff',  img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, max:2, desc:'Blocks one castle breach' },
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Peek at 4 face-down tiles' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Removes all rocks from play' },
-  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'Pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Bucket', img:'./glitter-bucket.png',    fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Stops Smashy at castle and removes all rocks' },
+  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:1, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'1 damage + pushes Smashy back 3 spaces' },
+  { id:'glitter',   name:'Glitter Hole',   img:'./glitter-hole.png',      fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Stops Smashy on his next step and removes all rocks' },
   { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Pushes Smashy back 4 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Freezes Smashy for one turn' },
   { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'1 damage + pushes Smashy back 2' },
@@ -597,6 +601,7 @@ function setMode(mode) {
   document.getElementById('modeMedium').className = 'mode-btn' + (mode==='medium' ? ' active-medium' : '');
   document.getElementById('modeHard').className   = 'mode-btn' + (mode==='hard'   ? ' active-hard'   : '');
   TILE_CONFIG.forEach(t => {
+    if (t.hidden) return;
     setupCounts[t.id] = Math.min(tileDefault(t, mode), tileMax(t));
   });
   userChangedHp = false;
@@ -662,9 +667,9 @@ function showSetup() {
 
 function renderSetupTiles() {
   const el = document.getElementById('setupTiles');
-  el.innerHTML = TILE_CONFIG.map(t => `
+  el.innerHTML = TILE_CONFIG.filter(t => !t.hidden).map(t => `
     <div class="setup-tile-card">
-      <img src="${t.img}" class="setup-tile-img">
+      <img src="${t.setupImg || t.img}" class="setup-tile-img">
       <div class="setup-tile-name">${t.name}</div>
       <div style="font-size:0.6rem;color:var(--muted)">${t.desc}</div>
       <div class="setup-counter">
@@ -691,9 +696,9 @@ function changeCount(id, delta) {
 }
 
 function updateSetupStats() {
-  const totalTiles = TILE_CONFIG.reduce((sum,t) => sum + (t.singleton ? setupCounts[t.id] : setupCounts[t.id]*2), 0);
-  const totalPairs = TILE_CONFIG.filter(t=>!t.singleton).reduce((sum,t)=>sum+setupCounts[t.id],0);
-  const maxDmg = TILE_CONFIG.reduce((sum,t) => sum + t.damage * setupCounts[t.id], 0);
+  const totalTiles = TILE_CONFIG.filter(t=>!t.hidden).reduce((sum,t) => sum + (t.singleton ? setupCounts[t.id] : setupCounts[t.id]*2), 0);
+  const totalPairs = TILE_CONFIG.filter(t=>!t.singleton&&!t.hidden).reduce((sum,t)=>sum+setupCounts[t.id],0);
+  const maxDmg = TILE_CONFIG.filter(t=>!t.hidden).reduce((sum,t) => sum + t.damage * setupCounts[t.id], 0);
   document.getElementById('setupMapSize').textContent = totalTiles || '—';
   document.getElementById('setupMaxDmg').textContent = maxDmg || '—';
   const slider = document.getElementById('hpSlider');
@@ -722,7 +727,7 @@ function updateSliderFill() {
 }
 
 function startFromSetup() {
-  const totalTilesCheck = TILE_CONFIG.reduce((sum,t) => sum + (t.singleton ? setupCounts[t.id] : setupCounts[t.id]*2), 0);
+  const totalTilesCheck = TILE_CONFIG.filter(t=>!t.hidden).reduce((sum,t) => sum + (t.singleton ? setupCounts[t.id] : setupCounts[t.id]*2), 0);
   if (totalTilesCheck < 4) return;
   const hp = parseInt(document.getElementById('hpSlider').value);
   document.getElementById('setupOverlay').classList.add('off');
@@ -732,8 +737,12 @@ function startFromSetup() {
 function initGame(counts, bossHp, mode='medium'){
   let deck = [];
   TILE_CONFIG.forEach(t => {
+    if(t.hidden) return;
     const pairs = counts[t.id] || 0;
-    if(t.singleton){ for(let i=0;i<pairs;i++) deck.push({...t}); }
+    if(t.pairWith){
+      const partner = TILE_CONFIG.find(p => p.id === t.pairWith);
+      for(let i=0;i<pairs;i++){ deck.push({...t}); if(partner) deck.push({...partner}); }
+    } else if(t.singleton){ for(let i=0;i<pairs;i++) deck.push({...t}); }
     else { for(let i=0;i<pairs*2;i++) deck.push({...t}); }
   });
   shuffle(deck);
@@ -747,7 +756,7 @@ function initGame(counts, bossHp, mode='medium'){
     warriors: new Set(),
     rocks: [],
     shields: 0,
-    glitterShield: false,
+    glitterTrap: false,
     hp: bossHp,
     maxHp: bossHp,
     peek: false, peekN: 0, peekIdx: [],
@@ -773,9 +782,9 @@ function initGame(counts, bossHp, mode='medium'){
 function renderPowersPanel(counts){
   const grid = document.getElementById('powersGrid');
   grid.innerHTML = TILE_CONFIG
-    .filter(t => (counts[t.id]||0) > 0)
+    .filter(t => !t.hidden && (counts[t.id]||0) > 0)
     .map(t => `<div class="power-card">
-      <img src="${t.img}" class="power-img" onerror="this.style.display='none'">
+      <img src="${t.setupImg || t.img}" class="power-img" onerror="this.style.display='none'">
       <div class="power-name">${t.name} <span class="power-count">×${counts[t.id]}</span></div>
       <div class="power-desc">${t.desc}</div>
     </div>`).join('');
@@ -856,13 +865,12 @@ function renderShields(){
 function renderStatus(){
   const banner = document.getElementById('contextBanner');
   if(!banner) return;
-  const popupShowing = document.getElementById('powerPopup').classList.contains('show');
+  const popup = document.getElementById('powerPopup');
+  if(popup.classList.contains('action-mode')){ banner.className='context-banner'; banner.innerHTML=''; return; }
   if(G.warriorMode){
-    if(popupShowing){ banner.className='context-banner'; banner.innerHTML=''; return; }
     banner.className = 'context-banner warrior';
     banner.innerHTML = `<img src="./rainbow-guardian.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
   } else if(G.peek){
-    if(popupShowing){ banner.className='context-banner'; banner.innerHTML=''; return; }
     const left = 4 - G.peekN;
     banner.className = 'context-banner peek';
     banner.innerHTML = `<img src="./star-wand.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Star Wand</div><div class="cb-sub">Click ${left} more tile${left!==1?'s':''} to reveal</div>`;
@@ -896,7 +904,7 @@ function onCard(pathIdx){
     G.warriors.add(pathIdx);
     G.warriorMode = false;
     addLog('☁️ Cloud Guard placed! Smashy will stop before stepping on it.','g');
-    showPopup('☁️','Cloud Guard placed!','Smashy will stop here!','#4da6ff');
+    clearPopupActionMode();
     render();
     setTimeout(()=>bossTurn(), 480);
     return;
@@ -907,13 +915,16 @@ function onCard(pathIdx){
     if(G.peekN>=4) return;
     G.peekIdx.push(pathIdx); G.peekN++;
     const e=cardEl(pathIdx); e.classList.add('flipped','peeked');
+    const left=4-G.peekN;
+    const ppSub=document.getElementById('ppSub');
+    if(ppSub && left>0) ppSub.textContent=`Click ${left} more tile${left!==1?'s':''} to reveal`;
     renderStatus();
     if(G.peekN>=4){
       setTimeout(()=>{
         G.peekIdx.forEach(pi=>{ const x=cardEl(pi); if(x) x.classList.remove('flipped','peeked'); });
         G.peek=false; G.peekN=0; G.peekIdx=[];
         addLog('⭐ Peek ended — remember those tiles!','i');
-        renderStatus(); renderPeek();
+        clearPopupActionMode(); renderPeek();
       },1000);
     }
     return;
@@ -946,12 +957,15 @@ function onCard(pathIdx){
   if(G.flipped.length===2){
     G.canFlip=false; G.canFlipLockedAt=Date.now();
     const [a,b]=G.flipped;
-    if(G.cards[a].id===G.cards[b].id){
+    const ta=G.cards[a],tb=G.cards[b];
+    const isMatch=ta.id===tb.id||(ta.pairWith&&ta.pairWith===tb.id)||(tb.pairWith&&tb.pairWith===ta.id);
+    const powerId=ta.pairWith?ta.id:(tb.pairWith?tb.id:ta.id);
+    if(isMatch){
       setTimeout(()=>{
         G.matched.add(a); G.matched.add(b); G.pairs++;
         G.lastMatched=[a,b];
-        const id=G.cards[a].id; G.flipped=[]; G.canFlip=true; G.canFlipLockedAt=null;
-        applyPower(id); render();
+        G.flipped=[]; G.canFlip=true; G.canFlipLockedAt=null;
+        applyPower(powerId); render();
         setTimeout(()=>{ G.lastMatched=[]; },600);
         checkMilestone();
         if(checkWin()) return;
@@ -973,17 +987,17 @@ function onCard(pathIdx){
 function applyPower(id){
   G.powerDelay=480;
   if(id==='lightning')   { damageBoss(2,'🪶 Feather Arrow — 2 damage!'); showPopup('🪶','Feather Arrow!','-2 HP to Smashy','#8bc34a'); }
-  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); }
-  else if(id==='shield') { G.shields++; addLog(`🌥️ Cloud Wall raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Cloud Wall!','Castle protected!','#b57bff'); }
-  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
+  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); setTimeout(setPopupActionMode,300); }
+  else if(id==='shield') { G.shields++; addLog(`🌥️ Wall of Fluff raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Wall of Fluff!','Castle protected!','#b57bff'); }
+  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); setTimeout(setPopupActionMode,300); }
   else if(id==='fireball'){ damageBoss(3,'💥 Cloud Cannon — 3 damage!'); showPopup('💥','Cloud Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { G.rocks=[]; addLog('💨 Wind Blast — all rocks removed!','g'); showPopup('💨','Wind Blast!','All rocks cleared!','#c8a856'); render(); }
-  else if(id==='unicorn'){ pushBackN(3); showPopup('🦄','Unicorn Horn!','Smashy pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterShield=true; addLog('✨ Glitter Bucket ready — will clear rocks and block Smashy at the castle!','g'); showPopup('✨','Glitter Bucket!','Blocks Smashy at the castle!','#ffe4f7'); }
+  else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
+  else if(id==='glitter'){ G.glitterTrap=true; addLog('✨ Glitter Hole set — Smashy will be stopped on his next step!','g'); showPopup('✨','Glitter Hole!','Smashy will be stopped!','#ffe4f7'); }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
-  else if(id==='queen')  { pushBackN(5); addLog('👑 Cloud Queen — Smashy knocked back 5!','g'); showPopup('👑','Cloud Queen!','Smashy knocked back 5!','#e8b4f8'); G.powerDelay=1400; }
+  else if(id==='queen')  { damageBoss(3,'👑 Cloud Queen — 3 damage!'); pushBackN(5); showPopup('👑','Cloud Queen!','-3 HP + pushed back 5!','#e8b4f8'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -1109,12 +1123,7 @@ function execMove(ri){
     const nextPos=G.bossPos+1;
     if(nextPos>=TOTAL){
       // Reached the end — storm the castle
-      if(G.glitterShield){
-        G.glitterShield=false; G.rocks=[];
-        addLog('✨ Glitter Bucket fires! All rocks cleared — Smashy blocked at the gates!','g');
-        showPopup('✨','Glitter Bucket!','Rocks cleared — castle protected!','#ffe4f7');
-        render();
-      } else if(G.shields>0){
+      if(G.shields>0){
         G.shields--;
         addLog(`🛡️ Wind Shield blocks Smashy at the gates! ${G.shields} left.`,'g');
         renderShields();
@@ -1132,10 +1141,16 @@ function execMove(ri){
     if(G.warriors.has(nextPos)){
       G.warriors.delete(nextPos);
       addLog('☁️ Cloud Guard blocks Smashy! He stops in his tracks!','g');
-      showPopup('☁️','Blocked!','Cloud Guard stops Smashy!','#4da6ff');
+      setTimeout(()=>showPopup('☁️','Blocked!','Cloud Guard stops Smashy!','#4da6ff'),900);
       break;
     }
     G.bossPos=nextPos;
+    if(G.glitterTrap){
+      G.glitterTrap=false; G.rocks=[];
+      addLog('✨ Glitter Hole triggered! Smashy stopped — all rocks cleared!','g');
+      showPopup('✨','Glitter Hole!','Smashy stopped — rocks cleared!','#ffe4f7');
+      render(); break;
+    }
   }
 
   const progress=G.bossPos/(TOTAL-1);
@@ -1231,6 +1246,16 @@ function exitReview(){
 }
 
 function addLog(m,t='n'){ G.log.push({m,t}); if(G.log.length>30) G.log.shift(); }
+
+function setPopupActionMode(){
+  if(popupTimer) clearTimeout(popupTimer);
+  document.getElementById('powerPopup').classList.add('action-mode');
+}
+function clearPopupActionMode(){
+  if(popupTimer) clearTimeout(popupTimer);
+  document.getElementById('powerPopup').className='power-popup';
+  renderStatus();
+}
 
 function showPopup(emoji,title,sub,color='white',duration=1800){
   const el=document.getElementById('powerPopup');
