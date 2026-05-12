@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tickle Fight!</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
 <link rel="preload" href="./smashy.webp" as="image">
 <link rel="preload" href="./castle.webp" as="image">
@@ -21,9 +23,9 @@
 <link rel="preload" href="./cloud-3.webp" as="image">
 <link rel="preload" href="./wind-blast.webp" as="image">
 <link rel="preload" href="./unicorn-horn.webp" as="image">
-<link rel="preload" href="./glitter-hole.png" as="image">
-<link rel="preload" href="./king.png" as="image">
-<link rel="preload" href="./kingandqueen.png" as="image">
+<link rel="preload" href="./glitter-hole.webp" as="image">
+<link rel="preload" href="./king.webp" as="image">
+<link rel="preload" href="./kingandqueen.webp" as="image">
 <link rel="preload" href="./rainbow-tornado.webp" as="image">
 <link rel="preload" href="./freeze-wand.webp" as="image">
 <link rel="preload" href="./rain-bow.webp" as="image">
@@ -122,7 +124,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 @keyframes match-burst{0%{transform:rotateY(180deg) scale(1);}40%{transform:rotateY(180deg) scale(1.18);box-shadow:0 0 28px 8px rgba(255,220,50,0.7);}100%{transform:rotateY(180deg) scale(1);}}
 .card.just-matched .card-inner{animation:match-burst 0.55s ease-out forwards;}
 
-.boss-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;pointer-events:none;z-index:2;animation:boss-float 1.9s ease-in-out infinite;background-size:85%;background-repeat:no-repeat;background-position:center;}
+.boss-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.3rem;pointer-events:none;z-index:3;animation:boss-float 1.9s ease-in-out infinite;background-size:85%;background-repeat:no-repeat;background-position:center;}
 @keyframes boss-float{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
 .warrior-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;pointer-events:none;z-index:2;animation:warrior-pulse 2s ease-in-out infinite;}
 @keyframes warrior-pulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 4px rgba(255,150,100,0.7));}50%{transform:scale(1.15);filter:drop-shadow(0 0 12px rgba(255,200,100,1));}}
@@ -376,7 +378,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
       <div class="tutorial-step" id="tutStep1">
         <div style="display:flex;justify-content:center;gap:16px;margin-bottom:10px;">
           <img src="./feather-arrow.webp" style="width:52px;height:52px;object-fit:contain;">
-          <img src="./glitter-hole.png" style="width:52px;height:52px;object-fit:contain;">
+          <img src="./glitter-hole.webp" style="width:52px;height:52px;object-fit:contain;">
         </div>
         <div class="tut-step-title">Flipping Tiles</div>
         <p class="tut-text">Tap any face-down tile to flip it over and see what's underneath. Then tap a second tile.</p>
@@ -384,7 +386,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
           <div class="tut-row"><span class="tut-icon">✅</span><span><strong style="color:var(--green)">Match!</strong> Both tiles show the same image — their power activates immediately. The tiles stay face-up and are removed from play.</span></div>
           <div class="tut-row"><span class="tut-icon">❌</span><span><strong style="color:var(--red)">No match.</strong> Both tiles flip back face-down, and Smashy takes his turn. Try to remember where they were!</span></div>
         </div>
-        <p class="tut-text">Rocks <img src="./rock.webp" style="width:16px;height:16px;vertical-align:middle;"> dropped by Smashy block tiles — match a <img src="./glitter-hole.png" style="width:16px;height:16px;vertical-align:middle;"> Glitter Hole pair and click either tile to remove them all instantly!</p>
+        <p class="tut-text">Rocks <img src="./rock.webp" style="width:16px;height:16px;vertical-align:middle;"> dropped by Smashy block tiles — match a <img src="./glitter-hole.webp" style="width:16px;height:16px;vertical-align:middle;"> Glitter Hole pair and click either tile to remove them all instantly!</p>
       </div>
 
       <div class="tutorial-step" id="tutStep2">
@@ -408,7 +410,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <p class="tut-text">After every pair of tile flips — whether you matched or not — Smashy rolls a die and does one of these:</p>
         <div class="tut-box">
           <div class="tut-row"><span class="tut-icon">⬆️</span><span><strong style="color:var(--text)">Charge 1–3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
-          <div class="tut-row"><span class="tut-icon"><img src="./rock.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. Match a <img src="./glitter-hole.png" style="width:14px;height:14px;vertical-align:middle;"> Glitter Hole pair and click either tile to clear all rocks instantly.</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./rock.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. Match a <img src="./glitter-hole.webp" style="width:14px;height:14px;vertical-align:middle;"> Glitter Hole pair and click either tile to clear all rocks instantly.</span></div>
           <div class="tut-row"><span class="tut-icon">↔️</span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles — scrambling your memory. Watch out for this one!</span></div>
         </div>
         <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen</strong> <img src="./freeze-wand.webp" style="width:14px;height:14px;vertical-align:middle;">, he skips his turn. If a <img src="./queen.webp" style="width:14px;height:14px;vertical-align:middle;"> <strong style="color:#c44dff">Cloud Guard</strong> is on his next tile, he stops before entering.</p>
@@ -544,8 +546,8 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
-  { id:'queen',     name:'Rainbow Royals',    img:'./queen.webp',            fc:'face-queen',     damage:3, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.png', desc:'3 damage + knocks Smashy back 3 spaces!' },
-  { id:'king',      name:'King',           img:'./king.png',              fc:'face-king',      damage:0, defaultPairs:0, max:1, hidden:true, desc:'' },
+  { id:'queen',     name:'Rainbow Royals',    img:'./queen.webp',            fc:'face-queen',     damage:3, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.webp', desc:'3 damage + knocks Smashy back 3 spaces!' },
+  { id:'king',      name:'King',           img:'./king.webp',              fc:'face-king',      damage:0, defaultPairs:0, max:1, hidden:true, desc:'' },
   { id:'fireball',  name:'Cumulus Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:2, defaultPairs:2, max:2, desc:'Deals 2 damage to Smashy' },
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Place on a tile to stop Smashy' },
@@ -553,7 +555,7 @@ const TILE_CONFIG = [
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Peek at 4 face-down tiles' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Pushes Smashy back to the last corner' },
   { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:1, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'1 damage + pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Hole',   img:'./glitter-hole.png',      fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Activate to immediately remove all rocks from the board' },
+  { id:'glitter',   name:'Glitter Hole',   img:'./glitter-hole.webp',      fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Activate to immediately remove all rocks from the board' },
   { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Pushes Smashy back 4 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Freezes Smashy for one turn' },
   { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'1 damage + pushes Smashy back 2' },
@@ -843,15 +845,15 @@ function renderGrid(){
       if(!G.review && G.lastMatched.includes(pathIdx)) el.classList.add('just-matched');
       if(!G.review && isBoss) el.classList.add('boss-cell');
       if(!G.review && isWarrior && !isBoss) el.classList.add('warrior-cell');
-      if(!G.review && isGlitterPending) el.classList.add('glitter-hole-target');
+      if(!G.review && isGlitterPending && !isBoss) el.classList.add('glitter-hole-target');
       if(!G.review && isRock && !isBoss) el.classList.add('rock-cell');
       if(!G.review && G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterPending&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterPending&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
-      if(isGlitterPending) el.addEventListener('click',()=>onCard(pathIdx));
+      if(isGlitterPending && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isGlitterPending && !isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
 
