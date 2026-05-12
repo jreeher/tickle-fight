@@ -765,7 +765,7 @@ function initGame(counts, bossHp, mode='medium'){
     shields: 0,
     hp: bossHp,
     maxHp: bossHp,
-    peek: false, peekN: 0, peekIdx: [],
+    peek: false, peekN: 0, peekTarget: 4, peekIdx: [],
     canFlip: true, canFlipLockedAt: null, frozen: false,
     phase: 'player',
     warriorMode: false,
@@ -880,7 +880,7 @@ function renderStatus(){
     banner.className = 'context-banner warrior';
     banner.innerHTML = `<img src="./rainbow-guardian.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
   } else if(G.peek){
-    const left = 4 - G.peekN;
+    const left = G.peekTarget - G.peekN;
     banner.className = 'context-banner peek';
     banner.innerHTML = `<img src="./star-wand.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Star Wand</div><div class="cb-sub">Click ${left} more tile${left!==1?'s':''} to reveal</div>`;
   } else {
@@ -932,14 +932,14 @@ function onCard(pathIdx){
 
   if(G.peek){
     if(G.matched.has(pathIdx)||G.flipped.includes(pathIdx)||G.peekIdx.includes(pathIdx)) return;
-    if(G.peekN>=4) return;
+    if(G.peekN>=G.peekTarget) return;
     G.peekIdx.push(pathIdx); G.peekN++;
     const e=cardEl(pathIdx); e.classList.add('flipped','peeked');
-    const left=4-G.peekN;
+    const left=G.peekTarget-G.peekN;
     const ppSub=document.getElementById('ppSub');
     if(ppSub && left>0) ppSub.textContent=`Click ${left} more tile${left!==1?'s':''} to reveal`;
     renderStatus();
-    if(G.peekN>=4){
+    if(G.peekN>=G.peekTarget){
       setTimeout(()=>{
         G.peekIdx.forEach(pi=>{ const x=cardEl(pi); if(x) x.classList.remove('flipped','peeked'); });
         G.peek=false; G.peekN=0; G.peekIdx=[];
@@ -1005,12 +1005,23 @@ function onCard(pathIdx){
 }
 
 // ── POWERS ───────────────────────────────────────────────────────────────────
+function countPeekable(){
+  let n=0;
+  for(let i=0;i<G.cards.length;i++){
+    if(!G.matched.has(i)&&!G.flipped.includes(i)&&i!==G.bossPos&&!G.warriors.has(i)&&!G.rocks.includes(i)) n++;
+  }
+  return n;
+}
 function applyPower(id){
   G.powerDelay=480;
   if(id==='lightning')   { damageBoss(2,'🪶 Feather Arrow — 2 damage!'); showPopup('🪶','Feather Arrow!','-2 HP to Smashy','#8bc34a'); }
   else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showActionPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); }
   else if(id==='shield') { G.shields++; addLog(`🌥️ Wall of Fluff raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Wall of Fluff!','Castle protected!','#b57bff'); }
-  else if(id==='starmap'){ G.peek=true; G.peekN=0; G.peekIdx=[]; addLog('⭐ Star Wand! Click 4 tiles to peek...','i'); showActionPopup('⭐','Star Wand!','Click 4 tiles to peek!','#f5c842'); }
+  else if(id==='starmap'){
+    const avail=countPeekable();
+    if(avail===0){ addLog('⭐ Star Wand — no tiles to peek!','i'); showPopup('⭐','Star Wand!','No tiles to peek!','#f5c842'); G.powerDelay=1400; }
+    else { G.peek=true; G.peekN=0; G.peekTarget=Math.min(4,avail); G.peekIdx=[]; addLog(`⭐ Star Wand! Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek...`,'i'); showActionPopup('⭐','Star Wand!',`Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek!`,'#f5c842'); }
+  }
   else if(id==='fireball'){ damageBoss(3,'💥 Cumulus Cannon — 3 damage!'); showPopup('💥','Cumulus Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet'){
     let corner=0;
