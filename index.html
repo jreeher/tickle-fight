@@ -1160,7 +1160,7 @@ function execMove(ri){
         showPopup('🛡️','Shield Activated!','Castle protected!','#b57bff');
       } else {
         addLog('💀 Smashy storms the castle! GAME OVER!','b');
-        G.phase='over'; render();
+        G.phase='over'; G.bossPos=TOTAL; render();
         const soc = document.getElementById('smashyOnCastle');
         if(soc){ soc.style.display='block'; soc.style.animation='none'; void soc.offsetWidth; soc.style.animation='smashy-storm 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards'; }
         setTimeout(()=>showOv(false),1100); return;
