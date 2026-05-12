@@ -1023,7 +1023,7 @@ function applyPower(id){
     G.powerDelay=1400; render();
   }
   else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole ready — click either tile anytime to remove all rocks!','i'); showPopup('✨','Glitter Hole!','Click either tile to activate!','#ffe4f7'); }
+  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole ready — click either tile anytime to remove all rocks!','i'); showPopup('✨','Glitter Hole!','Click either tile to activate!','#ffe4f7'); G.powerDelay=1800; }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
