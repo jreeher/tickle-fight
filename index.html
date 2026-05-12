@@ -324,16 +324,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
 
 <div class="setup-overlay" id="setupOverlay">
   <div class="setup-card">
-    <div class="setup-title">Setup Battle</div>
-    <div class="setup-sub">Choose your tiles and set Smashy's strength</div>
-    <div class="setup-tiles" id="setupTiles"></div>
-    <div class="setup-info-row">
-      <div class="setup-stats">
-        <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
-        <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
-      </div>
-    </div>
-    <div class="setup-mode-box" id="modeBox">
+    <div class="setup-title" style="margin-bottom:16px;">Tickle Fight!</div>
+    <button class="btn-tutorial" onclick="showTutorial()" style="margin-bottom:20px;">📖 Tutorial</button>
+    <div class="setup-mode-box" id="modeBox" style="margin-bottom:14px;">
       <div class="setup-mode-label"><strong>Difficulty</strong></div>
       <div class="setup-mode-btns">
         <button class="mode-btn" id="modeEasy" onclick="setMode('easy')">🌈 Easy</button>
@@ -341,13 +334,19 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <button class="mode-btn" id="modeHard" onclick="setMode('hard')">🔥 Hard</button>
       </div>
     </div>
-    <div class="setup-hp-row">
+    <div class="setup-hp-row" style="margin-bottom:20px;">
       <span class="setup-hp-label">Smashy's HP</span>
       <input type="range" class="setup-hp-slider" id="hpSlider" min="1" max="10" value="8" oninput="userChangedHp=true;document.getElementById('hpSliderVal').textContent=this.value;updateSliderFill()">
       <span class="setup-hp-val" id="hpSliderVal">8</span>
     </div>
-    <button class="btn-start" id="btnStart" onclick="startFromSetup()">⚔️ Start Battle!</button>
-    <button class="btn-tutorial" onclick="showTutorial()">📖 Tutorial</button>
+    <div class="setup-info-row" style="margin-bottom:20px;">
+      <div class="setup-stats">
+        <div class="setup-stat-row"><span>Total tiles on map</span><span class="setup-stat-val" id="setupMapSize">—</span></div>
+        <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
+      </div>
+    </div>
+    <button class="btn-start" id="btnStart" onclick="startFromSetup()" style="margin-bottom:20px;">⚔️ Start Battle!</button>
+    <div class="setup-tiles" id="setupTiles"></div>
   </div>
 </div>
 
