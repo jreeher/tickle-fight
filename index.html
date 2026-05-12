@@ -553,7 +553,7 @@ const TILE_CONFIG = [
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Peek at 4 face-down tiles' },
   { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Removes all rocks from play' },
   { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:1, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'1 damage + pushes Smashy back 3 spaces' },
-  { id:'glitter',   name:'Glitter Hole',   img:'./glitter-hole.png',      fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Place on a tile to stop Smashy and remove all rocks' },
+  { id:'glitter',   name:'Glitter Hole',   img:'./glitter-hole.png',      fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Activate to immediately remove all rocks from the board' },
   { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Pushes Smashy back 4 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Freezes Smashy for one turn' },
   { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:1, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'1 damage + pushes Smashy back 2' },
@@ -757,8 +757,8 @@ function initGame(counts, bossHp, mode='medium'){
     matched: new Set(),
     bossPos: 0,
     warriors: new Set(),
-    glitterHoles: new Set(),
     glitterHoleMode: false,
+    glitterPendingTiles: [],
     rocks: [],
     shields: 0,
     hp: bossHp,
@@ -831,7 +831,7 @@ function renderGrid(){
       const isMatched = G.matched.has(pathIdx);
       const isFlipped = G.flipped.includes(pathIdx);
       const isWarrior = G.warriors.has(pathIdx);
-      const isGlitterHole = G.glitterHoles.has(pathIdx);
+      const isGlitterPending = G.glitterHoleMode && G.glitterPendingTiles.includes(pathIdx);
       const isRock = G.rocks.includes(pathIdx);
 
       el.className = 'card';
@@ -843,17 +843,16 @@ function renderGrid(){
       if(!G.review && G.lastMatched.includes(pathIdx)) el.classList.add('just-matched');
       if(!G.review && isBoss) el.classList.add('boss-cell');
       if(!G.review && isWarrior && !isBoss) el.classList.add('warrior-cell');
-      if(!G.review && isGlitterHole && !isBoss) el.classList.add('glitter-hole-cell');
+      if(!G.review && isGlitterPending) el.classList.add('glitter-hole-target');
       if(!G.review && isRock && !isBoss) el.classList.add('rock-cell');
       if(!G.review && G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
-      if(!G.review && G.glitterHoleMode && isMatched && !isBoss) el.classList.add('glitter-hole-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterHole&&!isBoss&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterPending&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
-      else if(G.glitterHoleMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
+      else if(isGlitterPending) el.addEventListener('click',()=>onCard(pathIdx));
       else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
 
       g.appendChild(el);
@@ -880,7 +879,7 @@ function renderStatus(){
     banner.innerHTML = `<img src="./rainbow-guardian.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
   } else if(G.glitterHoleMode){
     banner.className = 'context-banner warrior';
-    banner.innerHTML = `<img src="./glitter-hole.png" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Glitter Hole</div><div class="cb-sub">Click a matched tile to place the trap</div>`;
+    banner.innerHTML = `<img src="./glitter-hole.png" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Glitter Hole</div><div class="cb-sub">Click either tile to remove all rocks</div>`;
   } else if(G.peek){
     const left = 4 - G.peekN;
     banner.className = 'context-banner peek';
@@ -921,18 +920,16 @@ function onCard(pathIdx){
     return;
   }
 
-  // GLITTER HOLE PLACEMENT
+  // GLITTER HOLE ACTIVATION
   if(G.glitterHoleMode){
-    if(!G.matched.has(pathIdx) || pathIdx===G.bossPos || G.rocks.includes(pathIdx)){
-      addLog('✨ Glitter Hole can only be placed on matched tiles!','n'); return;
-    }
-    G.glitterHoles.add(pathIdx);
-    G.glitterHoleMode = false;
-    addLog('✨ Glitter Hole placed! Smashy will be stopped when he lands on it.','g');
+    if(!G.glitterPendingTiles.includes(pathIdx)) return;
+    G.rocks=[];
+    G.glitterHoleMode=false;
+    G.glitterPendingTiles=[];
+    addLog('✨ Glitter Hole activated — all rocks cleared!','g');
     clearPopupActionMode();
     render();
-    setTimeout(()=>bossTurn(), 480);
-    return;
+    return; // player continues their turn — no bossTurn
   }
 
   if(G.peek){
@@ -1019,7 +1016,7 @@ function applyPower(id){
   else if(id==='fireball'){ damageBoss(3,'💥 Cumulus Cannon — 3 damage!'); showPopup('💥','Cumulus Cannon!','-3 HP to Smashy!','#ff8c42'); }
   else if(id==='comet')  { G.rocks=[]; addLog('💨 Wind Blast — all rocks removed!','g'); showPopup('💨','Wind Blast!','All rocks cleared!','#c8a856'); render(); }
   else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterHoleMode=true; addLog('✨ Click a matched tile to place the Glitter Hole!','i'); showActionPopup('✨','Glitter Hole!','Click a matched tile!','#ffe4f7'); }
+  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole! Click either tile to remove all rocks!','i'); showActionPopup('✨','Glitter Hole!','Click either tile to activate!','#ffe4f7'); }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
@@ -1171,12 +1168,6 @@ function execMove(ri){
       break;
     }
     G.bossPos=nextPos;
-    if(G.glitterHoles.has(nextPos)){
-      G.glitterHoles.delete(nextPos); G.rocks=[];
-      addLog('✨ Glitter Hole triggered! Smashy stopped — all rocks cleared!','g');
-      showPopup('✨','Glitter Hole!','Smashy stopped — rocks cleared!','#ffe4f7');
-      render(); break;
-    }
   }
 
   const progress=G.bossPos/(TOTAL-1);
