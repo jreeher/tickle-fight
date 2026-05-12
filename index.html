@@ -851,9 +851,9 @@ function renderGrid(){
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
       el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterPending&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.png" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
 
+      if(isGlitterPending) el.addEventListener('click',()=>onCard(pathIdx));
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
-      else if(isGlitterPending) el.addEventListener('click',()=>onCard(pathIdx));
-      else if(!isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
+      else if(!isGlitterPending && !isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
 
       g.appendChild(el);
     }
@@ -877,9 +877,6 @@ function renderStatus(){
   if(G.warriorMode){
     banner.className = 'context-banner warrior';
     banner.innerHTML = `<img src="./rainbow-guardian.webp" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Cloud Guard</div><div class="cb-sub">Click a matched tile to place your guardian</div>`;
-  } else if(G.glitterHoleMode){
-    banner.className = 'context-banner warrior';
-    banner.innerHTML = `<img src="./glitter-hole.png" class="cb-emoji" style="width:2.6rem;height:2.6rem;object-fit:contain;"><div class="cb-title">Glitter Hole</div><div class="cb-sub">Click either tile to remove all rocks</div>`;
   } else if(G.peek){
     const left = 4 - G.peekN;
     banner.className = 'context-banner peek';
@@ -920,16 +917,15 @@ function onCard(pathIdx){
     return;
   }
 
-  // GLITTER HOLE ACTIVATION
-  if(G.glitterHoleMode){
-    if(!G.glitterPendingTiles.includes(pathIdx)) return;
+  // GLITTER HOLE ACTIVATION (passive — can fire anytime player clicks a pending tile)
+  if(G.glitterHoleMode && G.glitterPendingTiles.includes(pathIdx)){
     G.rocks=[];
     G.glitterHoleMode=false;
     G.glitterPendingTiles=[];
     addLog('✨ Glitter Hole activated — all rocks cleared!','g');
-    clearPopupActionMode();
+    showPopup('✨','Glitter Hole!','All rocks cleared!','#ffe4f7');
     render();
-    return; // player continues their turn — no bossTurn
+    return;
   }
 
   if(G.peek){
@@ -992,7 +988,7 @@ function onCard(pathIdx){
         setTimeout(()=>{ G.lastMatched=[]; },600);
         checkMilestone();
         if(checkWin()) return;
-        if(!G.warriorMode && !G.glitterHoleMode) setTimeout(()=>bossTurn(), G.powerDelay);
+        if(!G.warriorMode) setTimeout(()=>bossTurn(), G.powerDelay);
         G.powerDelay=480;
       },400);
     } else {
@@ -1027,7 +1023,7 @@ function applyPower(id){
     G.powerDelay=1400; render();
   }
   else if(id==='unicorn'){ damageBoss(1,'🦄 Unicorn Horn — 1 damage + pushed back 3!'); pushBackN(3); showPopup('🦄','Unicorn Horn!','-1 HP + pushed back 3!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole! Click either tile to remove all rocks!','i'); showActionPopup('✨','Glitter Hole!','Click either tile to activate!','#ffe4f7'); }
+  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole ready — click either tile anytime to remove all rocks!','i'); showPopup('✨','Glitter Hole!','Click either tile to activate!','#ffe4f7'); }
   else if(id==='tornado'){ pushBackN(4); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 4!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(1,'🌈 Rain-Bow — 1 damage + pushback 2!'); pushBackN(2); showPopup('🌈','Rain-Bow!','-1 HP + pushed back 2!','#ffb3d9'); G.powerDelay=1400; }
