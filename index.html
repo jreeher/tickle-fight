@@ -18,6 +18,7 @@
 <link rel="preload" href="./star-wand.webp" as="image">
 <link rel="preload" href="./cloud-cannon-2.webp" as="image">
 <link rel="preload" href="./queen.webp" as="image">
+<link rel="preload" href="./smashy-wall.webp" as="image">
 <link rel="preload" href="./cloud-1.webp" as="image">
 <link rel="preload" href="./cloud-2.webp" as="image">
 <link rel="preload" href="./cloud-3.webp" as="image">
@@ -110,7 +111,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card:not(.matched):not(.flipped):not(.boss-cell):not(.rock-cell):hover .card-back::after{opacity:0.85;}
 .card.boss-cell{cursor:default;}
 .card.boss-cell .card-back{background:linear-gradient(135deg,#3a1818,#5a2020);border-color:rgba(255,80,80,0.55)!important;box-shadow:0 0 12px rgba(255,60,60,0.35);}
-.card.boss-cell .card-back::after,.card.rock-cell .card-back::after{display:none;}
 .card.peeked .card-face{box-shadow:0 0 10px rgba(245,200,66,0.55);border-color:var(--gold)!important;}
 .card.warrior-cell .card-back{border-color:rgba(255,150,100,0.55)!important;box-shadow:0 0 9px rgba(255,150,100,0.28);}
 .card.warrior-target .card-back{border-color:rgba(255,150,100,0.7)!important;box-shadow:0 0 12px rgba(255,150,100,0.4)!important;cursor:crosshair;}
@@ -118,6 +118,9 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .card.glitter-hole-target .card-back{border-color:rgba(255,100,220,0.7)!important;box-shadow:0 0 12px rgba(255,100,220,0.4)!important;cursor:crosshair;}
 .card.rock-cell{cursor:not-allowed;}
 .card.rock-cell .card-back{background:linear-gradient(135deg,#2a2018,#3a3020)!important;border-color:rgba(180,140,60,0.5)!important;box-shadow:0 0 8px rgba(150,110,40,0.3);}
+.card.wall-cell{cursor:not-allowed;}
+.card.wall-cell .card-back{background:linear-gradient(135deg,#1a2535,#2a3f55)!important;border-color:rgba(80,180,255,0.55)!important;box-shadow:0 0 10px rgba(60,150,255,0.3);}
+.card.boss-cell .card-back::after,.card.rock-cell .card-back::after,.card.wall-cell .card-back::after{display:none;}
 
 @keyframes card-shake{0%,100%{transform:rotateY(0) scale(1);}20%{transform:rotateY(0) scale(0.82) rotate(-10deg);}40%{transform:rotateY(0) scale(0.82) rotate(10deg);}60%{transform:rotateY(0) scale(0.82) rotate(-6deg);}80%{transform:rotateY(0) scale(0.82) rotate(6deg);}}
 .card.scrambling .card-inner{animation:card-shake 0.5s ease-in-out;}
@@ -578,7 +581,7 @@ const DICE_DEF = [
   { e:'⬆️⬆️',   lbl:'Double step — moves twice!',  step2:true   },
   { e:'⬆️⬆️⬆️', lbl:'Triple step — moves three!',  step3:true   },
   { e:'🪨',     lbl:'ROCK! Current tile blocked!',  rock:true    },
-  { e:'🪨',     lbl:'ROCK! Current tile blocked!',  rock:true    },
+  { e:'🧱',     lbl:'WALL! Smashy places a wall!',  wall:true    },
   { e:'↔️',     lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
 ];
 const DICE_DEF_HARD = [
@@ -587,7 +590,7 @@ const DICE_DEF_HARD = [
   { e:'⬆️⬆️⬆️',     lbl:'Triple step — moves three!',  step3:true   },
   { e:'⬆️⬆️⬆️⬆️',   lbl:'QUAD step — moves four!',     step4:true   },
   { e:'↔️',         lbl:'SWAP — tiles next to Smashy!', swapAdj:true },
-  { e:'🪨',         lbl:'ROCK! Current tile blocked!',  rock:true    },
+  { e:'🧱',         lbl:'WALL! Smashy places a wall!',  wall:true    },
 ];
 const DICE_DEF_EASY = [
   { e:'😏', lbl:'Smashy is taunting you!',  miss:true  },
@@ -763,7 +766,8 @@ function initGame(counts, bossHp, mode='medium'){
     glitterHoleMode: false,
     glitterPendingTiles: [],
     rocks: [],
-    shields: 0,
+    shields: 3,
+    wall: null,
     hp: bossHp,
     maxHp: bossHp,
     peek: false, peekN: 0, peekTarget: 4, peekIdx: [],
@@ -837,6 +841,7 @@ function renderGrid(){
       const isWarrior = G.warriors.has(pathIdx);
       const isGlitterPending = G.glitterHoleMode && G.glitterPendingTiles.includes(pathIdx);
       const isRock = G.rocks.includes(pathIdx);
+      const isWall = G.wall === pathIdx;
 
       el.className = 'card';
       el.style.gridRow = row;
@@ -849,15 +854,16 @@ function renderGrid(){
       if(!G.review && isWarrior && !isBoss) el.classList.add('warrior-cell');
       if(!G.review && isGlitterPending && !isBoss) el.classList.add('glitter-hole-target');
       if(!G.review && isRock && !isBoss) el.classList.add('rock-cell');
+      if(!G.review && isWall && !isBoss) el.classList.add('wall-cell');
       if(!G.review && G.warriorMode && isMatched && !isBoss) el.classList.add('warrior-target');
 
       const faceContent = card.img ? `<img src="${card.img}" style="width:75%;height:75%;object-fit:contain;" onerror="this.style.display='none'">` : card.emoji;
       const hpPct = Math.max(0, G.hp/G.maxHp*100);
-      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterPending&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}`;
+      el.innerHTML = `<div class="card-inner"><div class="card-back"></div><div class="card-face ${card.fc}">${faceContent}</div></div>${isBoss&&!G.review?`<div class="boss-overlay" id="bossOnTile"></div><div class="boss-tile-hp"><div class="boss-tile-hp-bar" style="width:${hpPct}%"></div></div>`:''}${isWarrior&&!isBoss&&!G.review?'<div class="warrior-overlay"><img src="' + WARRIOR_SRC + '" style="width:90%;height:90%;object-fit:contain;"></div>':''}${isGlitterPending&&!G.review?'<div class="glitter-hole-overlay"><img src="./glitter-hole.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isRock&&!isBoss&&!G.review?'<div class="rock-overlay"><img src="./rock.webp" style="width:85%;height:85%;object-fit:contain;"></div>':''}${isWall&&!isBoss&&!G.review?'<div class="wall-overlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:4;"><img src="./smashy-wall.webp" style="width:90%;height:90%;object-fit:contain;"></div>':''}`;
 
       if(isGlitterPending && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
       if(G.warriorMode && !isBoss) el.addEventListener('click',()=>onCard(pathIdx));
-      else if(!isGlitterPending && !isMatched && !isBoss && !isWarrior && !isRock) el.addEventListener('click',()=>onCard(pathIdx));
+      else if(!isGlitterPending && !isMatched && !isBoss && !isWarrior && !isRock && !isWall) el.addEventListener('click',()=>onCard(pathIdx));
 
       g.appendChild(el);
     }
@@ -1061,9 +1067,12 @@ function pushBack(){
 
 function pushBackN(n){
   const before=G.bossPos;
-  G.bossPos=Math.max(0,G.bossPos-n);
+  let target=Math.max(0,G.bossPos-n);
+  if(G.wall!==null && target<G.wall){ target=G.wall; }
+  G.bossPos=target;
   const moved=before-G.bossPos;
-  addLog(moved>0?`Smashy pushed back ${moved} step${moved>1?'s':''}!`:'Smashy is already at the start!','g');
+  if(moved>0 && G.wall!==null && G.bossPos===G.wall) addLog(`Smashy hits the wall and stops! (pushed back ${moved} step${moved>1?'s':''})`, 'g');
+  else addLog(moved>0?`Smashy pushed back ${moved} step${moved>1?'s':''}!`:'Smashy is already at the start!','g');
 }
 
 // ── BOSS TURN ────────────────────────────────────────────────────────────────
@@ -1137,8 +1146,15 @@ function execMove(ri){
       }
     }
     if(rockTarget === null){
-      addLog(`🪨 Smashy grumbles — no tiles to rock ahead!`,'b');
-      showBossPopup('🪨','Smashy Grumbles...','No tiles to block ahead!');
+      if(G.shields > 0){
+        G.shields--;
+        addLog(`🪨 No tiles ahead — Smashy hurls the rock at the castle! ${G.shields} wall${G.shields!==1?'s':''} left.`,'b');
+        showBossPopup('🪨','Rock at the Castle!',`Castle wall crumbles! ${G.shields} left.`);
+        renderShields();
+      } else {
+        addLog('🪨 Smashy grumbles — no tiles to block and no castle walls left!','n');
+        showBossPopup('🪨','Smashy Grumbles...','Nothing left to hit!');
+      }
       smashyTaunt('move'); render(); return;
     }
     if(G.rocks.length>=3){
@@ -1156,6 +1172,20 @@ function execMove(ri){
   if(d.miss){
     showBossPopup('','Smashy is taunting you!','');
     document.getElementById('ppEmoji').innerHTML='<img src="./rock.webp" style="width:72px;height:72px;object-fit:contain;display:inline-block;vertical-align:middle;"><img src="./rock.webp" style="width:72px;height:72px;object-fit:contain;display:inline-block;vertical-align:middle;margin-left:-30px;">';
+    smashyTaunt('move'); render(); return;
+  }
+
+  if(d.wall){
+    const wallPos = G.bossPos - 1;
+    if(wallPos < 0){
+      addLog('🧱 No tile behind Smashy to place a wall!','n');
+      showBossPopup('🧱','No Wall Spot!','No tile behind Smashy!');
+      smashyTaunt('move'); render(); return;
+    }
+    const moved = G.wall !== null;
+    G.wall = wallPos;
+    addLog(moved ? `🧱 Smashy moves his wall to tile ${wallPos+1}!` : `🧱 Smashy places a wall on tile ${wallPos+1}!`,'b');
+    showBossPopup('🧱', moved ? 'Wall Moved!' : 'Wall Placed!', 'Smashy placed a wall behind him!');
     smashyTaunt('move'); render(); return;
   }
 
@@ -1206,7 +1236,7 @@ function execMove(ri){
 function anyFaceDown(exclude=[]){
   const pool=[];
   for(let i=0;i<TOTAL;i++){
-    if(G.matched.has(i)||G.flipped.includes(i)||i===G.bossPos||G.rocks.includes(i)) continue;
+    if(G.matched.has(i)||G.flipped.includes(i)||i===G.bossPos||G.rocks.includes(i)||G.wall===i) continue;
     if(exclude.includes(i)) continue;
     pool.push(i);
   }
@@ -1216,7 +1246,7 @@ function anyFaceDown(exclude=[]){
 
 function hasFlippable(){
   for(let i=0;i<TOTAL;i++){
-    if(!G.matched.has(i)&&!G.flipped.includes(i)&&!G.rocks.includes(i)) return true;
+    if(!G.matched.has(i)&&!G.flipped.includes(i)&&!G.rocks.includes(i)&&G.wall!==i) return true;
   }
   return false;
 }
