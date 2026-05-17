@@ -726,7 +726,7 @@ function updateSetupStats() {
   } else {
     slider.disabled = false;
     slider.style.opacity = '';
-    if (!userChangedHp) slider.value = Math.max(1, effectiveMax - 9);
+    if (!userChangedHp) slider.value = Math.max(1, effectiveMax - 6);
     else if (parseInt(slider.value) > effectiveMax) slider.value = effectiveMax;
   }
   document.getElementById('hpSliderVal').textContent = slider.value;
@@ -772,7 +772,7 @@ function initGame(counts, bossHp, mode='medium'){
     glitterHoleMode: false,
     glitterPendingTiles: [],
     rocks: [],
-    shields: 3,
+    shields: 2,
     wall: null,
     hp: bossHp,
     maxHp: bossHp,
@@ -1179,7 +1179,7 @@ function execMove(ri){
       }
       smashyTaunt('move'); render(); return;
     }
-    if(G.rocks.length>=3){
+    if(G.rocks.length>=2){
       G.rocks.shift(); G.rocks.push(rockTarget);
       addLog(`🪨 Smashy moves his oldest rock ahead!`,'b');
       showBossPopup('<img src="./rock-3.webp" style="width:72px;height:72px;object-fit:contain;">','Rock Moved!','Oldest rock relocated!');
@@ -1225,6 +1225,7 @@ function execMove(ri){
         G.shields--;
         addLog(`🛡️ Wind Shield blocks Smashy at the gates! ${G.shields} left.`,'g');
         renderShields();
+        rockHitCastle();
         showPopup('🛡️','Shield Activated!','Castle protected!','#b57bff');
       } else {
         addLog('💀 Smashy storms the castle! GAME OVER!','b');
