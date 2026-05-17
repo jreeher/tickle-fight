@@ -1069,7 +1069,7 @@ function damageBoss(amt,msg){
 function pushBackN(n){
   const before=G.bossPos;
   let target=Math.max(0,G.bossPos-n);
-  if(G.wall!==null && target<G.wall){ target=G.wall; }
+  if(G.wall!==null && target<=G.wall){ target=Math.min(before, G.wall+1); }
   G.bossPos=target;
 }
 
