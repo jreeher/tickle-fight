@@ -340,9 +340,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
     <div class="setup-mode-box" id="modeBox" style="margin-bottom:14px;">
       <div class="setup-mode-label"><strong>Difficulty</strong></div>
       <div class="setup-mode-btns">
-        <button class="mode-btn" id="modeEasy" onclick="setMode('easy')">🌈 Easy</button>
-        <button class="mode-btn active-medium" id="modeMedium" onclick="setMode('medium')">⚔️ Medium</button>
-        <button class="mode-btn" id="modeHard" onclick="setMode('hard')">🔥 Hard</button>
+        <button class="mode-btn" id="modeEasy" onclick="setMode('easy')" style="display:flex;align-items:center;gap:5px;"><img src="./feather-arrow.webp" style="width:18px;height:18px;object-fit:contain;">Easy</button>
+        <button class="mode-btn active-medium" id="modeMedium" onclick="setMode('medium')" style="display:flex;align-items:center;gap:5px;"><img src="./cloud-cannon-2.webp" style="width:18px;height:18px;object-fit:contain;">Medium</button>
+        <button class="mode-btn" id="modeHard" onclick="setMode('hard')" style="display:flex;align-items:center;gap:5px;"><img src="./rain-bow.webp" style="width:18px;height:18px;object-fit:contain;">Hard</button>
       </div>
     </div>
     <div class="setup-hp-row" style="margin-bottom:20px;">
@@ -356,7 +356,7 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="setup-stat-row"><span>Max possible damage</span><span class="setup-stat-val" id="setupMaxDmg">—</span></div>
       </div>
     </div>
-    <button class="btn-start" id="btnStart" onclick="startFromSetup()" style="margin-bottom:20px;">⚔️ Start Battle!</button>
+    <button class="btn-start" id="btnStart" onclick="startFromSetup()" style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:8px;"><img src="./tf-logo.png" style="width:26px;height:26px;object-fit:contain;">Start Battle!</button>
     <div class="setup-tiles" id="setupTiles"></div>
   </div>
 </div>
@@ -631,8 +631,8 @@ const TAUNTS = {
   start: ['😤 I will squash your castle!','Prepare yourself! 🧌','You cannot stop me!'],
 };
 
-const MILESTONE_HALF = 'Halfway there! Keep going! 🌟';
-const MILESTONE_ALL  = 'All pairs matched! 🎉';
+const MILESTONE_HALF = '<img src="./star-wand.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:6px;">Halfway there! Keep going!';
+const MILESTONE_ALL  = '<img src="./rainbow-guardian.webp" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;margin-right:6px;">All pairs matched!';
 
 let G = {};
 let popupTimer = null, milestoneTimer = null;
@@ -1193,8 +1193,8 @@ function execMove(ri){
   }
 
   if(d.miss){
-    showBossPopup('','Smashy is taunting you!','');
-    document.getElementById('ppEmoji').innerHTML='<img src="./rock-3.webp" style="width:72px;height:72px;object-fit:contain;display:inline-block;vertical-align:middle;">';
+    const doubleRock = '<span style="display:flex;align-items:center;justify-content:center;gap:2px;"><img src="./rock-3.webp" style="width:36px;height:36px;object-fit:contain;"><img src="./rock-3.webp" style="width:36px;height:36px;object-fit:contain;"></span>';
+    showBossPopup(doubleRock,'Smashy is taunting you!','');
     smashyTaunt('move'); render(); return;
   }
 
@@ -1406,7 +1406,7 @@ function checkMilestone(){
   else if(half>=2 && G.pairs===half) msg=MILESTONE_HALF;
   if(!msg) return;
   const el=document.getElementById('milestone');
-  el.textContent=msg; el.className='milestone show';
+  el.innerHTML=msg; el.className='milestone show';
   if(milestoneTimer) clearTimeout(milestoneTimer);
   milestoneTimer=setTimeout(()=>{ el.classList.add('hide'); setTimeout(()=>el.className='milestone',400); },2200);
 }
