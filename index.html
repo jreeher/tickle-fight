@@ -78,7 +78,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 }
 .path-cell{aspect-ratio:1;}
 .path-cell.empty{/* invisible spacer */}
-.path-cell.ghost{background:rgba(255,255,255,0.08);border:1.5px dashed rgba(100,160,210,0.25);border-radius:9px;}
 
 /* Castle */
 .castle-cell{
@@ -833,7 +832,7 @@ function renderGrid(){
       const el = document.createElement('div');
 
       if(pathIdx === undefined){
-        el.className = row === numRows ? 'path-cell ghost' : 'path-cell empty';
+        el.className = 'path-cell empty';
         el.style.gridRow = row;
         el.style.gridColumn = col;
         g.appendChild(el);
