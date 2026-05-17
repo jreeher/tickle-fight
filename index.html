@@ -78,6 +78,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 }
 .path-cell{aspect-ratio:1;}
 .path-cell.empty{/* invisible spacer */}
+.path-cell.ghost{background:rgba(255,255,255,0.08);border:1.5px dashed rgba(100,160,210,0.25);border-radius:9px;}
 
 /* Castle */
 .castle-cell{
@@ -555,17 +556,17 @@ function generatePath(n) {
 }
 
 const TILE_CONFIG = [
-  { id:'queen',     name:'Rainbow Royals',    img:'./queen.webp',            fc:'face-queen',     damage:9, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.webp', desc:'9 damage + pushes Smashy back 3 spaces!' },
+  { id:'queen',     name:'Rainbow Royals',    img:'./queen.webp',            fc:'face-queen',     damage:9, defaultPairs:1, max:1, pairWith:'king', setupImg:'./kingandqueen.webp', desc:'9 damage + pushes Smashy back 6 spaces!' },
   { id:'king',      name:'King',           img:'./king.webp',              fc:'face-king',      damage:0, defaultPairs:0, max:1, hidden:true, desc:'' },
   { id:'fireball',  name:'Cumulus Cannon',   img:'./cloud-cannon-2.webp',   fc:'face-fireball',  damage:6, defaultPairs:2, max:2, desc:'Deals 6 damage to Smashy' },
   { id:'lightning', name:'Feather Arrow',  img:'./feather-arrow.webp',    fc:'face-lightning', damage:3, defaultPairs:2, max:2, desc:'Deals 3 damage to Smashy' },
   { id:'warrior',   name:'Cloud Guard',    img:'./rainbow-guardian.webp', fc:'face-warrior',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Place on a tile to stop Smashy' },
   { id:'shield',    name:'Wall of Fluff',  img:'./cloud-wall.webp',       fc:'face-shield',    damage:0, defaultPairs:1, max:2, desc:'Blocks one castle breach' },
   { id:'starmap',   name:'Star Wand',      img:'./star-wand.webp',        fc:'face-starmap',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:0, desc:'Peek at 4 face-down tiles' },
-  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Pushes Smashy back 1 space' },
-  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'Pushes Smashy back 2 spaces' },
+  { id:'comet',     name:'Wind Blast',     img:'./wind-blast.webp',       fc:'face-comet',     damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Pushes Smashy back 2 spaces' },
+  { id:'unicorn',   name:'Unicorn Horn',   img:'./unicorn-horn.webp',     fc:'face-unicorn',   damage:0, defaultPairs:1, max:2, easyDefaultPairs:2, desc:'Pushes Smashy back 4 spaces' },
   { id:'glitter',   name:'Glitter Hole',   img:'./glitter-hole.webp',      fc:'face-glitter',   damage:0, defaultPairs:1, max:2, hardDefaultPairs:1, easyDefaultPairs:0, desc:'Activate to remove all rocks from the board' },
-  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Pushes Smashy back 3 spaces' },
+  { id:'tornado',   name:'Rainbow Tornado',img:'./rainbow-tornado.webp',  fc:'face-tornado',   damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Pushes Smashy back 6 spaces' },
   { id:'freeze',    name:'Freeze Wand',    img:'./freeze-wand.webp',      fc:'face-freeze',    damage:0, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Freezes Smashy for one turn' },
   { id:'rainbow',   name:'Rain-Bow',       img:'./rain-bow.webp',         fc:'face-rainbow',   damage:9, defaultPairs:0, max:2, hardDefaultPairs:1, easyDefaultPairs:1, desc:'Deals 9 damage to Smashy' },
 ];
@@ -832,7 +833,7 @@ function renderGrid(){
       const el = document.createElement('div');
 
       if(pathIdx === undefined){
-        el.className = 'path-cell empty';
+        el.className = row === numRows ? 'path-cell ghost' : 'path-cell empty';
         el.style.gridRow = row;
         el.style.gridColumn = col;
         g.appendChild(el);
@@ -1064,13 +1065,13 @@ function applyPower(id){
     else { G.peek=true; G.peekN=0; G.peekTarget=Math.min(4,avail); G.peekIdx=[]; addLog(`⭐ Star Wand! Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek...`,'i'); showActionPopup('⭐','Star Wand!',`Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek!`,'#f5c842'); }
   }
   else if(id==='fireball'){ damageBoss(6,'💥 Cumulus Cannon — 6 damage!'); showPopup('💥','Cumulus Cannon!','-6 HP to Smashy!','#ff8c42'); }
-  else if(id==='comet'){ pushBackN(1); showPopup('💨','Wind Blast!','Smashy pushed back 1!','#c8a856'); G.powerDelay=1400; }
-  else if(id==='unicorn'){ pushBackN(2); showPopup('🦄','Unicorn Horn!','Smashy pushed back 2!','#f4b8ff'); G.powerDelay=1400; }
+  else if(id==='comet'){ pushBackN(2); showPopup('💨','Wind Blast!','Smashy pushed back 2!','#c8a856'); G.powerDelay=1400; }
+  else if(id==='unicorn'){ pushBackN(4); showPopup('🦄','Unicorn Horn!','Smashy pushed back 4!','#f4b8ff'); G.powerDelay=1400; }
   else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole ready — click either tile anytime to remove all rocks!','i'); showPopup('✨','Glitter Hole!','Click either Glitter Hole to remove all rocks','#ffe4f7'); G.powerDelay=1800; }
-  else if(id==='tornado'){ pushBackN(3); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 3!','#a0d8ff'); G.powerDelay=1400; }
+  else if(id==='tornado'){ pushBackN(6); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 6!','#a0d8ff'); G.powerDelay=1400; }
   else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
   else if(id==='rainbow'){ damageBoss(9,'🌈 Rain-Bow — 9 damage!'); showPopup('🌈','Rain-Bow!','-9 HP to Smashy!','#ffb3d9'); }
-  else if(id==='queen')  { damageBoss(9,'👑 Rainbow Royals — 9 damage!'); pushBackN(3); showPopup('👑','Rainbow Royals!','-9 HP + pushed back 3!','#e8b4f8'); G.powerDelay=1400; }
+  else if(id==='queen')  { damageBoss(9,'👑 Rainbow Royals — 9 damage!'); pushBackN(6); showPopup('👑','Rainbow Royals!','-9 HP + pushed back 6!','#e8b4f8'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
