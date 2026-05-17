@@ -1163,8 +1163,7 @@ function execMove(ri){
   }
 
   if(d.miss){
-    const doubleRock = '<span style="display:flex;align-items:center;justify-content:center;gap:2px;"><img src="./rock-3.webp" style="width:36px;height:36px;object-fit:contain;"><img src="./rock-3.webp" style="width:36px;height:36px;object-fit:contain;"></span>';
-    showBossPopup(doubleRock,'Smashy is taunting you!','');
+    showBossPopup('<img src="./rock.webp" style="width:72px;height:72px;object-fit:contain;">','Smashy is taunting you!','');
     render(); return;
   }
 
