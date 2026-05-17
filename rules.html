@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tickle Fight — Rulebook</title>
+<link rel="icon" href="./tf-logo.webp">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f5f0e8;
+    color: #2a1f0f;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── PAGE LAYOUT ── */
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    text-align: center;
+    padding: 40px 20px 32px;
+    background: linear-gradient(160deg, #1a0a2e 0%, #2d1060 50%, #1a0a2e 100%);
+    border-radius: 18px;
+    margin-bottom: 40px;
+    border: 3px solid #c8a030;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 0 60px rgba(200,160,48,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(200,160,48,0.3);
+    border-radius: 12px;
+    pointer-events: none;
+  }
+  .cover-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 16px rgba(245,200,66,0.6));
+  }
+  .cover-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.6rem;
+    color: #f5c842;
+    letter-spacing: 3px;
+    text-shadow: 0 2px 12px rgba(245,200,66,0.4), 0 0 40px rgba(245,200,66,0.2);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .cover-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: rgba(245,220,160,0.75);
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .cover-art {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 24px;
+    margin: 20px 0 16px;
+  }
+  .cover-art img {
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+  }
+  .cover-tagline {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.95rem;
+    color: rgba(245,200,66,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 16px;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section {
+    margin-bottom: 36px;
+  }
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    color: #5a1fa0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #c8a030;
+  }
+  .section-title img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+  .section-title .number {
+    background: #5a1fa0;
+    color: white;
+    font-size: 0.95rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ── ORNAMENTAL DIVIDER ── */
+  .divider {
+    text-align: center;
+    margin: 28px 0;
+    color: #c8a030;
+    font-size: 1.1rem;
+    letter-spacing: 6px;
+    opacity: 0.7;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    display: inline-block;
+    width: 80px;
+    height: 1px;
+    background: #c8a030;
+    vertical-align: middle;
+    margin: 0 12px;
+    opacity: 0.6;
+  }
+
+  /* ── CALLOUT BOXES ── */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .callout img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+  .callout-body { flex: 1; }
+  .callout-title { font-family: 'Fredoka One', cursive; font-size: 1rem; margin-bottom: 2px; }
+  .callout-text { font-size: 0.9rem; line-height: 1.5; }
+
+  .callout-purple { background: rgba(90,31,160,0.10); border: 1.5px solid rgba(90,31,160,0.25); }
+  .callout-purple .callout-title { color: #5a1fa0; }
+  .callout-gold   { background: rgba(200,160,48,0.12); border: 1.5px solid rgba(200,160,48,0.35); }
+  .callout-gold .callout-title   { color: #8a5800; }
+  .callout-red    { background: rgba(180,40,40,0.09); border: 1.5px solid rgba(180,40,40,0.25); }
+  .callout-red .callout-title    { color: #961f1f; }
+  .callout-green  { background: rgba(60,140,60,0.09); border: 1.5px solid rgba(60,140,60,0.25); }
+  .callout-green .callout-title  { color: #2a6e2a; }
+  .callout-blue   { background: rgba(30,100,180,0.09); border: 1.5px solid rgba(30,100,180,0.25); }
+  .callout-blue .callout-title   { color: #1a4a8a; }
+
+  /* ── STEP LIST ── */
+  .step-list { list-style: none; padding: 0; }
+  .step-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(0,0,0,0.1);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-num {
+    background: #5a1fa0;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  /* ── TILE GRID ── */
+  .tile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .tile-card {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    background: white;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .tile-face {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(0,0,0,0.12);
+  }
+  .tile-face img { width: 80%; height: 80%; object-fit: contain; }
+  .tile-info { flex: 1; }
+  .tile-name { font-family: 'Fredoka One', cursive; font-size: 0.95rem; color: #2a1f0f; line-height: 1.2; }
+  .tile-pairs { font-size: 0.72rem; color: #888; margin-bottom: 2px; }
+  .tile-desc { font-size: 0.82rem; color: #444; line-height: 1.4; }
+
+  /* Tile face colours */
+  .tf-lightning { background: #a8d080; }
+  .tf-fireball  { background: #e09870; }
+  .tf-comet     { background: #c8c890; }
+  .tf-unicorn   { background: #c090f0; }
+  .tf-tornado   { background: #80c8f0; }
+  .tf-freeze    { background: #80d8f8; }
+  .tf-rainbow   { background: #f080a0; }
+  .tf-warrior   { background: #80b0e0; }
+  .tf-shield    { background: #b080e0; }
+  .tf-starmap   { background: #e0c070; }
+  .tf-glitter   { background: #f080c8; }
+  .tf-queen     { background: linear-gradient(135deg,#7b2ff7,#c44dff 60%,#f5c842); }
+
+  /* ── DICE TABLE ── */
+  .dice-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .dice-table th {
+    background: #5a1fa0;
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    text-align: left;
+    letter-spacing: 0.5px;
+  }
+  .dice-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    font-size: 0.88rem;
+    vertical-align: middle;
+  }
+  .dice-table tr:last-child td { border-bottom: none; }
+  .dice-table tr:nth-child(even) td { background: rgba(0,0,0,0.025); }
+  .dice-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    vertical-align: middle;
+    display: inline-block;
+  }
+  .dice-mode {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+  }
+  .mode-easy   { background: rgba(80,210,100,0.15); color: #2a7a2a; border: 1px solid rgba(80,210,100,0.4); }
+  .mode-medium { background: rgba(80,140,255,0.12); color: #1a3a8a; border: 1px solid rgba(80,140,255,0.35); }
+  .mode-hard   { background: rgba(220,60,60,0.12);  color: #8a1f1f; border: 1px solid rgba(220,60,60,0.3); }
+
+  /* ── TWO COLUMN ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* ── WIN/LOSE ── */
+  .outcome-box {
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .outcome-box img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; }
+  .outcome-box .outcome-title { font-family: 'Fredoka One', cursive; font-size: 1.3rem; margin-bottom: 4px; }
+  .outcome-box .outcome-text { font-size: 0.88rem; line-height: 1.5; }
+  .outcome-win  { background: rgba(60,140,60,0.10); border: 2px solid rgba(60,140,60,0.35); }
+  .outcome-win .outcome-title { color: #2a6e2a; }
+  .outcome-lose { background: rgba(180,40,40,0.09); border: 2px solid rgba(180,40,40,0.3); }
+  .outcome-lose .outcome-title { color: #961f1f; }
+
+  /* ── COMPONENTS BOX ── */
+  .components-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .component-item {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .component-item img { width: 48px; height: 48px; object-fit: contain; margin-bottom: 6px; }
+  .component-name { font-family: 'Fredoka One', cursive; font-size: 0.85rem; color: #2a1f0f; }
+  .component-count { font-size: 0.78rem; color: #888; }
+
+  /* ── SPECIAL ICON ── */
+  .inline-icon { width: 18px; height: 18px; object-fit: contain; vertical-align: middle; display: inline-block; }
+  .inline-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    vertical-align: middle;
+  }
+  .inline-tile img { width: 85%; height: 85%; object-fit: contain; }
+
+  strong { font-weight: 800; }
+  p { margin-bottom: 10px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding-top: 24px;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+    color: #888;
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+  .footer img { width: 32px; height: 32px; object-fit: contain; vertical-align: middle; margin-right: 6px; opacity: 0.6; }
+
+  @media (max-width: 600px) {
+    .tile-grid, .two-col, .three-col, .components-grid { grid-template-columns: 1fr; }
+    .cover-title { font-size: 2.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ COVER ══ -->
+  <div class="cover">
+    <img src="./tf-logo.webp" class="cover-logo" alt="Tickle Fight Logo">
+    <div class="cover-title">Tickle Fight!</div>
+    <div class="cover-subtitle">A Memory Matching Adventure</div>
+    <div class="cover-art">
+      <img src="./castle.webp" style="width:90px;height:90px;">
+      <img src="./smashy.webp" style="width:110px;height:110px;">
+      <img src="./kingandqueen.webp" style="width:90px;height:90px;">
+    </div>
+    <div class="cover-tagline">Rulebook</div>
+  </div>
+
+
+  <!-- ══ OVERVIEW ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">1</span>
+      Overview
+    </div>
+    <p>
+      Smashy the monster is marching towards the <strong>Cloud Kingdom!</strong>
+      Players must use their memory and the magic tiles on the board to deal damage, push Smashy back, and defend the castle before he breaks through its walls.
+    </p>
+    <p>
+      This is a <strong>cooperative memory matching game</strong> for 1–4 players. Flip tiles two at a time to find matching pairs — each matched pair triggers a powerful ability. But every time you flip tiles, Smashy takes a turn and advances along the path!
+    </p>
+    <div class="two-col" style="margin-top:14px;">
+      <div class="callout callout-gold">
+        <img src="./tf-logo.webp" alt="">
+        <div class="callout-body">
+          <div class="callout-title">Players</div>
+          <div class="callout-text">1–4 players, cooperative. Works great solo too!</div>
+        </div>
+      </div>
+      <div class="callout callout-gold">
+        <img src="./smashy.webp" alt="">
+        <div class="callout-body">
+          <div class="callout-title">Play Time</div>
+          <div class="callout-text">15–30 minutes depending on difficulty</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ COMPONENTS ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">2</span>
+      Components
+    </div>
+    <div class="components-grid">
+      <div class="component-item">
+        <img src="./feather-arrow.webp" alt="">
+        <div class="component-name">Memory Tiles</div>
+        <div class="component-count">22 tiles (11 pairs)</div>
+      </div>
+      <div class="component-item">
+        <img src="./step-dice.webp" alt="">
+        <div class="component-name">Smashy's Die</div>
+        <div class="component-count">1 custom die (3 difficulties)</div>
+      </div>
+      <div class="component-item">
+        <img src="./smashy.webp" alt="">
+        <div class="component-name">Smashy Token</div>
+        <div class="component-count">1 monster meeple</div>
+      </div>
+      <div class="component-item">
+        <img src="./castle.webp" alt="">
+        <div class="component-name">Castle Board</div>
+        <div class="component-count">1 castle board</div>
+      </div>
+      <div class="component-item">
+        <img src="./cloud-wall.webp" alt="">
+        <div class="component-name">Wall of Fluff Tokens</div>
+        <div class="component-count">2 defense shields</div>
+      </div>
+      <div class="component-item">
+        <img src="./rock-3.webp" alt="">
+        <div class="component-name">Rock Tokens</div>
+        <div class="component-count">2 rock blockers</div>
+      </div>
+      <div class="component-item">
+        <img src="./smashy-wall.webp" alt="">
+        <div class="component-name">Wall Token</div>
+        <div class="component-count">1 wall blocker</div>
+      </div>
+      <div class="component-item">
+        <img src="./rainbow-guardian.webp" alt="">
+        <div class="component-name">Cloud Guard Token</div>
+        <div class="component-count">1 guardian</div>
+      </div>
+      <div class="component-item">
+        <img src="./tf-logo.webp" alt="">
+        <div class="component-name">Path Board</div>
+        <div class="component-count">1 snake-path grid</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ SETUP ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">3</span>
+      Setup
+    </div>
+    <ul class="step-list">
+      <li>
+        <span class="step-num">1</span>
+        <span>Choose a <strong>difficulty</strong>: Easy, Medium, or Hard. This determines which faces appear on Smashy's die.</span>
+      </li>
+      <li>
+        <span class="step-num">2</span>
+        <span>Select which <strong>tile pairs</strong> to include. The default setup uses all standard tiles for your chosen difficulty.</span>
+      </li>
+      <li>
+        <span class="step-num">3</span>
+        <span>Shuffle all selected tiles face-down and lay them out in the <strong>snake-path grid</strong> (5 columns, rows as needed).</span>
+      </li>
+      <li>
+        <span class="step-num">4</span>
+        <span>Place <strong>Smashy's token</strong> on the first tile of the path (bottom row, starting column).</span>
+      </li>
+      <li>
+        <span class="step-num">5</span>
+        <span>Place <strong>2 Wall of Fluff tokens</strong> on the Castle board as starting defenses.</span>
+      </li>
+      <li>
+        <span class="step-num">6</span>
+        <span>Set <strong>Smashy's HP</strong> marker to the agreed starting value. We recommend 6 less than your maximum possible damage for a balanced challenge.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ HOW TO PLAY ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">4</span>
+      How to Play
+    </div>
+    <p>Players alternate between <strong>the Player's Turn</strong> and <strong>Smashy's Turn</strong>. The player always goes first.</p>
+
+    <div class="callout callout-purple" style="margin-bottom:14px;">
+      <img src="./kingandqueen.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">The Player's Turn — Flip Two Tiles</div>
+        <div class="callout-text">
+          Flip any face-down tile, then flip a second tile. Two outcomes are possible:
+          <br><br>
+          <strong>Match!</strong> Both tiles show the same image. Their power activates immediately, and the pair is removed from play (left face-up, out of the game).<br><br>
+          <strong>No Match.</strong> Both tiles flip back face-down. Try to memorize where they were!
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-red">
+      <img src="./smashy.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">After Every Flip — Smashy Takes His Turn</div>
+        <div class="callout-text">
+          Whether you matched or not, Smashy always rolls his die after you flip two tiles. See Section 6 for what each die face does.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ TILE POWERS ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">5</span>
+      Tile Powers
+    </div>
+    <p style="margin-bottom:14px;">When you match a pair, the tile's power triggers immediately. Each tile type is described below with its default number of pairs in a standard game.</p>
+
+    <div class="tile-grid">
+
+      <div class="tile-card">
+        <div class="tile-face tf-queen"><img src="./kingandqueen.webp" alt="Rainbow Royals"></div>
+        <div class="tile-info">
+          <div class="tile-name">Rainbow Royals</div>
+          <div class="tile-pairs">1 pair (special)</div>
+          <div class="tile-desc">Deals <strong>9 damage</strong> to Smashy and pushes him <strong>back 6 spaces</strong>. This pair is a hidden cross-match — the King and Queen tiles must be matched with each other.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-fireball"><img src="./cloud-cannon-2.webp" alt="Cumulus Cannon"></div>
+        <div class="tile-info">
+          <div class="tile-name">Cumulus Cannon</div>
+          <div class="tile-pairs">2 pairs</div>
+          <div class="tile-desc">Deals <strong>6 damage</strong> to Smashy. A reliable source of damage in your deck.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-lightning"><img src="./feather-arrow.webp" alt="Feather Arrow"></div>
+        <div class="tile-info">
+          <div class="tile-name">Feather Arrow</div>
+          <div class="tile-pairs">2 pairs</div>
+          <div class="tile-desc">Deals <strong>3 damage</strong> to Smashy. A quick, light hit.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-comet"><img src="./wind-blast.webp" alt="Wind Blast"></div>
+        <div class="tile-info">
+          <div class="tile-name">Wind Blast</div>
+          <div class="tile-pairs">1 pair</div>
+          <div class="tile-desc">Pushes Smashy <strong>back 2 spaces</strong> along the path. Great for buying time.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-unicorn"><img src="./unicorn-horn.webp" alt="Unicorn Horn"></div>
+        <div class="tile-info">
+          <div class="tile-name">Unicorn Horn</div>
+          <div class="tile-pairs">1 pair</div>
+          <div class="tile-desc">Pushes Smashy <strong>back 4 spaces</strong>. A powerful pushback when he gets close.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-tornado"><img src="./rainbow-tornado.webp" alt="Rainbow Tornado"></div>
+        <div class="tile-info">
+          <div class="tile-name">Rainbow Tornado</div>
+          <div class="tile-pairs">1 pair (hard/easy)</div>
+          <div class="tile-desc">Pushes Smashy <strong>back 6 spaces</strong>. The strongest pushback tile in the deck.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-rainbow"><img src="./rain-bow.webp" alt="Rain-Bow"></div>
+        <div class="tile-info">
+          <div class="tile-name">Rain-Bow</div>
+          <div class="tile-pairs">1 pair (hard/easy)</div>
+          <div class="tile-desc">Deals <strong>9 damage</strong> to Smashy. Highest single-hit damage of any tile.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-freeze"><img src="./freeze-wand.webp" alt="Freeze Wand"></div>
+        <div class="tile-info">
+          <div class="tile-name">Freeze Wand</div>
+          <div class="tile-pairs">1 pair (hard/easy)</div>
+          <div class="tile-desc"><strong>Freezes Smashy</strong> for one turn — he skips his next die roll entirely.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-warrior"><img src="./rainbow-guardian.webp" alt="Cloud Guard"></div>
+        <div class="tile-info">
+          <div class="tile-name">Cloud Guard</div>
+          <div class="tile-pairs">1 pair</div>
+          <div class="tile-desc">After matching, place the Cloud Guard token on any matched tile. Smashy <strong>stops before entering</strong> that tile. The token is removed when he reaches it.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-shield"><img src="./cloud-wall.webp" alt="Wall of Fluff"></div>
+        <div class="tile-info">
+          <div class="tile-name">Wall of Fluff</div>
+          <div class="tile-pairs">1 pair</div>
+          <div class="tile-desc">Adds <strong>1 defense shield</strong> to the castle. Shields absorb one breach when Smashy reaches the end.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-starmap"><img src="./star-wand.webp" alt="Star Wand"></div>
+        <div class="tile-info">
+          <div class="tile-name">Star Wand</div>
+          <div class="tile-pairs">1 pair</div>
+          <div class="tile-desc">Lets you <strong>peek at 4 face-down tiles</strong> of your choice without flipping them. Great for planning your next move.</div>
+        </div>
+      </div>
+
+      <div class="tile-card">
+        <div class="tile-face tf-glitter"><img src="./glitter-hole.webp" alt="Glitter Hole"></div>
+        <div class="tile-info">
+          <div class="tile-name">Glitter Hole</div>
+          <div class="tile-pairs">1 pair</div>
+          <div class="tile-desc">After matching, click either Glitter Hole tile at any time to <strong>remove all rock tokens</strong> from the board instantly.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ SMASHY'S TURN ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">6</span>
+      Smashy's Turn
+    </div>
+    <p style="margin-bottom:14px;">After every pair of tile flips, roll Smashy's die. The result depends on the chosen difficulty. If Smashy is <strong>Frozen</strong>
+      <span class="inline-tile tf-freeze" style="background:#80d8f8;"><img src="./freeze-wand.webp"></span>, he skips his turn and the freeze is removed.
+    </p>
+
+    <table class="dice-table">
+      <thead>
+        <tr>
+          <th style="width:36px;"></th>
+          <th>Die Face</th>
+          <th>Effect</th>
+          <th>Modes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><img src="./step-dice.webp" class="dice-icon" alt="Step"></td>
+          <td><strong>Charge 1</strong></td>
+          <td>Smashy moves forward 1 tile along the path.</td>
+          <td><span class="dice-mode mode-easy">Easy</span> <span class="dice-mode mode-medium">Med</span> <span class="dice-mode mode-hard">Hard</span></td>
+        </tr>
+        <tr>
+          <td><img src="./step-dice.webp" class="dice-icon" alt="Step 2" style="opacity:0.7;"><img src="./step-dice.webp" class="dice-icon" alt="" style="margin-left:-8px;"></td>
+          <td><strong>Charge 2</strong></td>
+          <td>Smashy moves forward 2 tiles.</td>
+          <td><span class="dice-mode mode-easy">Easy</span> <span class="dice-mode mode-medium">Med</span> <span class="dice-mode mode-hard">Hard</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><strong>Charge 3</strong></td>
+          <td>Smashy moves forward 3 tiles.</td>
+          <td><span class="dice-mode mode-medium">Med</span> <span class="dice-mode mode-hard">Hard</span></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><strong>Charge 4</strong></td>
+          <td>Smashy moves forward 4 tiles. Hard mode only!</td>
+          <td><span class="dice-mode mode-hard">Hard</span></td>
+        </tr>
+        <tr>
+          <td><img src="./rock-3.webp" class="dice-icon" alt="Rock"></td>
+          <td><strong>Rock</strong></td>
+          <td>Smashy drops a rock token on an unmatched tile ahead. That tile cannot be flipped until the rock is removed by a Glitter Hole. Max 2 rocks on the board at once — the oldest rock moves if a third would be placed. If no tiles are ahead, the rock hits the castle instead!</td>
+          <td><span class="dice-mode mode-medium">Med</span> <span class="dice-mode mode-hard">Hard</span></td>
+        </tr>
+        <tr>
+          <td><img src="./smashy-wall.webp" class="dice-icon" alt="Wall"></td>
+          <td><strong>Wall</strong></td>
+          <td>Smashy places (or moves) his wall token on the tile directly behind him. Pushback abilities cannot move Smashy past his own wall.</td>
+          <td><span class="dice-mode mode-medium">Med</span></td>
+        </tr>
+        <tr>
+          <td><img src="./swap-dice.webp" class="dice-icon" alt="Swap"></td>
+          <td><strong>Swap</strong></td>
+          <td>Smashy swaps two nearby face-down tiles, scrambling your memory. Watch out!</td>
+          <td><span class="dice-mode mode-medium">Med</span> <span class="dice-mode mode-hard">Hard</span></td>
+        </tr>
+        <tr>
+          <td><img src="./rock.webp" class="dice-icon" alt="Taunt" style="margin-left:-8px;"><img src="./rock.webp" class="dice-icon" alt="" style="margin-left:-16px;"></td>
+          <td><strong>Taunt</strong></td>
+          <td>Smashy taunts the players and does nothing this turn. Enjoy the break!</td>
+          <td><span class="dice-mode mode-easy">Easy</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-blue" style="margin-top:14px;">
+      <img src="./smashy-wall.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">Smashy's Wall</div>
+        <div class="callout-text">There is only ever one wall on the board at a time. If Smashy rolls Wall again, his wall token moves to the new position. Smashy can place his wall on matched or unmatched tiles, but the tile beneath it cannot be flipped until the wall moves away.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-red" style="margin-top:10px;">
+      <img src="./rock-3.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">Castle Breaches</div>
+        <div class="callout-text">Whenever Smashy reaches the end of the path (or a rock hits the castle), one <strong>Wall of Fluff shield</strong> is removed. If the castle has no shields left, the players lose immediately!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ SPECIAL RULES ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">7</span>
+      Special Rules
+    </div>
+
+    <div class="callout callout-blue" style="margin-bottom:10px;">
+      <img src="./rainbow-guardian.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">Cloud Guard</div>
+        <div class="callout-text">After matching a Cloud Guard pair, immediately place the Cloud Guard token on any matched (face-up) tile on the board. When Smashy would move onto that tile, he stops on the tile before it instead, and the Cloud Guard token is removed.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-blue" style="margin-bottom:10px;">
+      <img src="./freeze-wand.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">Frozen</div>
+        <div class="callout-text">When the Freeze Wand pair is matched, place a Frozen marker on Smashy. On his very next turn, he skips his die roll entirely. Remove the Frozen marker after his skipped turn.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-purple" style="margin-bottom:10px;">
+      <img src="./glitter-hole.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">Glitter Hole</div>
+        <div class="callout-text">When the Glitter Hole pair is matched, the tiles remain active on the board. At any point on the player's turn (even before flipping), they may activate either Glitter Hole tile to remove all rock tokens from the board instantly. The Glitter Hole tiles are then removed from play.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-gold" style="margin-bottom:10px;">
+      <img src="./kingandqueen.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">Rainbow Royals (Cross-Match)</div>
+        <div class="callout-text">The Rainbow Royals are a special pair — the King tile and Queen tile look different but must be matched <em>with each other</em>. Flipping either one followed by the other counts as a match and triggers the full 9 damage + 6 pushback effect.</div>
+      </div>
+    </div>
+
+    <div class="callout callout-purple">
+      <img src="./star-wand.webp" alt="">
+      <div class="callout-body">
+        <div class="callout-title">All Tiles Blocked</div>
+        <div class="callout-text">If every remaining face-down tile is covered by a rock or wall, the player cannot flip any tiles. Smashy automatically takes another turn until at least one tile becomes flippable again.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ WIN & LOSE ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">8</span>
+      Winning &amp; Losing
+    </div>
+    <div class="two-col">
+      <div class="outcome-box outcome-win">
+        <img src="./kingandqueen.webp" alt="Victory">
+        <div class="outcome-title">Victory!</div>
+        <div class="outcome-text">
+          Players win if <strong>Smashy's HP reaches 0</strong> from tile damage, <em>or</em> if <strong>all tile pairs are matched</strong> before Smashy breaks through the castle.
+        </div>
+      </div>
+      <div class="outcome-box outcome-lose">
+        <img src="./smashy.webp" alt="Defeat">
+        <div class="outcome-title">Defeated!</div>
+        <div class="outcome-text">
+          Players lose if Smashy reaches the castle and <strong>no Wall of Fluff shields remain</strong> to stop him.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">✦ ✦ ✦</div>
+
+
+  <!-- ══ DIFFICULTY ══ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="number">9</span>
+      Difficulty Guide
+    </div>
+    <div class="three-col">
+      <div class="callout callout-green" style="flex-direction:column;gap:8px;text-align:center;">
+        <img src="./feather-arrow.webp" style="width:40px;height:40px;object-fit:contain;margin:0 auto;">
+        <div>
+          <div class="callout-title" style="font-size:1.1rem;">Easy</div>
+          <div class="callout-text">Die: 2× Taunt, 2× Step 1, 2× Step 2. More pushback tiles, fewer rocks. Great for new players.</div>
+        </div>
+      </div>
+      <div class="callout callout-blue" style="flex-direction:column;gap:8px;text-align:center;">
+        <img src="./cloud-cannon-2.webp" style="width:40px;height:40px;object-fit:contain;margin:0 auto;">
+        <div>
+          <div class="callout-title" style="font-size:1.1rem;">Medium</div>
+          <div class="callout-text">Die: Step 1, Step 2, Step 3, Rock, Wall, Swap. Balanced challenge with all mechanics in play.</div>
+        </div>
+      </div>
+      <div class="callout callout-red" style="flex-direction:column;gap:8px;text-align:center;">
+        <img src="./rain-bow.webp" style="width:40px;height:40px;object-fit:contain;margin:0 auto;">
+        <div>
+          <div class="callout-title" style="font-size:1.1rem;">Hard</div>
+          <div class="callout-text">Die: Step 1–4, Swap, Rock. No wall, no taunt — Smashy charges hard and drops rocks relentlessly.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══ FOOTER ══ -->
+  <div class="footer">
+    <img src="./tf-logo.webp" alt=""> Tickle Fight — may the best memory win!
+  </div>
+
+</div>
+</body>
+</html>
