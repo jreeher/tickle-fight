@@ -1214,7 +1214,8 @@ function execMove(ri){
   const steps = d.step?1:d.step2?2:d.step3?3:d.step4?4:0;
   const labels = {1:'Charge!',2:'Double Step!',3:'Triple Step!',4:'QUAD Step!'};
   const subs = {1:'Smashy charges ahead!',2:'Smashy moves twice!',3:'Smashy moves three times!',4:'Smashy moves four times!'};
-  showBossPopup('<img src="./step-dice.webp" style="width:72px;height:72px;object-fit:contain;">', labels[steps], subs[steps]);
+  const footImg = '<img src="./step-dice.webp" style="width:72px;height:72px;object-fit:contain;">';
+  showBossPopup(footImg.repeat(steps), labels[steps], subs[steps]);
 
   const startPos=G.bossPos;
   for(let s=0;s<steps;s++){
