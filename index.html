@@ -198,6 +198,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(180deg,#8ec5e6 0
 .popup-sub{font-size:0.85rem;color:rgba(255,255,255,0.6);margin-top:2px;}
 @keyframes shake{0%,100%{transform:translate(0,0) rotate(0);}15%{transform:translate(-6px,3px) rotate(-1deg);}30%{transform:translate(5px,-4px) rotate(1deg);}45%{transform:translate(-4px,5px) rotate(-0.5deg);}60%{transform:translate(4px,-3px) rotate(0.5deg);}75%{transform:translate(-3px,2px) rotate(-0.3deg);}}
 @keyframes smashy-storm{from{transform:translateX(-50%) scale(0) rotate(-20deg);}to{transform:translateX(-50%) scale(1) rotate(0deg);}}
+@keyframes rock-fall{0%{transform:translate(-50%,-120%) scale(0.4) rotate(-20deg);opacity:0;}25%{opacity:1;}60%{transform:translate(-50%,0%) scale(1.15) rotate(8deg);}75%{transform:translate(-50%,-8%) scale(0.95) rotate(-3deg);}100%{transform:translate(-50%,0%) scale(0);opacity:0;}}
+@keyframes castle-shake{0%,100%{transform:none;}15%{transform:translateX(-10px) rotate(-1.5deg);}30%{transform:translateX(10px) rotate(1.5deg);}45%{transform:translateX(-7px) rotate(-1deg);}60%{transform:translateX(7px) rotate(1deg);}75%{transform:translateX(-4px);}90%{transform:translateX(4px);}}
+.castle-rock{position:absolute;top:15%;left:50%;transform:translate(-50%,-120%);width:32%;pointer-events:none;z-index:5;animation:rock-fall 0.85s cubic-bezier(0.25,0.46,0.45,0.94) forwards;}
+.castle-shaking{animation:castle-shake 0.55s ease-in-out;}
 body.shake{animation:shake 0.45s ease-in-out;}
 .milestone{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-120px);z-index:250;pointer-events:none;background:linear-gradient(135deg,#f5c842,#ff8c42);color:#1a1000;font-family:'Fredoka One',cursive;font-size:1.1rem;letter-spacing:1px;padding:10px 28px;border-radius:99px;box-shadow:0 4px 24px rgba(245,200,66,0.5);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),opacity 0.4s;opacity:0;}
 .milestone.show{transform:translateX(-50%) translateY(0);opacity:1;}
@@ -881,6 +885,21 @@ function renderShields(){
   document.getElementById('shieldPips').innerHTML = Array(G.shields).fill('<div class="shield-pip">🛡</div>').join('');
 }
 
+function rockHitCastle(){
+  const strip = document.getElementById('castleStrip');
+  if(!strip) return;
+  const old = strip.querySelector('.castle-rock');
+  if(old) old.remove();
+  const rock = document.createElement('img');
+  rock.src = './rock-3.webp';
+  rock.className = 'castle-rock';
+  strip.appendChild(rock);
+  strip.classList.remove('castle-shaking');
+  void strip.offsetWidth;
+  strip.classList.add('castle-shaking');
+  setTimeout(()=>{ rock.remove(); strip.classList.remove('castle-shaking'); }, 900);
+}
+
 function renderStatus(){
   const banner = document.getElementById('contextBanner');
   if(!banner) return;
@@ -1153,6 +1172,7 @@ function execMove(ri){
         addLog(`🪨 No tiles ahead — Smashy hurls the rock at the castle! ${G.shields} wall${G.shields!==1?'s':''} left.`,'b');
         showBossPopup('<img src="./rock-3.webp" style="width:72px;height:72px;object-fit:contain;">','Rock at the Castle!',`Castle wall crumbles! ${G.shields} left.`);
         renderShields();
+        rockHitCastle();
       } else {
         addLog('🪨 Smashy grumbles — no tiles to block and no castle walls left!','n');
         showBossPopup('<img src="./rock-3.webp" style="width:72px;height:72px;object-fit:contain;">','Smashy Grumbles...','Nothing left to hit!');
