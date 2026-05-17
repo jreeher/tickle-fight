@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏰</text></svg>">
+<link rel="icon" href="./tf-logo.png">
 <link rel="preload" href="./smashy.webp" as="image">
 <link rel="preload" href="./castle.webp" as="image">
 <link rel="preload" href="./banner.webp" as="image">
@@ -418,9 +418,9 @@ body.shake{animation:shake 0.45s ease-in-out;}
         <div class="tut-step-title">Smashy's Turn</div>
         <p class="tut-text">After every pair of tile flips — whether you matched or not — Smashy rolls a die and does one of these:</p>
         <div class="tut-box">
-          <div class="tut-row"><span class="tut-icon">⬆️</span><span><strong style="color:var(--text)">Charge 1–3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./step-dice.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Charge 1–3 steps</strong> toward your castle along the path. The further he gets, the more urgent things become!</span></div>
           <div class="tut-row"><span class="tut-icon"><img src="./rock-3.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Drop a Rock</strong> on his current tile, blocking it. Match a <img src="./glitter-hole.webp" style="width:14px;height:14px;vertical-align:middle;"> Glitter Hole pair and click either tile to clear all rocks instantly.</span></div>
-          <div class="tut-row"><span class="tut-icon">↔️</span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles — scrambling your memory. Watch out for this one!</span></div>
+          <div class="tut-row"><span class="tut-icon"><img src="./swap-dice.webp" style="width:20px;height:20px;object-fit:contain;"></span><span><strong style="color:var(--text)">Swap!</strong> Smashy shuffles two nearby tiles — scrambling your memory. Watch out for this one!</span></div>
         </div>
         <p class="tut-text">If Smashy is <strong style="color:#b3ecff">Frozen</strong> <img src="./freeze-wand.webp" style="width:14px;height:14px;vertical-align:middle;">, he skips his turn. If a <img src="./queen.webp" style="width:14px;height:14px;vertical-align:middle;"> <strong style="color:#c44dff">Cloud Guard</strong> is on his next tile, he stops before entering.</p>
       </div>
@@ -882,7 +882,7 @@ function renderBoss(){
 }
 
 function renderShields(){
-  document.getElementById('shieldPips').innerHTML = Array(G.shields).fill('<div class="shield-pip">🛡</div>').join('');
+  document.getElementById('shieldPips').innerHTML = Array(G.shields).fill('<div class="shield-pip"><img src="./cloud-wall.webp" style="width:28px;height:28px;object-fit:contain;"></div>').join('');
 }
 
 function rockHitCastle(){
@@ -1055,22 +1055,23 @@ function countPeekable(){
 }
 function applyPower(id){
   G.powerDelay=480;
-  if(id==='lightning')   { damageBoss(3,'🪶 Feather Arrow — 3 damage!'); showPopup('🪶','Feather Arrow!','-3 HP to Smashy','#8bc34a'); }
-  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showActionPopup('☁️','Cloud Guard!','Click a matched tile!','#4da6ff'); }
-  else if(id==='shield') { G.shields++; addLog(`🌥️ Wall of Fluff raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup('🌥️','Wall of Fluff!','Castle protected!','#b57bff'); }
+  const pi = (src,s=72) => `<img src="${src}" style="width:${s}px;height:${s}px;object-fit:contain;">`;
+  if(id==='lightning')   { damageBoss(3,'🪶 Feather Arrow — 3 damage!'); showPopup(pi('./feather-arrow.webp'),'Feather Arrow!','-3 HP to Smashy','#8bc34a'); }
+  else if(id==='warrior'){ G.warriorMode=true; addLog('☁️ Click a matched tile to place your Cloud Guard!','i'); showActionPopup(pi('./rainbow-guardian.webp'),'Cloud Guard!','Click a matched tile!','#4da6ff'); }
+  else if(id==='shield') { G.shields++; addLog(`🌥️ Wall of Fluff raised! ${G.shields} shield${G.shields>1?'s':''}!`,'g'); renderShields(); showPopup(pi('./cloud-wall.webp'),'Wall of Fluff!','Castle protected!','#b57bff'); }
   else if(id==='starmap'){
     const avail=countPeekable();
-    if(avail===0){ addLog('⭐ Star Wand — no tiles to peek!','i'); showPopup('⭐','Star Wand!','No tiles to peek!','#f5c842'); G.powerDelay=1400; }
-    else { G.peek=true; G.peekN=0; G.peekTarget=Math.min(4,avail); G.peekIdx=[]; addLog(`⭐ Star Wand! Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek...`,'i'); showActionPopup('⭐','Star Wand!',`Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek!`,'#f5c842'); }
+    if(avail===0){ addLog('⭐ Star Wand — no tiles to peek!','i'); showPopup(pi('./star-wand.webp'),'Star Wand!','No tiles to peek!','#f5c842'); G.powerDelay=1400; }
+    else { G.peek=true; G.peekN=0; G.peekTarget=Math.min(4,avail); G.peekIdx=[]; addLog(`⭐ Star Wand! Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek...`,'i'); showActionPopup(pi('./star-wand.webp'),'Star Wand!',`Click ${G.peekTarget} tile${G.peekTarget!==1?'s':''} to peek!`,'#f5c842'); }
   }
-  else if(id==='fireball'){ damageBoss(6,'💥 Cumulus Cannon — 6 damage!'); showPopup('💥','Cumulus Cannon!','-6 HP to Smashy!','#ff8c42'); }
-  else if(id==='comet'){ pushBackN(2); showPopup('💨','Wind Blast!','Smashy pushed back 2!','#c8a856'); G.powerDelay=1400; }
-  else if(id==='unicorn'){ pushBackN(4); showPopup('🦄','Unicorn Horn!','Smashy pushed back 4!','#f4b8ff'); G.powerDelay=1400; }
-  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole ready — click either tile anytime to remove all rocks!','i'); showPopup('✨','Glitter Hole!','Click either Glitter Hole to remove all rocks','#ffe4f7'); G.powerDelay=1800; }
-  else if(id==='tornado'){ pushBackN(6); showPopup('🌈','Rainbow Tornado!','Smashy pushed back 6!','#a0d8ff'); G.powerDelay=1400; }
-  else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup('❄️','Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
-  else if(id==='rainbow'){ damageBoss(9,'🌈 Rain-Bow — 9 damage!'); showPopup('🌈','Rain-Bow!','-9 HP to Smashy!','#ffb3d9'); }
-  else if(id==='queen')  { damageBoss(9,'👑 Rainbow Royals — 9 damage!'); pushBackN(6); showPopup('👑','Rainbow Royals!','-9 HP + pushed back 6!','#e8b4f8'); G.powerDelay=1400; }
+  else if(id==='fireball'){ damageBoss(6,'💥 Cumulus Cannon — 6 damage!'); showPopup(pi('./cloud-cannon-2.webp'),'Cumulus Cannon!','-6 HP to Smashy!','#ff8c42'); }
+  else if(id==='comet'){ pushBackN(2); showPopup(pi('./wind-blast.webp'),'Wind Blast!','Smashy pushed back 2!','#c8a856'); G.powerDelay=1400; }
+  else if(id==='unicorn'){ pushBackN(4); showPopup(pi('./unicorn-horn.webp'),'Unicorn Horn!','Smashy pushed back 4!','#f4b8ff'); G.powerDelay=1400; }
+  else if(id==='glitter'){ G.glitterHoleMode=true; G.glitterPendingTiles=[...G.lastMatched]; addLog('✨ Glitter Hole ready — click either tile anytime to remove all rocks!','i'); showPopup(pi('./glitter-hole.webp'),'Glitter Hole!','Click either Glitter Hole to remove all rocks','#ffe4f7'); G.powerDelay=1800; }
+  else if(id==='tornado'){ pushBackN(6); showPopup(pi('./rainbow-tornado.webp'),'Rainbow Tornado!','Smashy pushed back 6!','#a0d8ff'); G.powerDelay=1400; }
+  else if(id==='freeze') { G.frozen=true; addLog('❄️ Freeze Wand — Smashy frozen for one turn!','i'); showPopup(pi('./freeze-wand.webp'),'Freeze Wand!','Smashy skips a turn!','#b3ecff'); }
+  else if(id==='rainbow'){ damageBoss(9,'🌈 Rain-Bow — 9 damage!'); showPopup(pi('./rain-bow.webp'),'Rain-Bow!','-9 HP to Smashy!','#ffb3d9'); }
+  else if(id==='queen')  { damageBoss(9,'👑 Rainbow Royals — 9 damage!'); pushBackN(6); showPopup(pi('./kingandqueen.webp'),'Rainbow Royals!','-9 HP + pushed back 6!','#e8b4f8'); G.powerDelay=1400; }
 }
 
 function damageBoss(amt,msg){
@@ -1337,7 +1338,9 @@ function checkWin(){
 
 function showOv(win){
   document.getElementById('overlay').classList.remove('off');
-  document.getElementById('oEmoji').textContent=win?'🏆':'💀';
+  document.getElementById('oEmoji').innerHTML=win
+    ?'<img src="./castle.webp" style="width:80px;height:80px;object-fit:contain;">'
+    :'<img src="./smashy.webp" style="width:80px;height:80px;object-fit:contain;">';
   document.getElementById('oTitle').textContent=win?'Victory!':'Defeated!';
   document.getElementById('oTitle').className='otitle '+(win?'win':'lose');
   document.getElementById('oBody').textContent=win
